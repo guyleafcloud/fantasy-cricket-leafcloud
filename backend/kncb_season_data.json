@@ -1,0 +1,819 @@
+{
+  "entity": {
+    "__type": "Entity:http://api.resultsvault.com",
+    "country_id": "NL",
+    "current_season_id": 19,
+    "current_season_name": "2025",
+    "entity_id": 134453,
+    "entity_name": "Koninklijke Nederlandse Cricket Bond",
+    "entity_short_name": "KNCB",
+    "entity_type_id": 6,
+    "entity_type_name": "National",
+    "location": "Amstelveen",
+    "rv_layout_id": 53,
+    "sport_id": 1,
+    "state_full_name": "North Holland",
+    "state_id": 232,
+    "state_name": "",
+    "EntityAddress": {
+      "address1": "Nieuwe Kalfjeslaan",
+      "country_id": "NL",
+      "full_address": null,
+      "lat": 52.31902,
+      "long": 4.85048,
+      "mapref": "",
+      "postcode": "1182 AA",
+      "state_id": 232,
+      "suburb": "Amstelveen"
+    },
+    "ExtProperties": null,
+    "MobProperties": {
+      "event_feed_options": 0,
+      "logo_display_options": 0,
+      "news_feed_options": 0
+    },
+    "RelatedEntities": [],
+    "access_flags": 12768,
+    "comp_op_flags": 47,
+    "description": null,
+    "timezone_id": 40,
+    "url": "http://demo134453.sv.com",
+    "utc_off_min": 0
+  },
+  "season_id": 19,
+  "grades": [
+    {
+      "grade_id": 71374,
+      "grade_name": "Topklasse",
+      "grade_short_name": "TK",
+      "tier": "tier1",
+      "teams": [
+        {
+          "entity_id": 134456,
+          "team_name": "Excelsior'20",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134457,
+          "team_name": "HBS",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134461,
+          "team_name": "HCC",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134462,
+          "team_name": "Punjab CCR",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134463,
+          "team_name": "Sparta",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134464,
+          "team_name": "VOC",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134465,
+          "team_name": "VCC",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134466,
+          "team_name": "VRA",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134470,
+          "team_name": "Hermes-DVS",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134471,
+          "team_name": "Kampong",
+          "team_number": 1
+        }
+      ],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 94308,
+      "grade_name": "TK - HK Promotie - Degradatie Play Off",
+      "grade_short_name": "TKHLPO",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 71375,
+      "grade_name": "Hoofdklasse",
+      "grade_short_name": "HK",
+      "tier": "tier1",
+      "teams": [
+        {
+          "entity_id": 134454,
+          "team_name": "ACC",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134455,
+          "team_name": "Dosti",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134466,
+          "team_name": "VRA 2",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134467,
+          "team_name": "Bloemendaal",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134469,
+          "team_name": "Groen & Wit",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134472,
+          "team_name": "Quick",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134473,
+          "team_name": "Rood en Wit",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134474,
+          "team_name": "Salland",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134475,
+          "team_name": "VVV",
+          "team_number": 1
+        },
+        {
+          "entity_id": 136544,
+          "team_name": "Hercules",
+          "team_number": 1
+        }
+      ],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 73934,
+      "grade_name": "Eerste Klasse",
+      "grade_short_name": "EK",
+      "tier": "tier2",
+      "teams": [
+        {
+          "entity_id": 134461,
+          "team_name": "HCC 2",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134462,
+          "team_name": "Punjab CCR 2",
+          "team_number": 2
+        },
+        {
+          "entity_id": 134462,
+          "team_name": "Punjab CCR 3",
+          "team_number": 3
+        },
+        {
+          "entity_id": 134464,
+          "team_name": "VOC 2",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134465,
+          "team_name": "VCC 2",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134471,
+          "team_name": "Kampong 2",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134475,
+          "team_name": "VVV 2",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134476,
+          "team_name": "Qui Vive",
+          "team_number": 1
+        },
+        {
+          "entity_id": 136537,
+          "team_name": "Concordia",
+          "team_number": 1
+        },
+        {
+          "entity_id": 136540,
+          "team_name": "Eindhoven",
+          "team_number": 1
+        }
+      ],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 71378,
+      "grade_name": "Topklasse Twenty20",
+      "grade_short_name": "TK T20",
+      "tier": "tier1",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 82134,
+      "grade_name": "Hoofdklasse Twenty20",
+      "grade_short_name": "HK T20",
+      "tier": "tier1",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 94762,
+      "grade_name": "TKT20 - HKT20 Promotie - Degradatie Play Off",
+      "grade_short_name": "TKHKT20PO",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 82135,
+      "grade_name": "Eerst Klasse Twenty20",
+      "grade_short_name": "EK T20",
+      "tier": "tier3",
+      "teams": [
+        {
+          "entity_id": 134455,
+          "team_name": "Dosti",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134461,
+          "team_name": "HCC 2",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134462,
+          "team_name": "Punjab CCR 2",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134462,
+          "team_name": "Punjab CCR 3",
+          "team_number": 2
+        },
+        {
+          "entity_id": 134469,
+          "team_name": "Groen & Wit",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134471,
+          "team_name": "Kampong 2",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134475,
+          "team_name": "VVV 2",
+          "team_number": 1
+        },
+        {
+          "entity_id": 136537,
+          "team_name": "Concordia",
+          "team_number": 1
+        },
+        {
+          "entity_id": 136540,
+          "team_name": "Eindhoven",
+          "team_number": 1
+        },
+        {
+          "entity_id": 136544,
+          "team_name": "Hercules",
+          "team_number": 1
+        }
+      ],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 73940,
+      "grade_name": "Tweede Klasse",
+      "grade_short_name": "2e Klasse",
+      "tier": "tier2",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 73941,
+      "grade_name": "Derde Klasse",
+      "grade_short_name": "3e Klasse",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 73942,
+      "grade_name": "Vierde Klasse",
+      "grade_short_name": "4e Klasse",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 73945,
+      "grade_name": "Lagere Klassen Twenty20",
+      "grade_short_name": "LK T20",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 75993,
+      "grade_name": "Vrouwen T20",
+      "grade_short_name": "VT20",
+      "tier": "ladies",
+      "teams": [
+        {
+          "entity_id": 134457,
+          "team_name": "The Hague All Stars",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134461,
+          "team_name": "HCC",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134465,
+          "team_name": "VCC",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134466,
+          "team_name": "VRA",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134471,
+          "team_name": "Kampong",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134472,
+          "team_name": "Quick",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134473,
+          "team_name": "Rood en Wit",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134764,
+          "team_name": "Ajax",
+          "team_number": 1
+        },
+        {
+          "entity_id": 136542,
+          "team_name": "Groen Geel",
+          "team_number": 1
+        },
+        {
+          "entity_id": 136551,
+          "team_name": "Cricket Combinatie Brabant",
+          "team_number": 1
+        }
+      ],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 82349,
+      "grade_name": "Vrouwen Topklasse",
+      "grade_short_name": "VTK",
+      "tier": "tier1",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 82351,
+      "grade_name": "Vrouwen Hoofdklasse",
+      "grade_short_name": "VHK",
+      "tier": "tier1",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 73943,
+      "grade_name": "Zami",
+      "grade_short_name": "Zami",
+      "tier": "social",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 73944,
+      "grade_name": "Zomi",
+      "grade_short_name": "Zomi",
+      "tier": "social",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 75943,
+      "grade_name": "U17",
+      "grade_short_name": "U17",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 75913,
+      "grade_name": "U15",
+      "grade_short_name": "U15",
+      "tier": "youth",
+      "teams": [
+        {
+          "entity_id": 134454,
+          "team_name": "ACC",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134457,
+          "team_name": "HBS",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134461,
+          "team_name": "HCC",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134462,
+          "team_name": "Punjab CCR",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134463,
+          "team_name": "Sparta",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134464,
+          "team_name": "VOC",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134465,
+          "team_name": "VCC 1",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134465,
+          "team_name": "VCC 2",
+          "team_number": 2
+        },
+        {
+          "entity_id": 134466,
+          "team_name": "VRA 1",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134466,
+          "team_name": "VRA 2",
+          "team_number": 2
+        },
+        {
+          "entity_id": 134471,
+          "team_name": "Kampong",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134472,
+          "team_name": "Quick",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134473,
+          "team_name": "Rood en Wit 1",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134473,
+          "team_name": "Rood en Wit 2",
+          "team_number": 2
+        },
+        {
+          "entity_id": 134476,
+          "team_name": "Qui Vive Red",
+          "team_number": 1
+        },
+        {
+          "entity_id": 134476,
+          "team_name": "Qui Vive Blue",
+          "team_number": 2
+        },
+        {
+          "entity_id": 136545,
+          "team_name": "Hilversum",
+          "team_number": 1
+        },
+        {
+          "entity_id": 136546,
+          "team_name": "HTCECA",
+          "team_number": 2
+        }
+      ],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 75914,
+      "grade_name": "U13",
+      "grade_short_name": "U13",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 75916,
+      "grade_name": "U11 HB",
+      "grade_short_name": "U11 HB",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 79816,
+      "grade_name": "Bedrijfscompetitie",
+      "grade_short_name": "BCOMP",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93531,
+      "grade_name": "Friendly Matches",
+      "grade_short_name": "FM",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 94441,
+      "grade_name": "CTC De Flamingo's Jeugd Toernooi",
+      "grade_short_name": "FJT",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 73130,
+      "grade_name": "Vrouwen Slotdag",
+      "grade_short_name": "VSD",
+      "tier": "ladies",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 76036,
+      "grade_name": "Men's Pro Series",
+      "grade_short_name": "Men's Pro Series",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 76801,
+      "grade_name": "Qui Vive Premier League",
+      "grade_short_name": "QPL",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 88310,
+      "grade_name": "Youth Qui Vive Premier league U13",
+      "grade_short_name": "YQPL U13",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 92865,
+      "grade_name": "Youth Qui Vive Premier league U16",
+      "grade_short_name": "YQPL U16",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 89663,
+      "grade_name": "Wanderers CC Friendlies",
+      "grade_short_name": "WAN-F",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 90057,
+      "grade_name": "Pakistan Ambassador Cup",
+      "grade_short_name": "PAC",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93626,
+      "grade_name": "Haagse Jeugd 100 U9",
+      "grade_short_name": "HJ100",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93627,
+      "grade_name": "Haagse Jeugd 100 U11",
+      "grade_short_name": "HJ100 U11",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93628,
+      "grade_name": "Haagse Jeugd 100 U13",
+      "grade_short_name": "HJ100 U13",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93629,
+      "grade_name": "Haagse Jeugd 100 U15",
+      "grade_short_name": "HJ100 U15",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93630,
+      "grade_name": "Haagse Jeugd 100 U17",
+      "grade_short_name": "HJ100 U17",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93976,
+      "grade_name": "The Jan-Willem Trophy",
+      "grade_short_name": "TJWT",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93218,
+      "grade_name": "Netherlands A v UAE XI series",
+      "grade_short_name": "NLAvUAEXI",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93846,
+      "grade_name": "ICC T20 WCQ 2025 Warm-Up Matches",
+      "grade_short_name": "ICC T20 WCQ 2025 WU",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 79968,
+      "grade_name": "KNCB Mini Pro Series",
+      "grade_short_name": "KMPS",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 80248,
+      "grade_name": "U15 Girl's Netherlands v Scotland",
+      "grade_short_name": "",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 80481,
+      "grade_name": "North East Cricket Series",
+      "grade_short_name": "NECS",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 79969,
+      "grade_name": "KNCB Young Pro Series",
+      "grade_short_name": "KYPS",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 83848,
+      "grade_name": "U18 Quadrangular Series 2025",
+      "grade_short_name": "U18 Quad Series 2025",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 83849,
+      "grade_name": "U14 Nertherlands v Denmark",
+      "grade_short_name": "U16 NED v DEN",
+      "tier": "tier3",
+      "teams": [
+        {
+          "entity_id": 137711,
+          "team_name": "Netherlands U14",
+          "team_number": 1
+        },
+        {
+          "entity_id": 138486,
+          "team_name": "Denmark U15",
+          "team_number": 1
+        }
+      ],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 94238,
+      "grade_name": "Middlesex Schools National Team Festivals",
+      "grade_short_name": "",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 80033,
+      "grade_name": "Dutch Women's Super Series",
+      "grade_short_name": "DWSS",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 89359,
+      "grade_name": "Netherlands XI vs USA XI",
+      "grade_short_name": "WT20",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 89360,
+      "grade_name": "Women's T20I Series Netherlands vs USA",
+      "grade_short_name": "WT20I-NEDvUSA",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93357,
+      "grade_name": "Dutch Women's U19 Super Series",
+      "grade_short_name": "DWU19SS",
+      "tier": "tier3",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 80565,
+      "grade_name": "U17 Girl's Tri Series",
+      "grade_short_name": "U17 Girl's Tri Serie",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    },
+    {
+      "grade_id": 93575,
+      "grade_name": "Dutch Lionesses U15 Friendlies",
+      "grade_short_name": "DLS U15",
+      "tier": "youth",
+      "teams": [],
+      "sample_matches": []
+    }
+  ]
+}

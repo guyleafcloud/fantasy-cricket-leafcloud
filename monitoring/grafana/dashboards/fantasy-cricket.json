@@ -1,0 +1,30 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Fantasy Cricket Platform",
+    "tags": ["fantasy-cricket", "leafcloud"],
+    "timezone": "Europe/Amsterdam",
+    "panels": [
+      {
+        "title": "API Response Time",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "avg(http_request_duration_seconds)",
+            "legendFormat": "Avg Response Time"
+          }
+        ]
+      },
+      {
+        "title": "Weekly Updates Status",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "fantasy_cricket_weekly_updates_total",
+            "legendFormat": "Updates"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "fetched_at": "2025-10-20T22:46:24.481566",
+  "fetched_from": "laptop",
+  "data": {
+    "__type": "Entity:http://api.resultsvault.com",
+    "country_id": "NL",
+    "current_season_id": 19,
+    "current_season_name": "2025",
+    "entity_id": 134453,
+    "entity_name": "Koninklijke Nederlandse Cricket Bond",
+    "entity_short_name": "KNCB",
+    "entity_type_id": 6,
+    "entity_type_name": "National",
+    "location": "Amstelveen",
+    "rv_layout_id": 53,
+    "sport_id": 1,
+    "state_full_name": "North Holland",
+    "state_id": 232,
+    "state_name": "",
+    "EntityAddress": {
+      "address1": "Nieuwe Kalfjeslaan",
+      "country_id": "NL",
+      "full_address": null,
+      "lat": 52.31902,
+      "long": 4.85048,
+      "mapref": "",
+      "postcode": "1182 AA",
+      "state_id": 232,
+      "suburb": "Amstelveen"
+    },
+    "ExtProperties": null,
+    "MobProperties": {
+      "event_feed_options": 0,
+      "logo_display_options": 0,
+      "news_feed_options": 0
+    },
+    "RelatedEntities": [],
+    "access_flags": 12768,
+    "comp_op_flags": 47,
+    "description": null,
+    "timezone_id": 40,
+    "url": "http://demo134453.sv.com",
+    "utc_off_min": 0
+  }
+}

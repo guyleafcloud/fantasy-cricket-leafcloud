@@ -1,0 +1,32 @@
+[
+  {
+    "grade_id": 12345,
+    "grade_name": "Topklasse",
+    "season_id": 19,
+    "entity_id": "134453"
+  },
+  {
+    "grade_id": 12346,
+    "grade_name": "Hoofdklasse",
+    "season_id": 19,
+    "entity_id": "134453"
+  },
+  {
+    "grade_id": 12347,
+    "grade_name": "Eerste Klasse",
+    "season_id": 19,
+    "entity_id": "134453"
+  },
+  {
+    "grade_id": 12348,
+    "grade_name": "Tweede Klasse",
+    "season_id": 19,
+    "entity_id": "134453"
+  },
+  {
+    "grade_id": 12349,
+    "grade_name": "Derde Klasse",
+    "season_id": 19,
+    "entity_id": "134453"
+  }
+]

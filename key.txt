@@ -1,0 +1,1 @@
+JWT_SECRET_KEY=j0xO6Ba3vfqD7/aWg0G7mw0U6e9Q9DBdRzHelecmUpw=

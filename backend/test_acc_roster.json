@@ -1,0 +1,21 @@
+{
+  "club": "ACC",
+  "season": "2024",
+  "players": [
+    {
+      "name": "Boris Gorlee",
+      "club": "ACC",
+      "role": "all-rounder"
+    },
+    {
+      "name": "Sikander Zulfiqar",
+      "club": "ACC",
+      "role": "batsman"
+    },
+    {
+      "name": "Shariz Ahmad",
+      "club": "ACC",
+      "role": "bowler"
+    }
+  ]
+}

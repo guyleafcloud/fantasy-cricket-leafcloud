@@ -1,0 +1,514 @@
+team,player_name,player_type,multiplier,player_id
+ACC 1,AbhishekSaxena,bowler,0.94,dda46009-8890-4755-aac0-9ec325805855
+ACC 1,AdnanShah,batsman,0.95,deb5cf75-a953-4507-96c5-ab68dedcbd90
+ACC 1,AkashArora,batsman,0.93,fc677fbf-5218-42fb-8320-8d6c4f1b8c2e
+ACC 1,AnthonyQuinn,bowler,3.93,c3a698b4-fcbc-477a-b43c-f9eb1a8dfd21
+ACC 1,ArslanAhmed,batsman,0.93,4539e023-4fa2-449d-8e0f-b61e5222ba07
+ACC 1,AshanBunumusinghe,all-rounder,1.32,ac6752b5-7e16-456f-b87c-1f4dcf423be0
+ACC 1,BhathiyaGunathilaka,all-rounder,0.94,1c71fe37-c931-4bcb-88d1-8679e22b01ba
+ACC 1,BrandenTaeuber,all-rounder,0.87,a0126b2f-d744-42e3-ad7a-a33ee87472aa
+ACC 1,CasperDekeling,all-rounder,0.97,ff4e5782-4934-47f3-8cae-548848ba7f11
+ACC 1,DaanVierling,batsman,0.91,a7a3f602-01ee-4a75-ad0a-9e6274c1693f
+ACC 1,DanielRawson,all-rounder,0.94,dc21bec6-540e-40c4-b999-13a1ef94d311
+ACC 1,DanishMunir,bowler,2.07,d8564052-7605-4751-b09c-682c0370fef2
+ACC 1,DarshAbhinay,all-rounder,0.96,0c8c23b4-a9b5-467c-93b2-1f8813eadf47
+ACC 1,DebrupDasgupta,batsman,2.55,2094b356-2b83-4d4a-84ff-b92ce9c0074e
+ACC 1,DevanshuArya,bowler,0.96,1c2caa0b-f9a7-4950-a4a8-60288994fc3d
+ACC 1,DihanBekker,all-rounder,0.93,5aafd0c8-8ab3-4df5-ac39-014e239f6e6c
+ACC 1,EthanHartsink,all-rounder,2.98,d4c75d73-d025-4bdd-97be-fd959a5ebca5
+ACC 1,FaasKeppel,all-rounder,0.96,2e5fdd40-c250-4aa0-b74e-4c4962e72954
+ACC 1,FrancoiseStoman,all-rounder,0.92,cac2cfd6-d5a6-4e6f-9bc1-d0b99d181320
+ACC 1,IhsanMohammad,bowler,3.19,8cea4a0a-ae7a-4b63-8138-b9c9becdbfa9
+ACC 1,IsmatullahNasery,bowler,0.94,49c2ff3d-1f59-4058-ac8e-28d55c5c0095
+ACC 1,IzhaanSayed,all-rounder,0.83,197fa640-0c72-4d2f-a172-20de8af78b25
+ACC 1,JaapDickmann,batsman,3.08,b6537d37-fcc2-4246-961d-4b0349feb6e2
+ACC 1,JamesRidley,all-rounder,2.04,f3faed0b-0f48-471c-b0d5-9efc6300226b
+ACC 1,JordanWoolf,all-rounder,0.95,da36080d-5101-4a5d-b0ef-856cb24044e6
+ACC 1,KeaganBromilow,batsman,3.67,0c98bd73-1bed-4a9d-b0f9-948e8df45c81
+ACC 1,KokabNadeem,batsman,0.98,623846b7-500a-42e6-b411-1210f30ff888
+ACC 1,LakshayAggarwal,all-rounder,0.86,7b44ed37-04c0-44b5-ad45-a7198f6f49fc
+ACC 1,LucaBalducci,batsman,0.93,afeeeee2-d197-4a94-982e-3efeb2a29143
+ACC 1,MaheshHans,all-rounder,0.95,75256ddb-be5b-4028-ad25-4bd67ea686b0
+ACC 1,ManzoorTarake,all-rounder,0.93,11aa9544-ea4e-468a-ae52-5b4397f2a852
+ACC 1,MasoodKhan,all-rounder,0.97,b2f51ee4-6716-4a03-abb5-a9ed86df2c94
+ACC 1,MatsPrenen,all-rounder,0.96,fe0a10d4-deba-4cf1-8db4-7f4df28924b2
+ACC 1,MuhammadYaseen,batsman,0.99,ee32a692-e443-4cd4-b8eb-6759ee91e383
+ACC 1,QamarQazi,batsman,4.38,c3dfbb0b-4ca0-4ff6-bf1a-c330ed19106c
+ACC 1,QuirijnGunning,all-rounder,0.95,9c012e99-bde6-4e7c-8b2e-40411c6c6c24
+ACC 1,RahilAhmed,batsman,0.95,48700242-ad94-45b8-a9cf-5ff1402ab9de
+ACC 1,ReinderLubbers,all-rounder,0.94,b3092d39-00c9-4f56-b3c6-172d1523fdcc
+ACC 1,RobertJordaan,all-rounder,0.86,7c8886a4-488c-4ea1-ac8e-e82d7907ca9c
+ACC 1,SachinPeiris,batsman,0.98,04761f4e-d407-42e4-931b-a3933ec753f0
+ACC 1,SahirNaqash,batsman,0.98,a0d25045-522c-4c5e-917b-b810521b01ec
+ACC 1,SanderHelberg,all-rounder,0.91,bfb30809-f824-4aa4-a416-0ee72f236009
+ACC 1,SaqibullahUsmanzai,all-rounder,0.96,94a71488-a08c-46a5-8ff0-07e2c7b65123
+ACC 1,SarangaLiyanage,all-rounder,0.91,ca482983-b014-4f20-9ac4-218d9193aed5
+ACC 1,SatvinderSingh,all-rounder,1.48,1ff50c17-6c45-42fd-9e01-01f970a43a46
+ACC 1,SharadHake,all-rounder,0.94,d7460b50-c8b2-40f7-8983-662c4c14146d
+ACC 1,SharifollahSherzad,bowler,1.73,111d39ff-a245-4caf-b466-0dbfd7a31924
+ACC 1,ShayanMoodley,bowler,0.99,b1f4883e-4fe9-49ce-b49a-6b61f86cb64c
+ACC 1,ShreyasPotdar,all-rounder,0.97,dd1a0b5d-49ed-4fa2-b159-1106e07058cf
+ACC 1,SurajBelavadi,batsman,0.98,47d755c2-3fe3-4d0f-9ecf-6e0e278b6da1
+ACC 1,VictorLubbers,all-rounder,0.97,9e2ecbcd-8356-49a9-a6be-dd52a92d31ec
+ACC 1,WahiduleMasood,all-rounder,0.93,9d9e3c4f-ea3f-4350-89d4-ff2c912c00f7
+ACC 1,ZamaanKhan,batsman,1.35,a46309e5-3877-427e-b395-60cb41c3c3b8
+ACC 1,ZeeshanChoudhry,all-rounder,0.99,cc3435a4-0db5-4fed-8fab-d235f2e59e0c
+ACC 2,AaravManohar,all-rounder,0.96,132d0dce-6d56-4a5c-8fa9-58f7ea63f16c
+ACC 2,AbdulKhan,all-rounder,1.78,c1d51fc1-766e-4f1a-a03c-2f7a61b64243
+ACC 2,AdityaBura,all-rounder,0.84,5c355aa0-2d53-495e-b394-ab4412f80ce1
+ACC 2,AjitYadav,all-rounder,0.95,2d0b5169-8ef7-49be-bf2d-fe63a5049634
+ACC 2,AliSaeed,all-rounder,0.87,87077270-44b0-416d-97d3-dac0ea7ff6bb
+ACC 2,AmitozBindra,all-rounder,0.98,5dc1fffc-43c2-4342-9f44-c6bf50320bd3
+ACC 2,AsadMalik,batsman,5,f0134f34-1e33-446f-958c-0e06ff34c6bc
+ACC 2,AshwinOppu,batsman,0.99,1fe65eae-61b5-4649-98b7-31f27bfe7588
+ACC 2,AvinashRamkumar,bowler,1.81,6c55fc42-5141-4c64-8812-ec7413ef41f2
+ACC 2,BaljotSingh,batsman,0.83,769b97ef-04ea-493d-8be8-7845e6aab136
+ACC 2,BasStembord,batsman,3.12,a6b90d7e-a1a3-4d56-8a33-d80656b3f3b9
+ACC 2,DevanshuUke,all-rounder,2.42,588df776-bcb6-4e7f-8102-6c05d823835f
+ACC 2,FarhaanKhawaja,all-rounder,0.8,ab7321dd-fad2-4e4e-ad9c-287f4b8f2dea
+ACC 2,HarisMahmood,all-rounder,1.96,73123f8f-07a5-4b3d-b9bc-6b173b242889
+ACC 2,HarshRathore,all-rounder,0.86,22cd8921-9675-4dab-9711-12b4e2529088
+ACC 2,HimanshuPaliwal,all-rounder,0.97,33aafe40-9ecf-407a-ac21-8d6184c28d15
+ACC 2,HimanshuPant,all-rounder,0.95,f5f7c630-eaaf-46dd-85e5-2cacc97a996b
+ACC 2,HimanshuSingh,all-rounder,0.97,a39d0cb3-90bb-4423-a005-ec71593448df
+ACC 2,IrfanFarroq,all-rounder,0.98,5fed357e-f8ee-415a-bf3f-bcdb18276761
+ACC 2,KamalMahana,bowler,2.82,3cd42d6e-027d-4b3f-bccf-c9939051c66a
+ACC 2,KishankumarPatel,batsman,0.97,95c6375c-3720-4db8-96e8-a941a807ffaf
+ACC 2,KodiVishal,all-rounder,0.95,9f6f64c8-e751-4686-b707-79a3de809966
+ACC 2,LiagetAnwar,all-rounder,0.95,b7e0e8ee-8f9b-4173-9df0-caa83571c6d4
+ACC 2,ModassirSiddiqui,all-rounder,0.88,86a2b042-fc2b-4960-a1ac-eec4554c5fb6
+ACC 2,MohseenKarche,batsman,3.2,b294e3fa-2b7c-46ec-82ef-20266dcf355f
+ACC 2,MohsinKhan,all-rounder,1.2,846a8ea8-d9d9-4865-8e6a-0bf3a7c64f78
+ACC 2,MuzamalIqbal,all-rounder,0.94,6e9a7550-6951-461e-ae7c-cff8cdd8ddb8
+ACC 2,NavjotSingh,bowler,0.95,42c18fe4-ea1c-4bb6-a04f-0504657d557b
+ACC 2,NissarAli,all-rounder,0.95,e2467f93-bc90-4426-9a26-a9a26a128a34
+ACC 2,OlafStadhouder,batsman,4.42,bf5149e6-8747-45d2-8e86-0107fed3740f
+ACC 2,ShreyTrehan,all-rounder,0.96,b2891ab9-f95a-4c40-a991-f6fdac5560da
+ACC 2,ShreyasSinha,batsman,2.86,3a9e0fef-f369-43f9-a721-85a043678f51
+ACC 2,ShujatAli,all-rounder,0.88,207953c2-526a-4755-8701-b6fe45556579
+ACC 2,UjjawalRanjan,all-rounder,0.88,333348f5-926c-4c79-9121-bd8d91860319
+ACC 2,VetrivelanKarunanithi,all-rounder,1.56,54c78cac-3282-4f65-a678-6b7a61ee83ac
+ACC 2,VivaanDhawan,all-rounder,0.86,81a2d3dc-03b8-4335-b999-b3a7a4125248
+ACC 2,VivekKumar,all-rounder,0.88,2ce403ab-50af-4529-9a66-78d21f64fde7
+ACC 2,WaqasAhmad,bowler,0.9,c4e2f69b-3ef4-41d2-aab6-fde59e2a461b
+ACC 3,AbdullahSafi,bowler,0.98,eb8e1486-6485-4353-8ae9-9ddb36c7d924
+ACC 3,AbdulmananMian,bowler,4.79,61b90ea8-b14b-4212-bcd0-82080d851df1
+ACC 3,AbhinavGill,batsman,2.08,f87ffe02-8f00-42ac-aa92-ed60afcbd63b
+ACC 3,AdityaNavandar,batsman,3.89,15987285-9afc-4c0f-a462-14414eb0ffd1
+ACC 3,AhmerAltaf,batsman,0.98,a9f9b3c8-2da4-4b37-b032-faeb0d336a90
+ACC 3,AjayKumar,bowler,4.12,108a70f8-f364-4565-bb2e-06d584866698
+ACC 3,AkhilGolla,batsman,1.68,e2125da8-923e-415d-8631-3d079bd6b5af
+ACC 3,AmeyaPethe,batsman,1.12,75d5b8eb-af70-4d12-9988-6735bb252ace
+ACC 3,AniruddhaSengupta,all-rounder,0.97,9cb710e5-9677-4f82-8d20-e6992e7aa1cd
+ACC 3,AqibSaleem,all-rounder,0.96,34fb5bc5-3efe-490e-a382-443e8b132cb8
+ACC 3,AreebShoaib,batsman,2.34,fc56c88f-36c4-4ff7-9b98-42c1327a8cff
+ACC 3,ArsalanAlim,batsman,0.96,7dbd4577-1a1e-4ac5-89ba-9a4df4b9dac9
+ACC 3,AxayaKansal,bowler,0.97,656dddb8-b9af-44eb-9cc2-7388d71f966b
+ACC 3,BalasubramaniamGurmurthy,all-rounder,0.91,baed7f44-2b87-40b2-9304-dcfebb651f36
+ACC 3,EdgarSchiferli,all-rounder,0.97,be74d414-4918-4d6c-b188-1e952ce3ea77
+ACC 3,GaganGaba,batsman,0.95,1bbf21b6-da24-4b08-9b2d-81b635f51fb4
+ACC 3,HaiderAli,batsman,4.41,f2bf421c-0245-47e9-869d-807026e2480a
+ACC 3,HamidullahShinwari,all-rounder,1.49,9584a9cb-81e1-48eb-9165-8ddde91e4484
+ACC 3,HarpreetSingh,batsman,0.96,70452429-73df-4aaf-b89b-0e2f2f27a4bc
+ACC 3,HarrySingh,batsman,0.88,d2072191-5b2f-465c-b96f-08983b09dcc1
+ACC 3,HelalGhairat,all-rounder,0.99,e0dab0c2-2537-4af1-9319-458e89b929a3
+ACC 3,HimanshuTonk,all-rounder,0.95,12c69d23-9759-4a41-9195-f15bb384083e
+ACC 3,IbrahimShah,batsman,4.45,69a98d02-599c-4321-8271-435801439b34
+ACC 3,ImranChoudry,all-rounder,0.95,919256c1-4987-4216-9fa8-b100875cefde
+ACC 3,IrfanAlim,batsman,0.99,177ce35d-4c34-4c79-b6a7-265e69604405
+ACC 3,JamalGhairat,all-rounder,0.93,835c9513-385c-432a-89fd-36237ec0c0f5
+ACC 3,KhalidMughal,batsman,0.8,fdcd492e-7285-46d1-a883-6cabb69f25bb
+ACC 3,LalitGurnani,bowler,0.98,9c1a5c81-1137-4ec4-b232-a9c2cddeb82e
+ACC 3,MandeepSingh,all-rounder,0.75,083ee276-cd5d-4d52-9452-df46f531b8e8
+ACC 3,MartijnBesier,all-rounder,0.93,8e02b6ae-3692-42e7-a63f-4a08551fa9ef
+ACC 3,MartinKrop,batsman,2.75,9ba67ce8-624e-4aeb-86a7-eaf9742f618d
+ACC 3,MohitKumar,all-rounder,0.98,1757a48d-48cc-4981-b5a1-be2e36ea1f4a
+ACC 3,MuhammedAsif,all-rounder,1.36,2f5310d1-ea74-4fcf-97af-ad5b7fbac78d
+ACC 3,MuswarAhmad,all-rounder,2.9,53a18614-d323-4161-bcab-b9ca109819a3
+ACC 3,NaeemNasir,batsman,0.92,299c3464-0350-4493-89b4-ad8fd31112fb
+ACC 3,NaseerAhmed,all-rounder,3.16,ff47b387-b943-4813-9c2c-56b35b85dd98
+ACC 3,NileshLohia,batsman,3.66,60a19728-352b-429c-b734-e6d8fe3e4dab
+ACC 3,PalasNuwal,all-rounder,0.92,ae7eaa9d-5d87-4968-827b-e0b3cf666ff5
+ACC 3,PrabhakarAnbarasu,all-rounder,0.97,afd0f2d0-30d5-401f-b452-5c2decf8ed4a
+ACC 3,PrasukJain,all-rounder,0.91,38e881f7-a5ca-4be0-b29c-27c0aebef1c6
+ACC 3,PraveenKota,batsman,2.42,64f34602-027b-4ec0-9a16-b6a46fb27bb5
+ACC 3,REHANMUHAMMAD,all-rounder,0.91,6be9f920-082e-4c59-bef1-799258121e16
+ACC 3,RajanThavaratnam,all-rounder,0.94,4f8cd1c9-e6bf-43a4-a5be-a3f622be363c
+ACC 3,RandheerPonnamkunnath,all-rounder,0.97,4c4152c5-9069-4078-ad38-46aa38bc91bf
+ACC 3,RishiMohan,all-rounder,2.26,02d08e45-b0be-47a4-b421-06ec39492262
+ACC 3,RobineRijke,all-rounder,0.95,4da27741-4e56-4573-b68b-5ef610228e24
+ACC 3,SabinSumghershanan,batsman,2.78,1ab0dd7e-3d26-4f84-908a-90180b249f0b
+ACC 3,SadaqatSafi,all-rounder,0.8,687a5633-0165-416f-9894-7168feb1d267
+ACC 3,SaimMian,all-rounder,2.13,136a5d4a-4904-4756-8ab1-0fcc738ecf38
+ACC 3,ShahrukhMahmood,all-rounder,3.82,32109804-5ec6-4f40-a311-6afde507223c
+ACC 3,ShitizArya,bowler,3.2,eb8fe79b-c145-4c02-835d-b2f0cb051973
+ACC 3,SrinathPanchavati,bowler,3.56,f530f943-4335-4fe2-9341-a41e1f00e72f
+ACC 3,SumeetDiwan,all-rounder,0.95,0385f0dc-f7a1-40b7-aa5f-ecb3078408e7
+ACC 3,SuryaNaragani,bowler,2.19,8b8c2e6b-df1b-4f6b-87f6-f135ad274acb
+ACC 3,TamilArasu,batsman,0.99,592c3ba3-c7fb-4194-82f0-35817714cf4c
+ACC 3,ThomasPasierowski,all-rounder,0.92,1b6f3ee8-3777-4a5f-a2eb-8fe91af4b15f
+ACC 3,TimVersteegh,all-rounder,0.91,5efdc5f2-3927-4d82-a05e-76cf7f08c317
+ACC 3,VasanthSekar,batsman,0.95,15e000ff-0164-4a3d-adbb-247e94b9512f
+ACC 3,VijayaJayanthi,batsman,2.07,460dbb47-603a-4ea5-b0cc-35487f45ec41
+ACC 3,VinayBhat,all-rounder,0.99,677ec853-a72c-44b0-ac03-d8fb5c431434
+ACC 3,WaheedullahSafi,all-rounder,0.93,5a8d0654-4acd-4f23-9ed0-c7fcbadd04a8
+ACC 3,ZalandZazai,all-rounder,4.17,84b0e948-1c9d-47a3-9629-0f97cced849c
+ACC 4,AbhinandhanDevadiga,all-rounder,0.92,f34a7040-63a4-4e06-9ec1-cefdf89f5086
+ACC 4,AbhisaarBhatnagar,all-rounder,1.9,8ddf3247-e79f-42a0-9ed9-fcd225e8e17c
+ACC 4,AdeelHaq,all-rounder,0.97,7d24d7e2-845b-498f-a998-67ff746d985d
+ACC 4,AhmedMasharaf,all-rounder,2.89,d4f4adc2-4937-4c20-857f-5b656acd99f2
+ACC 4,AkhilDixit,bowler,1.11,abe9d8e5-fa60-41d9-946f-3baaf6e96d4e
+ACC 4,AnasAmin,all-rounder,0.98,7382a4cf-1eb7-4458-a7fd-85eb6147c780
+ACC 4,AniketBhattacharya,bowler,4.48,515a0515-d797-4703-be21-073bc8e55b3d
+ACC 4,AnityaAnand,all-rounder,1.49,522fd27e-0e32-4161-a1d4-65cb89751d93
+ACC 4,BhanpersadSoechit,batsman,4.63,6abe7809-bda3-4dfa-be94-ba159728f5c8
+ACC 4,ChristopherBraine,batsman,3.47,a4385a7f-331c-4c17-a0c0-c4d2b6b2461e
+ACC 4,DhruvSogani,batsman,3.91,56a193c6-cb96-4d4b-b123-7d457ae4124e
+ACC 4,EhtishamAhmad,all-rounder,0.94,b0b4b59c-4654-49df-8cc7-d5873f490dc8
+ACC 4,EzzatMuhseni,batsman,0.99,eb75d0a0-8eef-4790-8f50-d7172155e862
+ACC 4,GouravSharma,bowler,0.96,1fa421bc-f876-466c-9e39-966932c45c94
+ACC 4,HashimMahmood,all-rounder,0.98,290e0a56-4f5b-48c5-a696-71d3d36b54af
+ACC 4,JunedIqbal,batsman,0.99,0b55cf2f-3083-4f7d-b54a-a4955390ffe1
+ACC 4,KarthikPrakash,batsman,0.98,db3d693f-3e13-4b0d-90a6-609219157438
+ACC 4,LokeshKumar,batsman,0.98,490a1b6f-4b91-4ce7-8faf-0e003d5f8e42
+ACC 4,MohammedShabir,batsman,4.17,4036b7db-da83-4239-923c-75bedc96b8dd
+ACC 4,MuhammadTaha,all-rounder,0.98,4dd10796-86fe-413f-b13b-564f34125d36
+ACC 4,NaveenMahaveer,all-rounder,1.68,6728575f-6f71-4475-9d94-553899f6a48d
+ACC 4,NavinSaran,all-rounder,0.93,3e17c600-2d6a-4f62-9bcf-7f5ecd24d93d
+ACC 4,NishanthRamesh,all-rounder,0.92,bbe1942d-4565-4594-959e-8a6d217b6d70
+ACC 4,PremkumarGanesan,all-rounder,1.16,a210fd9b-6f85-4ec2-8de7-595cc39415a1
+ACC 4,PuneetBindlish,all-rounder,0.9,31ca0c0e-315e-4346-96d2-a2a2c00032f2
+ACC 4,PuneetrajShivanand,all-rounder,0.95,ac257ee0-1945-4b05-a3b2-cd0dc1bfb9a3
+ACC 4,RajeshYadav,all-rounder,0.92,8b27a7f2-e91a-43b0-be99-0350b2cce140
+ACC 4,RehanWaheed,all-rounder,0.9,b54db491-ce1b-4159-8a6b-bf16635de255
+ACC 4,SaneelMahulkar,all-rounder,2.01,8dc76dd7-9cf4-4054-b230-89e1a162b6d7
+ACC 4,ShahidMehmood,batsman,1.32,74b72eb6-780c-474e-ab76-9848e036dfcf
+ACC 4,ShankarIyer,batsman,0.99,a130146d-439c-4474-9a42-9fcd937a58aa
+ACC 4,SharadDonga,batsman,2.95,35b0a219-6aaa-4903-bb76-24b70bfa2678
+ACC 4,ShirazAhmad,all-rounder,0.9,26cc3e4a-f04e-4879-9e5c-1c2464611932
+ACC 4,SiddharthGoyal,batsman,0.95,5b33fcf3-7d30-4b2d-b203-9d24eb2d4c7e
+ACC 4,SidharthVenugopalan,batsman,2.44,b7f41f1b-a36f-40fb-a092-ce39edfa2b06
+ACC 4,SivaGoma,bowler,4.79,db557db8-edc8-4c29-98b7-c66eb71e3a22
+ACC 4,SohailKakar,batsman,3.15,8ee902d2-ec8a-4e60-8c98-e342c2d80db7
+ACC 4,SrijanSingh,all-rounder,0.92,1cbf5983-b806-4bc9-b8ff-04226fa78478
+ACC 4,SultanHaider,all-rounder,0.96,bf4aa208-5791-477a-82c1-012123f53380
+ACC 4,SunilSarangi,batsman,0.96,e269179a-3b93-4e4d-89cd-0cd4e8e8193d
+ACC 4,SunnyGharat,batsman,1.64,7bd6dec6-72fa-46b8-8770-9d2443057af3
+ACC 4,SureshMyana,bowler,4.83,f7171413-6505-4e8b-b6e0-145b02a8232c
+ACC 4,TayubTabassum,batsman,0.98,3ff19e3f-dbb4-4227-a578-9dd0b39dadfe
+ACC 4,UmerMir,all-rounder,0.89,20c3ebc6-b60d-4bd1-99bb-c912ed5b5db1
+ACC 4,UsmanYousaf,all-rounder,0.93,e20f4d9d-39c4-4e82-8fc8-adf6f56aac0c
+ACC 4,VaibhavVakharia,all-rounder,0.9,eafc47f0-50f9-40e9-af3e-b9fbd8b24d75
+ACC 4,VijayGomatam,batsman,2.5,6a898ee1-c846-471c-b961-45206f71abac
+ACC 4,VivekTiwari,batsman,1.87,09883877-87ce-4135-a3fc-86ce3a18ba89
+ACC 4,WaleedEjaz,all-rounder,0.89,1e6b8c8c-d6ca-4095-996c-1d7c959b53d3
+ACC 4,ZishaanYousaf,all-rounder,0.98,c720b315-fc3d-4918-ba2f-8cf99f1923ac
+ACC 5,AbhipreetSinha,batsman,4.33,631b30e0-8a06-4713-a43d-c6afbc38db22
+ACC 5,AhmedMirzada,all-rounder,0.95,3f75101c-a5e7-48c9-8682-4ed3ae772ac1
+ACC 5,AkaashMahangoe,bowler,3.4,9ab0362a-b6c9-4250-bf88-2e050f67648d
+ACC 5,AkshaySingh,all-rounder,1.38,a17d53dd-bc84-40f4-965a-bda3e5d2fac6
+ACC 5,AnkushTrikha,batsman,4.42,33625b79-4a50-4ce9-a6af-1d74fea662a3
+ACC 5,AnoopChoudhary,all-rounder,0.96,180b9284-2aa9-4b36-a9a1-e82dc089ca73
+ACC 5,AnujPatel,all-rounder,2.36,c989d47f-7022-4206-9fef-bbee5c33e546
+ACC 5,DhananjayKhamankar,all-rounder,0.92,9b9b3697-9bd3-4204-a26f-51abeb1ef979
+ACC 5,GauravNivsarkar,all-rounder,0.99,0c2802ba-dad1-480f-b834-adc04b2f3ac3
+ACC 5,HAMZA ANASIR,all-rounder,0.98,b5e8c1d8-7ff6-4d00-9a10-e3050823c66f
+ACC 5,IHTISHAM HAKRAM,bowler,3.7,6bc6771e-3180-4f47-89d9-d23ddf2c170f
+ACC 5,JatinKumar,batsman,4.49,8cb49dc3-baf9-4fe7-9777-2c9acff0ce0a
+ACC 5,JayasimhaRao,all-rounder,0.95,2b07ffa7-fdec-42da-8995-ff57965dbd84
+ACC 5,KamranNasir,all-rounder,0.97,5fcb6e12-6c8d-4e69-974e-21a2a765bdfe
+ACC 5,LuckyPrince,all-rounder,0.9,5028f8a4-0e0b-467e-8909-dff01013a9b0
+ACC 5,MaheshNavale,all-rounder,0.87,b3274fe1-7f86-4417-be3d-832acafccd3b
+ACC 5,MukeshBhardwaj,all-rounder,0.98,ac2f9708-1558-4830-b368-b2e9dc056011
+ACC 5,NandanPatil,batsman,0.98,a4b0c8b5-a71b-40f9-91e2-9fe26075dd11
+ACC 5,NewtonPawlish,all-rounder,0.99,9c271ad7-1213-4a09-ab80-4bb0741a7cff
+ACC 5,ParagBawane,batsman,0.88,d3f48736-f1ae-440b-8fb6-ca60d9c16f92
+ACC 5,PraneethPendru,all-rounder,0.96,6bb35e30-7bcc-431d-96a8-2f4f104ce7d2
+ACC 5,PratheekPerala,all-rounder,1.25,a8ab73d1-3b71-4a81-b823-5036878eb922
+ACC 5,PraveenkumarAlluri,all-rounder,0.99,d6bcd647-3bfd-4e72-b74f-1ae4a2f2cc18
+ACC 5,PriyathamKatukuri,batsman,0.99,f79f5de8-5f43-4268-b6cd-eb9ac747997d
+ACC 5,PulkitSaxena,bowler,3.41,fcce9f14-c835-4b93-b35d-480af2ecc11a
+ACC 5,RachitGupta,all-rounder,3.04,1a8cfdb4-dce6-425e-bd94-3b37e7edfb8c
+ACC 5,RahulKumar,all-rounder,0.95,27fa5307-412a-46fa-b380-5f01004f58e7
+ACC 5,RohanSolanki,batsman,1.07,4a83a744-3307-460f-aa8a-d70f13b34564
+ACC 5,SagarMahangoe,all-rounder,2.11,d84e5acc-d9cd-486a-8899-d2fd0e2f2ef6
+ACC 5,SagarParihar,all-rounder,1.68,cd381471-5593-4a5d-81fa-943ba68b58a7
+ACC 5,SamanyuChauhan,all-rounder,0.99,c18eaa7a-7249-493f-8dee-82971a27a7f2
+ACC 5,ShreyashMehta,all-rounder,0.91,01022fb5-a396-495c-a680-63c172b2a840
+ACC 5,SrikanthSuryadevara,bowler,3.35,f8fda0dd-df20-4a0a-a2bf-5e4229c544d1
+ACC 5,SrinivasMuralidharan,bowler,4.84,67f1632e-d38b-4ab1-9f9d-63f6e77e7d7c
+ACC 5,SritharaNagamani,bowler,3.48,c5ba1ad0-473f-4d73-8b9c-8840d26ca2c8
+ACC 5,UmairTariq,all-rounder,0.96,8109c37b-da04-4339-a0c2-4653c04a735d
+ACC 5,VigneshAsokan,batsman,3.89,249e11e6-df0a-4bab-8697-88494377480e
+ACC 5,ViswanathanRaman,all-rounder,0.94,ed0c44b5-47bc-458d-b05c-e85eadca8e81
+ACC 5,WajidZulfiqar,all-rounder,1.19,f77f7841-d346-43e3-823e-2fbc2376282c
+ACC 5,ZahidIslam,all-rounder,1.51,08e56cfd-3a76-4814-8911-2e08e1e3f60c
+ACC 6,AbhiAnand,all-rounder,0.99,4a1edcfc-4dc6-477a-b55f-565e397ac9a6
+ACC 6,AdeelMasih,batsman,3.02,503b551f-7fa4-4798-bc71-21153f6df024
+ACC 6,AdeelRaja,all-rounder,0.99,6f2d890c-d68b-4242-ae74-91674477e360
+ACC 6,AdeelShahzad,all-rounder,0.96,6bec67af-c6b2-4aac-a8bc-0913d1b165a8
+ACC 6,AdilAwan,bowler,2.29,915009dc-e34e-45f9-b64a-e40136f330e1
+ACC 6,AhmadullahKakar,all-rounder,1.72,81df0839-1701-4af1-b588-6342b92c5377
+ACC 6,AmiteshKamani,batsman,1.95,1eebe7f5-e124-4b9e-affd-553fe02a510d
+ACC 6,AvinashAkella,all-rounder,0.98,cb7a4acf-14b0-471e-8820-48a144e9daa4
+ACC 6,AvinashKumar,bowler,4.36,c284f130-d67e-4e80-ae7c-5efe69ea2c96
+ACC 6,AvnishChaudhary,batsman,1.58,0b0b3062-599f-4029-a129-ea0428a838ef
+ACC 6,BhupendraSingh,bowler,4.17,314e8276-3847-4a67-83b1-96e168539108
+ACC 6,CarlGilding,batsman,3.15,3657e01f-4766-42fd-9f2f-6667897d3cb5
+ACC 6,DavidMasson,all-rounder,1.59,01b0edbc-1255-4834-b8d6-ad3187d147c1
+ACC 6,FaisalAbbas,all-rounder,0.97,4a98a7d1-09c1-4e21-a565-7138c0c25ee0
+ACC 6,FaizanQureshi,batsman,2.79,61682d04-14eb-4e2a-be57-4f8fe18e1f93
+ACC 6,GauravKwatra,bowler,1.57,a10e7473-c6d6-43d3-a6a5-688cbf08c97b
+ACC 6,GeronimoNota,all-rounder,0.96,ee3fbb3b-1324-402d-a12b-58e3b8274229
+ACC 6,GunjanJamindar,all-rounder,0.96,4f6a2f8f-0e26-41f2-aed4-71de6d654c5e
+ACC 6,HashanKulasinghe,all-rounder,1.33,83418825-ada3-469b-976b-2eb320fbe0e3
+ACC 6,HeshanWijesinghe,bowler,2.71,77f58c5c-8461-4476-81b0-538d4178c6ae
+ACC 6,HoneyWilliam,all-rounder,2.16,0b3f5846-77a6-4c66-bfdb-59a38242659e
+ACC 6,JaganNarayanamoorthy,batsman,2.07,1f8ecb5d-fbd0-4a9b-bfa7-394fc0363096
+ACC 6,JayantPote,batsman,0.99,c33a0794-a4bc-43a7-a6ec-7f22d40c61dc
+ACC 6,KandeeNageswaran,batsman,4.42,52c8116b-435d-4255-9f9b-5721819cf2ae
+ACC 6,KaramjitSingh,all-rounder,0.99,924b4ed9-f850-46bc-8db6-c4b27a6c3bd3
+ACC 6,KaranPawa,all-rounder,1.49,8480bbc6-623d-400e-b4d6-6e0665391870
+ACC 6,KirtiSingh,bowler,4.82,de932f67-511c-4489-a407-4a4aa77e2d58
+ACC 6,KrishnakanthAjjarapu,bowler,2,a13642e3-a680-4225-83ef-d52264f79aef
+ACC 6,LakshaySharma,bowler,3.02,4a72f0b2-3c80-4826-81da-75902460d73e
+ACC 6,ManinderBisen,bowler,0.97,e4ea05c6-ca6e-4c40-8a39-0c2d363e868d
+ACC 6,ManoharanMurugesan,all-rounder,0.97,78a55733-4254-4fea-a0c3-106919609fb9
+ACC 6,MehrabMarri,all-rounder,1.69,2c967cc2-d539-4e9f-9e61-bdb26721f368
+ACC 6,MethmalJayasekara,all-rounder,0.99,f5cd4aac-66fa-4730-aff0-96ca3fcf5d6e
+ACC 6,MirzaHassan,all-rounder,0.95,9fd480cc-4434-4fba-a213-e5ecf54eac30
+ACC 6,MohammedNaqvi,batsman,0.95,8b011044-6f70-4d49-8e8e-b19d40db1303
+ACC 6,MohyeeAshraf,all-rounder,0.99,7c619bd1-a6ef-4596-812f-c49f81037b42
+ACC 6,NoorAhmed,all-rounder,3.15,e0598344-f940-4230-85b1-1bae8438b0e3
+ACC 6,PatrickReardon,all-rounder,0.99,9a60a4f2-4d70-4429-b361-e1aaeed732b9
+ACC 6,PiyushPandey,batsman,0.89,d0f81038-7c87-4116-b3de-508c210b6559
+ACC 6,PrakashAzhagappan,all-rounder,0.98,97cd14e3-c10a-4290-926a-fc2f536eba90
+ACC 6,RahulSingh,batsman,0.92,f98f9025-066d-4192-aa22-0408dc428c20
+ACC 6,RajanGriowrirajan,all-rounder,3.3,ad5acdcb-f6c9-408c-af7b-2d6eb502dbf3
+ACC 6,RavindraDayaram,bowler,2.55,06e08974-ea2f-4e58-99a9-e25f97f208f8
+ACC 6,RohitKapoor,batsman,0.98,37d4e6d7-122b-4992-9dc5-399e775d96d5
+ACC 6,RohitKapote,batsman,2.78,829ed784-010e-4249-ad6a-452da85367b8
+ACC 6,RohitManethiya,batsman,0.96,a91b184a-1909-4579-921f-470855feee3e
+ACC 6,SahelEzmarai,bowler,4.12,667808e0-fed9-462e-8a61-a1c87415ef76
+ACC 6,SaifSaifullah,bowler,0.98,63b0dd2b-b44d-42b3-b2e7-a7fd9c79cc6f
+ACC 6,SandeepChavali,all-rounder,0.96,3b38711c-99e4-4c16-8488-8be214b9ddbf
+ACC 6,SarukanKulasekaram,all-rounder,0.97,b44d4ff3-0285-4638-bfd7-c8b2f46c0e97
+ACC 6,SauravNarain,bowler,2.6,0737595b-79c6-4540-be98-cd97c6c536a9
+ACC 6,SauravSharma,batsman,4.67,3e512524-d50a-4fbf-bcd3-d9cc223f0cf0
+ACC 6,ShaikhBadiujzama,all-rounder,0.85,134b2220-525e-47d8-abb6-58cd86018c97
+ACC 6,ShatrudamanSharma,batsman,0.99,8e05d4e1-18d0-4272-b0af-d23de8c19449
+ACC 6,ShishirKapoor,bowler,2.97,aadedd0c-2aac-4f3f-a8d3-4bb6ba1c5d6f
+ACC 6,ShubhamChhikara,all-rounder,0.88,1564dcfe-6b5a-4522-b699-ff6c39dfd2e5
+ACC 6,SiddarthMadhavan,batsman,3.98,192315d2-23b8-4668-b978-039183ac0036
+ACC 6,SubhanAshfaq,all-rounder,0.98,0661de40-7387-4ffe-b371-3bd8cfa34d96
+ACC 6,SujervanNageswaran,all-rounder,2.98,077e2e70-b575-4a70-83b0-0c3ab3c695e2
+ACC 6,SunnyKakkar,all-rounder,0.99,6845e989-bf30-459e-99ac-b6f16cee77bb
+ACC 6,SuryaHenry,bowler,4.22,bb2f1ba0-2ebe-493d-90f3-2e95af231acc
+ACC 6,TarunPal,batsman,0.99,650ed5fd-ee5a-4a31-8fae-8e4079ff6d81
+ACC 6,UdaySharma,bowler,1.76,5707d16c-4335-496d-a081-0278874c6434
+ACC 6,VarunGoel,batsman,1.92,99eb8d72-f4c4-4d69-afa6-d11263281489
+ACC 6,VijayTomar,bowler,0.93,208f6a72-aa6a-431f-a045-4a46f9462b23
+ACC 6,VinodDawra,batsman,0.96,b9f110ed-2902-43bf-8765-67cc822c24f8
+ACC 6,VishalKumar,all-rounder,0.9,51ecccfc-094c-43f6-baee-cec556829beb
+ACC 6,VishwdeepVaid,all-rounder,0.9,a4bccef5-cb34-4f84-99e9-cdcefa970f2b
+ACC 6,VivekSingh,all-rounder,0.98,239fb51b-611d-4bae-9bab-5d05f2ae0b62
+ACC 6,WaliedZamani,all-rounder,2.98,d51b3edf-36b6-426d-9951-5502531db4b2
+ACC 6,WaseemKhan,all-rounder,0.96,dd4ca219-92e5-462c-933f-6433959b4bbd
+U13,AaditNema,all-rounder,3.91,693dbd66-ebad-4ee8-bf69-488b8827c5e6
+U13,AadyaChandra,bowler,4.2,67859080-005e-446e-9f3f-893f1313cc0e
+U13,AahilPenubolu,batsman,4.26,d195f2e3-0eab-49e8-8c9b-cd2585746899
+U13,AaravPatel,batsman,3.5,907d8c76-7033-4141-9f49-53ef6a6df0bc
+U13,AarushBharali,bowler,4.29,720a669a-4897-486d-9da3-4885cc5a10aa
+U13,AbhaySingh,all-rounder,3.64,20822aac-2350-4142-88a5-e18a5cfa1612
+U13,AdhrutaNaropanth,batsman,4.98,89d967e0-9c53-47fc-bab4-5c6b20aecce2
+U13,AgrimMahana,all-rounder,1.19,a6ba9df7-3a6d-4e1e-89da-9d0af7b34c69
+U13,AkshayaSripatnala,bowler,3.23,48b29f32-a13e-4381-b34d-b4146942a972
+U13,AlexanderWard,batsman,4.14,f8ce6f74-eb23-4da8-af06-472a81e1a71a
+U13,AryanBellad,batsman,3.7,9d7d0ff6-3af5-4482-a5b4-a9d0e1ba18b9
+U13,AvyuktVats,bowler,4.36,d386b8a1-02f1-4ac1-9ead-5fc1377e1993
+U13,AyaanAbhilash,batsman,4.33,103ed435-29b0-4ca5-975f-3ebd3eca094f
+U13,BramBuytendijk,bowler,3.68,6cdc9cf3-96e6-4824-bb38-461db366ec82
+U13,ChandrahasUndurti,batsman,4.5,6826ce38-c99e-42bc-a52d-a5ac98638947
+U13,ClaudioPucciatti,all-rounder,2.13,44b0ce31-547d-480b-89b3-05cabb660912
+U13,EDemichelis,bowler,4.46,93f914dc-dca0-4e3b-8248-62043607d234
+U13,EkagraArya,batsman,4.37,fb36a230-b4de-4c3b-abde-e53f08271183
+U13,HenryDolphin,all-rounder,3.34,f95a23ff-f597-4167-b954-01e4ba514b72
+U13,JackMadgwick,batsman,2.21,ab68e642-5b44-45e1-a496-bf5c0c52e442
+U13,JuanFourie,all-rounder,0.92,e9b86a07-574e-4d63-b226-8b5e060d109d
+U13,KhyatNakhwa,bowler,2.81,68dbce94-9929-4a0f-887e-bfbd896dc469
+U13,KrishaanMali,bowler,4.11,074ba9a8-b42c-41ee-9e6f-07b2f6dcc3ea
+U13,KshitijkumarPadhy,batsman,4.11,048bdf11-1043-4503-907a-9643ca712951
+U13,KulteghSingh,all-rounder,1.84,0cf396df-4bc6-462c-af0f-b3e519b9c354
+U13,MaxwellGorlee,all-rounder,3.81,5a90d219-0ebd-411b-b1ad-08f3fc85083c
+U13,MihirGoyal,all-rounder,0.96,eeaf814f-2746-4830-969f-21fb21bf79df
+U13,MuhilanNatarajan,batsman,4.05,2a719c1a-84d4-4509-a56a-6e80640bc6c0
+U13,NavyahRajesh,all-rounder,1.12,ea96f3c4-e1a0-4577-8165-4382e73a8c6e
+U13,NiallRavi,bowler,4.32,bd302884-4bc3-4ab2-923e-ef2ca85292db
+U13,NiekRijnbeek,all-rounder,0.94,fe436d8c-b5c7-4037-97b2-77862ce6d755
+U13,OlePototsky,all-rounder,2.63,9e9e4d96-d3f1-4eb8-9d67-7bad1797c23b
+U13,OscarGrawe,batsman,4.54,3d0c09cb-ed15-41c0-b1a7-7e143115cb11
+U13,PhilipHeeremans,bowler,4.51,f557ae10-7f06-45f2-afa5-4a50dce0137e
+U13,RafiRana,all-rounder,0.96,b61c8da1-b6ad-48ee-9ba1-712bdbb13883
+U13,ReinierVos,all-rounder,1.04,a626543e-a37a-4607-9cc9-4dd5a11e63f1
+U13,RiaanSehgal,batsman,1.77,8c2eee25-71c5-45c7-92c9-86492e2aaa0f
+U13,RushaanShaikh,all-rounder,1.59,bf15117a-15e9-47a9-baf0-227e9d4e9db3
+U13,SamEikelenboom,batsman,4.08,673999a3-0205-4882-89ed-028190df4a1f
+U13,ShivankSingh,all-rounder,3.72,dceb1157-9081-4b1e-8908-2a86a8a08d09
+U13,ShrihanPisal,all-rounder,4.08,d7b39622-e449-4542-9230-e3e73ea223fe
+U13,SohamPatel,batsman,0.99,0e7b81aa-2f47-44e8-82e0-84b9ea58f8b3
+U13,ThomasQuayle,all-rounder,3.48,ed4d7980-c2e6-4dfd-b1cf-f1d775674765
+U13,TivonAnanda,batsman,4.18,2a00942b-8b89-40b1-b824-c2431ef52f66
+U13,VihaanChatterji,bowler,4.05,b4776d46-f3dc-4732-b3ee-5d9b29ce1a68
+U13,VivaanJethva,batsman,2.81,85b0786d-8c22-4ac3-bf30-99a04e3039e6
+U13,YugVatsa,bowler,3.22,45cc83dd-2c67-4780-8c98-6a3abd7f6507
+U13,ZahabiaGhadiali,batsman,4.98,17f52e82-2db5-4722-b3af-67d487c4dbea
+U15,AbhinavVelidandla,batsman,3.07,9245c119-3196-42f6-b8f6-db49c8b2c0c4
+U15,AdvaySubhedar,batsman,0.98,aa4832cd-f0cf-44c1-a9f0-45ebe469ac15
+U15,AgampreetSingh,all-rounder,3.63,06c7b178-37ec-4728-8f18-9bed72282970
+U15,AlanYadava,batsman,0.99,6f145921-b11e-49a3-9154-2050208a689b
+U15,AnjanaNarayanamoorthy,batsman,3.93,92ba3872-821d-46b8-ad78-e26fc59c2a85
+U15,AnthonyCronje,batsman,3.85,a14a758b-0753-4101-9cb2-04123def005d
+U15,ArrushNadakatta,all-rounder,0.82,e08a0b13-4bf6-4853-8d72-84273821e0c3
+U15,AyaanshSehgal,batsman,0.9,2559e411-7604-42fb-b602-132767ed8f92
+U15,AylinJoe,all-rounder,0.99,398e41b4-a2d6-4faf-a80a-02c32bbd0520
+U15,CasimirBoom,batsman,4.94,a947f35d-2d7b-4cf5-a504-c593f31b5b88
+U15,DaniyalKhan,all-rounder,1.39,1f2e7f75-c1a3-43d7-b6fd-153350e4265b
+U15,DoreeKouwenhoven,bowler,4.64,81e6ed67-3261-483a-8a93-a61a49af87b9
+U15,FezanFirdausi,batsman,4.16,f30fb360-c85b-4a09-9bcd-d9abac9e50c8
+U15,FidaAli,bowler,2.74,1c625beb-5b44-407a-b04b-a405a372bbfb
+U15,FraserLord,bowler,4.37,4f21f7aa-c34d-4d64-a90d-86a204f91af9
+U15,HashimMalik,all-rounder,2.84,2c58831b-0786-4c4a-8c06-fae96d9bee40
+U15,ImranQuderty,all-rounder,0.85,063a8f6a-dda8-48b4-a1c4-af72700dbcf5
+U15,IrtezaAnwar,all-rounder,0.86,702a639b-f4df-44a8-8126-1f0df8e609b7
+U15,IshmeetSingh,batsman,4.27,b1e2d711-a913-4913-a823-e2ed7334d0da
+U15,JoelTharakan,bowler,4.32,6ffd6bd2-673c-48de-b366-7769ee73ff56
+U15,JoshuaKhawaja,bowler,3.03,02d275c9-1b39-4bca-9f3a-0f71e0fbf41f
+U15,LucaPucciatti,all-rounder,0.98,e84013e3-06a1-4959-91f0-1eaba55c329b
+U15,LukasKuper,all-rounder,3.21,e297ded2-777e-4f62-b2d0-b93ae80e7269
+U15,MickBoendermaker,all-rounder,0.95,dfca9b5a-eac3-4bfc-b8fb-cf874d1f6d84
+U15,MostafaQuderty,all-rounder,0.98,8c3cfa94-44cf-48ff-a9bd-b78690bd95c1
+U15,NoudWijnstra,batsman,4.53,4afb6fb3-ca24-4a2b-9ee4-0aad59c652a4
+U15,RakeshSripatnala,batsman,0.88,ee225874-6f0e-4fe2-9163-e692f05e5937
+U15,RoonavNarayanan,bowler,4.85,17e2bf5e-9f63-45ea-b68d-c5cd38a18b5e
+U15,RubenVissers,batsman,2.08,92d8948d-d805-4c13-98d8-d561231fcc1a
+U15,SawanVelidandla,batsman,0.98,d004c2cc-7812-4f5e-98d3-5bd4538d6752
+U15,SeanRyan,bowler,4.31,6244b595-03e6-46d4-b5c9-4905320db6ba
+U15,ShahaanAnwar,all-rounder,3.01,3326afa6-9646-426e-b5fe-d12263fbb215
+U15,ShauryaThakur,batsman,4.19,04982eb1-3893-4721-b565-24e288a11471
+U15,ShrihanChakrabarty,bowler,4.65,59e4891d-1a28-4877-924e-f4eb6769d4fc
+U17,AarushJanardhanan,all-rounder,0.98,fdc1ca7b-c1f7-4739-90ec-719a5b0d4276
+U17,AdnanAhmad,all-rounder,0.86,12853a6b-b381-4424-8295-54daf3905cd1
+U17,AdvayChandra,all-rounder,3.16,7f701d77-50ee-4076-9ff0-b88cb72aef37
+U17,AhmerAli,bowler,3.67,2fb11813-bd3d-4809-903c-57230560c1de
+U17,AmanBalasubramaniam,all-rounder,0.97,b8cabe1b-5d0d-47e7-aa69-37b8b561094e
+U17,AryanAjjarapu,batsman,4.42,d942fda1-4e4b-4c03-ac7c-5fa39bed181b
+U17,AryanWarrier,bowler,4.79,871bd2c1-1c02-418e-bdd4-7f2edf19f9bd
+U17,AyaanBarve,all-rounder,0.69,f87a9b05-97f0-41c6-82c5-f673fcf67fe5
+U17,AyaanFarooq,batsman,0.97,e5d7a119-5901-4832-adb4-7fac9e4690da
+U17,DaiwikDaksh,all-rounder,0.99,880a76e3-5423-4ca3-a754-d1263af3df76
+U17,DakshShah,all-rounder,2.91,66ea5ae2-38ed-4081-b79f-7f8ab6c22b23
+U17,DaniyalAdnan,batsman,0.99,261350c4-3152-4306-b717-7d42cf5b7c28
+U17,DhilanBisessar,bowler,4.84,8ae0aed9-3905-46db-9a33-ce33d86416b0
+U17,EdwardThomas,bowler,4.18,23201d73-9809-43c0-b9ec-f12cfc433562
+U17,FarhanAhmed,bowler,4.12,d2ea9de5-17dd-4cf0-bcad-9ccab5c1b5d9
+U17,GijsEvers,batsman,4.61,18df674d-51f8-4a46-b0a6-eaa1e75d7c40
+U17,GijsKuijstermans,all-rounder,3.83,e4f3363a-672c-4cce-8a6a-a2c09ad62c34
+U17,HejranAhmadi,batsman,0.99,ba13c44b-6f7d-4519-b796-accfde5c76a3
+U17,LonneBalk,batsman,4.98,bb7d1c51-685c-4a01-8e6f-d1ee2e085603
+U17,MahadAwan,bowler,0.97,b4de57cc-bef6-41ec-bf5d-84032872e710
+U17,MalyarSafi,bowler,0.92,4b3b6a07-1631-421e-a3e3-9beb9f8c7624
+U17,RishaanFernandez,batsman,2.62,ad8f0f7f-4664-4131-8c58-4ba3dd9cacc0
+U17,RohanAngoelal,batsman,4.11,700c3aae-56f1-40b0-ae5d-e8239dff6997
+U17,RokhanSafi,batsman,3.69,aecae709-b658-49a9-babe-6dcfc0f1fdb8
+U17,RosalieLawrence,all-rounder,0.93,ddc39f03-d0ca-4c0d-ac9c-d68a336ec99f
+U17,RouhinBanerjee,bowler,4,7f273c91-1e7c-49c5-a6a9-da6eda24c9ec
+U17,SamyakJain,bowler,3.49,73ee0023-454f-4360-b626-62bc24dafe34
+U17,ShayanAhmed,bowler,3.33,4ed499a1-a080-4e95-b8c2-5fc1725fe07a
+U17,SidanthRajaraman,batsman,4.84,d6015955-139f-4b4f-bd59-38c42d485142
+U17,SitheshVigneshwaran,all-rounder,0.91,301a8d5a-bb31-4112-b1f1-7675da44c1e5
+U17,SrivatsanSubbaraman,all-rounder,0.98,c6c3f386-132c-405f-b087-61d92736ae2c
+U17,SultanKhan,all-rounder,0.9,e6eca08a-a0b8-410a-a329-58fe36733399
+U17,TiboBalk,bowler,0.98,e55f45c6-b6e1-421c-967a-c9ed50af23e5
+U17,VinaySuresh,batsman,3.68,ff3477e4-cbde-41bc-87f9-d8e0204fa896
+U17,YuyutsuUrs,all-rounder,0.95,476ac7bc-f136-4bc4-bd9a-95b3ac4e3be8
+U17,ZahraJankie,all-rounder,2.85,4dc476b8-3c39-4c40-8c51-877bb917c534
+U17,ZidaneHamid,batsman,4.72,ce363d95-b3ca-4b71-800f-43f99fc01c83
+U17,ZinedineKhawaja,bowler,3.69,13d7b625-f44c-4dbd-9edc-e03caeb11e90
+ZAMI 1,AbadSethi,all-rounder,3.26,41d83a2a-b52c-4719-879e-c3cb54782b73
+ZAMI 1,AbhilashPanicker,all-rounder,0.94,0b8537eb-86ba-490f-a11a-4962d0e794f8
+ZAMI 1,AbhishekSharma,all-rounder,0.99,259e50e6-c758-4861-860f-7b667cb84078
+ZAMI 1,AdiDimri,all-rounder,0.9,e202b57a-e156-4bc4-a4d3-a6fe53b0182f
+ZAMI 1,AdilAnsari,all-rounder,3.25,0dd09299-c0e4-4576-923f-6b554acb25bc
+ZAMI 1,AjaySaggar,batsman,3.92,947d8bae-e625-4d0a-8659-e0db8a4aa93b
+ZAMI 1,AmanpreetSingh,bowler,0.98,6b3ebf6c-a8b2-4008-86b5-0e576a8430e0
+ZAMI 1,AmrenderGhangas,all-rounder,1.71,7f278ae2-b4ed-40b8-86fc-d59ad476efe5
+ZAMI 1,AnshulSah,batsman,3.02,fd8a064f-828d-4480-8cf7-8f0005c41fac
+ZAMI 1,AntoniJanssen,batsman,4.97,ad062ff9-f7c6-446f-ae3b-16b34f4baff5
+ZAMI 1,AqilGhadiali,batsman,4.46,6a9f8a8a-754b-4574-aa5f-3d8403d0d1c1
+ZAMI 1,ArifienHayat,bowler,3.23,58c99648-813a-4170-8710-6bf65dcffaff
+ZAMI 1,AroonJaved,batsman,2.01,b71bbb33-6132-4f9e-bc64-e4eec47682e5
+ZAMI 1,AshokDangi,bowler,1.68,611636f7-2f36-41ea-a672-1afbb5e6ae3c
+ZAMI 1,AtulRana,batsman,3.75,c904bf4f-908f-448e-a4b7-deac874e32d0
+ZAMI 1,BalramKrishnakumar,all-rounder,2.03,6699917a-f50b-4e7a-9fd8-ae590e5f5987
+ZAMI 1,BartSandberg,batsman,0.99,a3e2e08d-8bd1-4776-991a-c213c025d118
+ZAMI 1,BhargavNallapu,all-rounder,3.54,0f5d36e8-35e5-406c-a922-e4404fdb0bf8
+ZAMI 1,BilalTayyab,batsman,3.49,be1578f7-33ae-4508-aa38-335b98f70e4a
+ZAMI 1,BrandonMadgwick,all-rounder,2.55,974816e4-544b-4d6e-8804-13575b637da2
+ZAMI 1,CasperSchuijtvlot,bowler,2.99,af9292c1-22d9-4451-a894-169d3fe5ec0d
+ZAMI 1,DjawidAbqari,all-rounder,0.99,6f4b1980-c138-489b-8735-8e5f2bd6aad0
+ZAMI 1,EvertBrouwer,bowler,2.52,8cffcae9-6927-4351-919c-61ebe4f48c6e
+ZAMI 1,FrankSnieder,all-rounder,0.99,7c524c64-3d16-4f7e-a843-6303d2cb2211
+ZAMI 1,GurlabhSingh,batsman,1.46,4947b901-5b1e-440a-95d8-cfc13387e9ca
+ZAMI 1,GuyPathak,batsman,2.9,e7ab6301-c7af-439f-8b62-4baa67396bf8
+ZAMI 1,IrfanYounis,batsman,4.73,d3682c40-056c-4d7c-89dc-317b5c33fecf
+ZAMI 1,JacoFourie,all-rounder,0.79,4097ad2b-5cb3-4251-84eb-37d717b34320
+ZAMI 1,JagjitSingh,bowler,3.9,66faae16-ff06-44e0-a691-9b3596ef871d
+ZAMI 1,JanBalk,batsman,3.24,b2dfa044-3ae1-4790-a8ff-bc5f161370e5
+ZAMI 1,JeroenAlderliesten,bowler,0.99,2bccfd8a-fc68-4093-8493-cfb83321b895
+ZAMI 1,JeroenBal,batsman,2.47,cd828faf-cba5-4099-bc65-af64df655155
+ZAMI 1,JoostBakker,batsman,4.49,691fe9d1-3124-470c-94c1-e9a9ebfe35a2
+ZAMI 1,JovandeepSingh,batsman,1.81,719f40ed-c22a-4b7f-b9a1-01f106a71251
+ZAMI 1,JustinCampbell,bowler,3.12,85fc584c-f2a6-470d-8e4b-bdcd013f4ddd
+ZAMI 1,KaranSeth,batsman,3.33,015e78ca-5800-429c-9dd3-351538bc62e1
+ZAMI 1,KarthickSasikumar,all-rounder,1.39,2b178f36-ddee-44e5-b415-798eff08671d
+ZAMI 1,KeshavNarula,all-rounder,0.96,2a0b386d-0d09-41c2-b73f-eb8cb8ec95e4
+ZAMI 1,KiranSiripuram,batsman,4.94,4c682971-b238-436c-933b-da65394f69eb
+ZAMI 1,LotteHeerkens,bowler,3.81,4ef64320-6c27-401b-86da-213b30d58be7
+ZAMI 1,LouisCollignon,batsman,2.72,be1387b9-77b8-464a-bd52-28dd3d38c2e0
+ZAMI 1,MahediMridul,all-rounder,0.86,3770207e-302d-44cc-8b7f-c8e78330fdaa
+ZAMI 1,MarcKerdijk,batsman,3.54,41e9b774-6317-456a-b83b-e25674549bae
+ZAMI 1,MichaelDukker,bowler,1.44,f217413c-ae14-47f0-9196-582642ab5c08
+ZAMI 1,MithunAjith,all-rounder,3.42,0221fac8-2e6c-4bbc-9ea4-0d67ccb75b1f
+ZAMI 1,MushafMian,all-rounder,2.6,84267f45-af5c-4c42-a820-039865e6456f
+ZAMI 1,NageshwarDanturti,batsman,0.95,3197ac32-9321-4007-936c-f43849bcf8ba
+ZAMI 1,NaveenRajasekaran,bowler,3.56,03b07307-b139-4b3f-8b53-f8eacfc98369
+ZAMI 1,NaveenSingh,all-rounder,0.92,16dc2133-c16c-415d-bfc6-b629e957e9fe
+ZAMI 1,ParthaBhattacharjee,batsman,2.75,3d07f68f-143f-48be-a5fa-084f27e1aa44
+ZAMI 1,PaulHagebeuk,batsman,4.92,c30d46e9-0ce5-4af0-ba6f-39cde01d05a3
+ZAMI 1,PrasunBanerjee,batsman,0.94,a5b4b438-1385-4ffa-a808-d74056e14064
+ZAMI 1,QudratullahAkbari,all-rounder,1.71,55bdde68-6553-4525-958f-ae86b49c3858
+ZAMI 1,RichardWolfe,batsman,1.17,8cd84df7-ac4c-41a3-b6bf-3bdcb69d3eff
+ZAMI 1,RobertKottman,all-rounder,2,84745bb2-dc74-4929-85da-a2353b8b6e82
+ZAMI 1,RutgerDomhoff,all-rounder,2.6,2641ff16-de10-4600-b491-8f6d23f36a66
+ZAMI 1,RuwanKalupahanage,all-rounder,0.89,73252dbc-3c46-4b48-b6c1-9e874f04a865
+ZAMI 1,SakethReddy,all-rounder,1.2,df09ab42-49d9-4656-aa9b-cbf35fb6ecad
+ZAMI 1,SantoshSahoo,all-rounder,1.69,6a400c40-372f-45ad-b2ed-4d18d749e79b
+ZAMI 1,SeanEllicott,batsman,0.99,c5d231cc-422c-4d83-adc3-9b9e7b8c1052
+ZAMI 1,SeanWalsh,batsman,0.92,067991da-7190-470a-a08f-ddfa25ef36a5
+ZAMI 1,ShadabSarwary,all-rounder,0.84,e54276b4-aadb-4a92-ae26-da1dbf1c431a
+ZAMI 1,ShahzaibMirza,batsman,3.31,a9dd3458-eb63-4688-8820-394c1339c01e
+ZAMI 1,SourabhJain,all-rounder,0.98,e1f526dc-b2a1-42cc-97ce-2ed7006be71a
+ZAMI 1,StephenHart,all-rounder,3.05,65cca0ec-d618-4ca5-b2b1-92ca20e9902d
+ZAMI 1,TacoKuijers,all-rounder,3.35,20f79e8f-08ee-4e0f-addb-c50863ff627e
+ZAMI 1,ThomasSpits,all-rounder,0.97,f6456e3c-d439-49f1-92ad-ca1407e80632
+ZAMI 1,UlcoUmans,batsman,4.44,1ea12d81-7128-4a97-a464-0b7a43cae8cd
+ZAMI 1,UsmanYounas,all-rounder,1.95,d6dde139-c658-48b6-9dba-3477802bf55a
+ZAMI 1,UvarajThangavel,all-rounder,0.98,265f355b-b504-4857-afc5-893ec78e6936
+ZAMI 1,VarunKumar,batsman,2.79,025c2139-1f9b-4736-bd54-e6d3dc16f20f
+ZAMI 1,WalterHolleman,batsman,3.24,e278c570-2e76-4b6e-94eb-7d5c09ee0e70
+ZAMI 1,WilkoFrieke,batsman,4.92,c648bff0-431a-4c4b-867c-fbf27ff8fd66
+ZAMI 1,WimPielage,batsman,0.99,7852d4c0-9b02-42ce-88b8-86fddfdc1787
+ZAMI 1,XanderUdo,batsman,2.39,65dcc9f6-99a2-4e88-8c6d-cf3e423c49dd
+ZAMI 1,ZakQureshi,batsman,3.14,39fabd28-1713-4a59-8922-04b1ea36a334
+ZAMI 1,ZuhaibKhaliq,bowler,3.5,fd77b989-4a41-46d3-b1bd-b78d8c74863c
+ZAMI 1,ZuhaibRashid,all-rounder,0.93,f845740c-5518-4b81-8c0a-ccbc2c41bc6a

@@ -1,0 +1,198 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  fantasy_cricket_db:
+    image: postgres:15-alpine
+    container_name: fantasy_cricket_db
+    environment:
+      POSTGRES_DB: fantasy_cricket
+      POSTGRES_USER: cricket_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: md5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - cricket_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cricket_admin -d fantasy_cricket"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache
+  fantasy_cricket_redis:
+    image: redis:7-alpine
+    container_name: fantasy_cricket_redis
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - cricket_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # FastAPI Backend
+  fantasy_cricket_api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: fantasy_cricket_api
+    environment:
+      DATABASE_URL: postgresql://cricket_admin:${DB_PASSWORD}@fantasy_cricket_db:5432/fantasy_cricket
+      REDIS_URL: redis://fantasy_cricket_redis:6379
+      SECRET_KEY: ${JWT_SECRET_KEY}
+      ENVIRONMENT: production
+      FRONTEND_URL: ${FRONTEND_URL}
+      SMTP_SERVER: ${SMTP_SERVER}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      KNCB_BASE_URL: https://matchcentre.kncb.nl/
+      SENTRY_DSN: ${SENTRY_DSN}
+    depends_on:
+      - fantasy_cricket_db
+      - fantasy_cricket_redis
+    networks:
+      - cricket_network
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  # Next.js Frontend
+  fantasy_cricket_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: https://api.fantcric.fun
+    container_name: fantasy_cricket_frontend
+    environment:
+      NEXT_PUBLIC_API_URL: https://api.fantcric.fun
+      NODE_ENV: production
+    networks:
+      - cricket_network
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Celery Worker (for scraping tasks)
+  fantasy_cricket_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: fantasy_cricket_worker
+    command: celery -A celery_tasks worker --loglevel=info --concurrency=2
+    environment:
+      DATABASE_URL: postgresql://cricket_admin:${DB_PASSWORD}@fantasy_cricket_db:5432/fantasy_cricket
+      REDIS_URL: redis://fantasy_cricket_redis:6379
+      SECRET_KEY: ${JWT_SECRET_KEY}
+      ENVIRONMENT: production
+      KNCB_BASE_URL: https://matchcentre.kncb.nl/
+    depends_on:
+      - fantasy_cricket_db
+      - fantasy_cricket_redis
+    networks:
+      - cricket_network
+    volumes:
+      - ./logs:/app/logs
+      - ./backend/rosters:/app/rosters:ro
+      - season_data:/app/season_data
+    restart: unless-stopped
+
+  # Celery Beat Scheduler (weekly scraping)
+  fantasy_cricket_scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: fantasy_cricket_scheduler
+    command: celery -A celery_tasks beat --loglevel=info
+    environment:
+      DATABASE_URL: postgresql://cricket_admin:${DB_PASSWORD}@fantasy_cricket_db:5432/fantasy_cricket
+      REDIS_URL: redis://fantasy_cricket_redis:6379
+      SECRET_KEY: ${JWT_SECRET_KEY}
+      ENVIRONMENT: production
+    depends_on:
+      - fantasy_cricket_db
+      - fantasy_cricket_redis
+    networks:
+      - cricket_network
+    volumes:
+      - ./logs:/app/logs
+      - ./backend/rosters:/app/rosters:ro
+      - season_data:/app/season_data
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  fantasy_cricket_nginx:
+    image: nginx:alpine
+    container_name: fantasy_cricket_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites-enabled:/etc/nginx/sites-enabled
+      - ./ssl:/etc/nginx/ssl
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/html:/var/www/html:ro
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - fantasy_cricket_api
+    networks:
+      - cricket_network
+    restart: unless-stopped
+
+  # Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: fantasy_cricket_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - cricket_network
+    restart: unless-stopped
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: fantasy_cricket_grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: false
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - cricket_network
+    restart: unless-stopped
+
+networks:
+  cricket_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+  season_data:

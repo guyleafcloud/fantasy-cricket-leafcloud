@@ -1,0 +1,73 @@
+{
+  "batting": {
+    "run_tiers": [
+      {
+        "min": 1,
+        "max": 30,
+        "points_per_run": 1.0
+      },
+      {
+        "min": 31,
+        "max": 49,
+        "points_per_run": 1.25
+      },
+      {
+        "min": 50,
+        "max": 99,
+        "points_per_run": 1.5
+      },
+      {
+        "min": 100,
+        "max": 999,
+        "points_per_run": 1.75
+      }
+    ],
+    "strike_rate_applies_as_multiplier": true,
+    "fifty_bonus": 8,
+    "century_bonus": 16,
+    "duck_penalty": -2
+  },
+  "bowling": {
+    "wicket_tiers": [
+      {
+        "min": 1,
+        "max": 2,
+        "points_per_wicket": 15
+      },
+      {
+        "min": 3,
+        "max": 4,
+        "points_per_wicket": 20
+      },
+      {
+        "min": 5,
+        "max": 10,
+        "points_per_wicket": 30
+      }
+    ],
+    "economy_rate_applies_as_multiplier": true,
+    "points_per_maiden": 15,
+    "five_wicket_haul_bonus": 8
+  },
+  "fielding": {
+    "points_per_catch": 4,
+    "points_per_stumping": 6,
+    "points_per_runout": 6,
+    "wicketkeeper_catch_multiplier": 2.0
+  },
+  "player_multipliers": {
+    "min": 0.69,
+    "neutral": 1.0,
+    "max": 5.0,
+    "weekly_adjustment_max": 0.15
+  },
+  "leadership": {
+    "captain_multiplier": 2.0,
+    "vice_captain_multiplier": 1.5,
+    "wicketkeeper_multiplier": 2.0
+  },
+  "tiers": {
+    "applies_to_scoring": false,
+    "used_for": "team_identification_only"
+  }
+}

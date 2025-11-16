@@ -1,0 +1,157 @@
+{
+  "scenario": "Player appearing in multiple grades/matches",
+  "description": "Same player (Jan de Vries) plays in ACC 1, U17, and ZAMI in the same week",
+  "matches": [
+    {
+      "match_id": 7001,
+      "grade": "Eerste Klasse (ACC 1)",
+      "tier": "tier2",
+      "date": "2025-11-10",
+      "scorecard": {
+        "innings": [
+          {
+            "batting": [
+              {
+                "person_id": "12345",
+                "person_name": "Jan de Vries",
+                "player_id": "12345",
+                "player_name": "Jan de Vries",
+                "runs": 45,
+                "balls_faced": 38,
+                "fours": 5,
+                "sixes": 1
+              }
+            ],
+            "bowling": [
+              {
+                "person_id": "12345",
+                "person_name": "Jan de Vries",
+                "player_id": "12345",
+                "player_name": "Jan de Vries",
+                "overs": 8.0,
+                "maidens": 1,
+                "runs": 32,
+                "wickets": 2
+              }
+            ],
+            "fielding": [
+              {
+                "person_id": "12345",
+                "person_name": "Jan de Vries",
+                "player_id": "12345",
+                "player_name": "Jan de Vries",
+                "catches": 1,
+                "stumpings": 0,
+                "runouts": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "match_id": 7002,
+      "grade": "U17 Competition",
+      "tier": "youth",
+      "date": "2025-11-11",
+      "scorecard": {
+        "innings": [
+          {
+            "batting": [
+              {
+                "person_id": "12345",
+                "person_name": "Jan de Vries",
+                "player_id": "12345",
+                "player_name": "Jan de Vries",
+                "runs": 78,
+                "balls_faced": 52,
+                "fours": 8,
+                "sixes": 3
+              }
+            ],
+            "bowling": [],
+            "fielding": []
+          }
+        ]
+      }
+    },
+    {
+      "match_id": 7003,
+      "grade": "ZaMi Social",
+      "tier": "social",
+      "date": "2025-11-12",
+      "scorecard": {
+        "innings": [
+          {
+            "batting": [],
+            "bowling": [
+              {
+                "person_id": "12345",
+                "person_name": "J. de Vries",
+                "player_id": "12345",
+                "player_name": "J. de Vries",
+                "overs": 6.0,
+                "maidens": 0,
+                "runs": 25,
+                "wickets": 3
+              }
+            ],
+            "fielding": [
+              {
+                "person_id": "12345",
+                "person_name": "J. de Vries",
+                "player_id": "12345",
+                "player_name": "J. de Vries",
+                "catches": 2,
+                "stumpings": 0,
+                "runouts": 0
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "expected_aggregation": {
+    "player_name": "Jan de Vries",
+    "player_id": "12345",
+    "total_matches": 3,
+    "performances": [
+      {
+        "match_id": 7001,
+        "tier": "tier2",
+        "runs": 45,
+        "wickets": 2,
+        "catches": 1,
+        "fantasy_points": "calculated with tier2 multiplier"
+      },
+      {
+        "match_id": 7002,
+        "tier": "youth",
+        "runs": 78,
+        "fantasy_points": "calculated with youth multiplier"
+      },
+      {
+        "match_id": 7003,
+        "tier": "social",
+        "wickets": 3,
+        "catches": 2,
+        "fantasy_points": "calculated with social multiplier"
+      }
+    ],
+    "season_total": "sum of all fantasy_points across all matches"
+  },
+  "edge_cases": {
+    "name_variations": [
+      "Jan de Vries",
+      "J. de Vries",
+      "de Vries, Jan",
+      "J de Vries",
+      "jan de vries"
+    ],
+    "without_player_id": {
+      "description": "If player_id is missing, must match by normalized name",
+      "matching_algorithm": "remove spaces, lowercase, remove punctuation"
+    }
+  }
+}

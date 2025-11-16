@@ -214,17 +214,37 @@ export default function HowToPlay() {
         <div className="bg-gradient-to-r from-cricket-green to-green-600 rounded-lg shadow-lg p-8 text-white mb-8">
           <h2 className="text-3xl font-bold mb-6">📊 Example Calculation</h2>
 
-          <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-4">All-Rounder Performance</h3>
+          <div className="bg-white/95 dark:bg-gray-800/10 backdrop-blur rounded-lg p-6">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">All-Rounder Performance</h3>
 
-            <div className="space-y-3 mb-4">
+            <div className="space-y-3 mb-4 text-gray-900 dark:text-white">
               <div className="flex justify-between">
-                <span>Batting: 45 runs (SR 125)</span>
-                <span className="font-mono">45 + 5 = 50 pts</span>
+                <span>Batting: 45 runs @ SR 125</span>
+                <span className="font-mono">59.1 pts</span>
+              </div>
+              <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 pl-4">
+                <span>• Tiered base: (30×1.0) + (15×1.25) = 48.75</span>
+                <span></span>
+              </div>
+              <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 pl-4">
+                <span>• SR multiplier: 48.75 × 1.25 = 59.1</span>
+                <span></span>
               </div>
               <div className="flex justify-between">
-                <span>Bowling: 3 wickets, 2 maidens (ER 3.5)</span>
-                <span className="font-mono">36 + 50 + 10 = 96 pts</span>
+                <span>Bowling: 3 wickets @ ER 4.0, 1 maiden</span>
+                <span className="font-mono">90 pts</span>
+              </div>
+              <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 pl-4">
+                <span>• Tiered wickets: (2×15) + (1×20) = 50</span>
+                <span></span>
+              </div>
+              <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 pl-4">
+                <span>• ER multiplier: 50 × 1.5 = 75</span>
+                <span></span>
+              </div>
+              <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 pl-4">
+                <span>• Maidens: 1 × 15 = 15</span>
+                <span></span>
               </div>
               <div className="flex justify-between">
                 <span>Fielding: 1 catch</span>
@@ -232,56 +252,12 @@ export default function HowToPlay() {
               </div>
             </div>
 
-            <div className="border-t border-white/30 pt-3 mt-3">
-              <div className="flex justify-between text-2xl font-bold">
+            <div className="border-t border-gray-300 dark:border-white/30 pt-3 mt-3">
+              <div className="flex justify-between text-2xl font-bold text-gray-900 dark:text-white">
                 <span>TOTAL:</span>
-                <span>150 points</span>
+                <span>153 points</span>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Strategy Tips */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 border-b-2 border-cricket-green pb-2">
-            💡 Strategy Tips
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-              <h3 className="font-semibold text-green-800 dark:text-green-400 mb-2">✅ High Value</h3>
-              <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                <li>• <strong>Specialist batsmen (50+ runs)</strong> - Tiered system rewards big scores!</li>
-                <li>• <strong>Aggressive batsmen</strong> - SR &gt; 150 multiplies points</li>
-                <li>• <strong>Economical bowlers</strong> - ER &lt; 4.0 multiplies wicket points</li>
-                <li>• <strong>Maiden bowlers</strong> - 15 pts each, stackable!</li>
-                <li>• <strong>All-rounders</strong> - Points from multiple skills</li>
-                <li>• <strong>Wicketkeepers</strong> - 2x catch points adds up fast</li>
-              </ul>
-            </div>
-
-            <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-              <h3 className="font-semibold text-red-800 dark:text-red-400 mb-2">⚠️ Watch Out</h3>
-              <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                <li>• <strong>Slow batsmen</strong> - SR &lt; 80 reduces points significantly</li>
-                <li>• <strong>Expensive bowlers</strong> - ER &gt; 7.0 reduces wicket points</li>
-                <li>• <strong>Duck risks</strong> - Opening batsmen vulnerable to -2 penalty</li>
-                <li>• <strong>Low-order bowlers</strong> - Unlikely to reach tier 3 wickets (30 pts)</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-blue-300 dark:border-blue-700">
-            <h3 className="font-semibold text-blue-800 dark:text-blue-400 mb-2">🎯 Team Building Strategy</h3>
-            <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-              <strong>Specialist batsmen are valuable!</strong> The tiered system and strike rate multiplier mean a batsman scoring 80-100+ runs
-              can earn 150-300 points, justifying their roster spot even if they don&apos;t bowl. This creates strategic depth:
-            </p>
-            <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300 ml-4">
-              <li>• <strong>Balanced approach:</strong> Mix all-rounders with specialist batsmen and bowlers</li>
-              <li>• <strong>High-risk, high-reward:</strong> Load up on aggressive batsmen hoping for big scores</li>
-              <li>• <strong>Consistent approach:</strong> Focus on all-rounders who contribute in every match</li>
-            </ul>
           </div>
         </div>
 
@@ -312,24 +288,13 @@ export default function HowToPlay() {
               </p>
             </div>
 
-            <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+            <div className="pb-4">
               <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 Can a player play in multiple teams/grades?
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
                 Yes! Players can appear in ACC 1, U17, and ZAMI in the same week. All performances are
                 tracked separately and contribute to their total points.
-              </p>
-            </div>
-
-            <div className="pb-4">
-              <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                Why are maidens worth so much?
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Maidens represent excellent pressure bowling and are hard to achieve. At 25 points each,
-                they reward economical bowling mastery. A bowler with 3 maidens earns 75 points before
-                any wickets!
               </p>
             </div>
           </div>

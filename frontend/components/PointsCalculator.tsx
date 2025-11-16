@@ -309,7 +309,10 @@ export default function PointsCalculator({ playersList = [] }: PointsCalculatorP
 
           {/* Bowling Stats */}
           <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">⚾ Bowling</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+              <img src="/ball.png" alt="Bowling" className="inline w-5 h-5" />
+              Bowling
+            </h3>
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Wickets</label>
@@ -357,7 +360,10 @@ export default function PointsCalculator({ playersList = [] }: PointsCalculatorP
 
           {/* Fielding Stats */}
           <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">🥎 Fielding</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+              <img src="/catch.png" alt="Fielding" className="inline w-5 h-5" />
+              Fielding
+            </h3>
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Catches</label>

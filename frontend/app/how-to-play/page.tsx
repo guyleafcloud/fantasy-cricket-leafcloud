@@ -103,7 +103,8 @@ export default function HowToPlay() {
           {/* Bowling Section */}
           <div className="mb-8">
             <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
-              <span className="mr-2">⚾</span> Bowling
+              <img src="/ball.png" alt="Bowling" className="w-6 h-6 mr-2" />
+              Bowling
             </h3>
 
             {/* Tiered Wicket Points */}
@@ -175,17 +176,18 @@ export default function HowToPlay() {
           {/* Fielding Section */}
           <div className="mb-8">
             <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
-              <span className="mr-2">🥎</span> Fielding
+              <img src="/catch.png" alt="Fielding" className="w-6 h-6 mr-2" />
+              Fielding
             </h3>
 
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-900 rounded">
                 <span className="font-medium">Catch</span>
-                <span className="text-cricket-green font-bold">+4 points</span>
+                <span className="text-cricket-green font-bold">+15 points</span>
               </div>
               <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-900 rounded">
                 <span className="font-medium">Stumping</span>
-                <span className="text-cricket-green font-bold">+6 points</span>
+                <span className="text-cricket-green font-bold">+15 points</span>
               </div>
               <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-900 rounded">
                 <span className="font-medium">Run out</span>
@@ -199,7 +201,7 @@ export default function HowToPlay() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between items-center">
                   <span>Designated Wicketkeeper catches</span>
-                  <span className="text-yellow-600 dark:text-yellow-400 font-bold">2x points (8 pts each)</span>
+                  <span className="text-yellow-600 dark:text-yellow-400 font-bold">2x points (30 pts each)</span>
                 </div>
               </div>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 italic">
@@ -248,14 +250,14 @@ export default function HowToPlay() {
               </div>
               <div className="flex justify-between">
                 <span>Fielding: 1 catch</span>
-                <span className="font-mono">4 pts</span>
+                <span className="font-mono">15 pts</span>
               </div>
             </div>
 
             <div className="border-t border-gray-300 dark:border-white/30 pt-3 mt-3">
               <div className="flex justify-between text-2xl font-bold text-gray-900 dark:text-white">
                 <span>TOTAL:</span>
-                <span>153 points</span>
+                <span>164 points</span>
               </div>
             </div>
           </div>

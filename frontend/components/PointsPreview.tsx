@@ -14,6 +14,7 @@ interface PointsPreviewProps {
 
 export default function PointsPreview({ players }: PointsPreviewProps) {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [playerMultiplier, setPlayerMultiplier] = useState<number>(1.0);
   const [runs, setRuns] = useState<number>(0);
   const [balls, setBalls] = useState<number>(0);
   const [wickets, setWickets] = useState<number>(0);
@@ -32,8 +33,25 @@ export default function PointsPreview({ players }: PointsPreviewProps) {
       .catch(err => console.error('Failed to load rules:', err));
   }, []);
 
+  // Load player from URL params if present
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const playerId = params.get('player_id');
+      const multiplier = params.get('multiplier');
+
+      if (playerId && players.length > 0) {
+        const player = players.find(p => p.id === playerId);
+        if (player) {
+          setSelectedPlayer(player);
+          setPlayerMultiplier(multiplier ? parseFloat(multiplier) : player.multiplier || 1.0);
+        }
+      }
+    }
+  }, [players]);
+
   const calculatePoints = () => {
-    if (!rules || !selectedPlayer) return 0;
+    if (!rules) return 0;
 
     let totalPoints = 0;
 
@@ -121,8 +139,7 @@ export default function PointsPreview({ players }: PointsPreviewProps) {
 
     totalPoints += catchPoints;
 
-    // Apply player multiplier
-    const playerMultiplier = selectedPlayer.multiplier || 1.0;
+    // Apply player multiplier (from state, not from player object)
     totalPoints = totalPoints * playerMultiplier;
 
     // Apply leadership multiplier
@@ -144,6 +161,7 @@ export default function PointsPreview({ players }: PointsPreviewProps) {
     setMaidens(0);
     setCatches(0);
     setRole('none');
+    // Don't reset player multiplier when resetting stats
   };
 
   if (!rules) {
@@ -159,29 +177,54 @@ export default function PointsPreview({ players }: PointsPreviewProps) {
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">🧮 Points Preview Calculator</h3>
 
-      {/* Player Selection */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Player</label>
-        <select
-          value={selectedPlayer?.id || ''}
-          onChange={(e) => {
-            const player = players.find(p => p.id === e.target.value);
-            setSelectedPlayer(player || null);
-            resetCalculator();
-          }}
-          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        >
-          <option value="">Choose a player...</option>
-          {players.map(player => (
-            <option key={player.id} value={player.id}>
-              {player.name} (×{player.multiplier?.toFixed(2) || '1.00'})
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Player Selection - Only show if we have players */}
+      {players.length > 0 && (
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Player (Optional)</label>
+          <select
+            value={selectedPlayer?.id || ''}
+            onChange={(e) => {
+              const player = players.find(p => p.id === e.target.value);
+              setSelectedPlayer(player || null);
+              setPlayerMultiplier(player?.multiplier || 1.0);
+              resetCalculator();
+            }}
+            className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          >
+            <option value="">Manual Entry</option>
+            {players.map(player => (
+              <option key={player.id} value={player.id}>
+                {player.name} (×{player.multiplier?.toFixed(2) || '1.00'})
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
-      {selectedPlayer && (
-        <>
+      {/* Always show calculator now */}
+      <>
+          {/* Player Multiplier Field */}
+          <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border-2 border-gray-300 dark:border-gray-600">
+            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">⚙️ Player Multiplier</h4>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                Multiplier (0.69 - 5.00)
+              </label>
+              <input
+                type="number"
+                min="0.69"
+                max="5.0"
+                step="0.01"
+                value={playerMultiplier}
+                onChange={(e) => setPlayerMultiplier(Math.max(0.69, Math.min(5.0, parseFloat(e.target.value) || 1.0)))}
+                className="w-full px-2 py-1 text-sm border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Lower = better IRL player (handicapped), Higher = weaker IRL player (boosted)
+              </p>
+            </div>
+          </div>
+
           {/* Batting Section */}
           <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
             <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">🏏 Batting</h4>
@@ -211,7 +254,10 @@ export default function PointsPreview({ players }: PointsPreviewProps) {
 
           {/* Bowling Section */}
           <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">⚾ Bowling</h4>
+            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2">
+              <img src="/ball.png" alt="Bowling" className="inline w-5 h-5" />
+              Bowling
+            </h4>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Wickets</label>
@@ -260,7 +306,10 @@ export default function PointsPreview({ players }: PointsPreviewProps) {
 
           {/* Fielding Section */}
           <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">🥎 Fielding</h4>
+            <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2">
+              <img src="/catch.png" alt="Fielding" className="inline w-5 h-5" />
+              Fielding
+            </h4>
             <div>
               <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Catches</label>
               <input
@@ -326,7 +375,7 @@ export default function PointsPreview({ players }: PointsPreviewProps) {
               <div className="text-sm text-white/90 mb-1">Projected Fantasy Points</div>
               <div className="text-4xl font-bold text-white">{calculatePoints()}</div>
               <div className="text-xs text-white/80 mt-2">
-                Player Multiplier: ×{selectedPlayer.multiplier?.toFixed(2) || '1.00'}
+                Player Multiplier: ×{playerMultiplier.toFixed(2)}
                 {role === 'captain' && ' • Captain: ×2.0'}
                 {role === 'vice_captain' && ' • Vice Captain: ×1.5'}
                 {role === 'wicketkeeper' && ' • WK: 2x catches'}
@@ -342,13 +391,6 @@ export default function PointsPreview({ players }: PointsPreviewProps) {
             Reset Calculator
           </button>
         </>
-      )}
-
-      {!selectedPlayer && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
-          Select a player from the roster to preview their potential points
-        </p>
-      )}
     </div>
   );
 }

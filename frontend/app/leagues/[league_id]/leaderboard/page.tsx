@@ -11,31 +11,75 @@ interface LeaderboardEntry {
   weekly_points: number;
 }
 
+interface LeagueStats {
+  best_batsman: {
+    player_name: string;
+    team_name: string;
+    runs: number;
+    average: number;
+    strike_rate: number;
+  } | null;
+  best_bowler: {
+    player_name: string;
+    team_name: string;
+    wickets: number;
+    average: number;
+    economy: number;
+  } | null;
+  best_fielder: {
+    player_name: string;
+    team_name: string;
+    catches: number;
+  } | null;
+  best_team: {
+    team_name: string;
+    total_points: number;
+    player_count: number;
+  } | null;
+  top_players: Array<{
+    player_name: string;
+    team_name: string;
+    total_points: number;
+  }>;
+}
+
 export default function LeaderboardPage() {
   const params = useParams();
   const router = useRouter();
   const league_id = params.league_id as string;
 
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [stats, setStats] = useState<LeagueStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/leagues/${league_id}/leaderboard`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+        const token = localStorage.getItem('admin_token');
 
-        if (!response.ok) {
+        // Fetch both leaderboard and stats in parallel
+        const [leaderboardResponse, statsResponse] = await Promise.all([
+          fetch(`/api/leagues/${league_id}/leaderboard`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+          }),
+          fetch(`/api/leagues/${league_id}/stats`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+          })
+        ]);
+
+        if (!leaderboardResponse.ok) {
           throw new Error('Failed to fetch leaderboard');
         }
 
-        const data = await response.json();
-        setLeaderboard(data);
+        const leaderboardData = await leaderboardResponse.json();
+        setLeaderboard(leaderboardData);
+
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json();
+          setStats(statsData);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -44,7 +88,7 @@ export default function LeaderboardPage() {
     };
 
     if (league_id) {
-      fetchLeaderboard();
+      fetchData();
     }
   }, [league_id]);
 
@@ -190,6 +234,165 @@ export default function LeaderboardPage() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Player & Team Performance Stats */}
+        {stats && (
+          <>
+            {/* Top Performers */}
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold text-white mb-4">Top Performers</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Best Batsman */}
+                {stats.best_batsman && (
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
+                    <div className="flex items-center mb-3">
+                      <span className="text-3xl mr-2">🏏</span>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Best Batsman</h3>
+                    </div>
+                    <div className="text-xl font-bold text-cricket-green mb-2">
+                      {stats.best_batsman.player_name}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                      {stats.best_batsman.team_name}
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Runs:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{stats.best_batsman.runs}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Average:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{stats.best_batsman.average.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Strike Rate:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{stats.best_batsman.strike_rate.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Best Bowler */}
+                {stats.best_bowler && (
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
+                    <div className="flex items-center mb-3">
+                      <img src="/ball.png" alt="Bowling" className="w-8 h-8 mr-2" />
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Best Bowler</h3>
+                    </div>
+                    <div className="text-xl font-bold text-cricket-green mb-2">
+                      {stats.best_bowler.player_name}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                      {stats.best_bowler.team_name}
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Wickets:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{stats.best_bowler.wickets}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Average:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{stats.best_bowler.average.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Economy:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{stats.best_bowler.economy.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Best Fielder */}
+                {stats.best_fielder && (
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
+                    <div className="flex items-center mb-3">
+                      <span className="text-3xl mr-2">🧤</span>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Best Fielder</h3>
+                    </div>
+                    <div className="text-xl font-bold text-cricket-green mb-2">
+                      {stats.best_fielder.player_name}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                      {stats.best_fielder.team_name}
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">Catches:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{stats.best_fielder.catches}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Best Team */}
+            {stats.best_team && (
+              <div className="mt-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
+                  <div className="flex items-center mb-3">
+                    <span className="text-3xl mr-2">🏆</span>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Best IRL Team</h3>
+                  </div>
+                  <div className="text-2xl font-bold text-cricket-green mb-2">
+                    {stats.best_team.team_name}
+                  </div>
+                  <div className="flex gap-6 text-sm">
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Total Points:</span>
+                      <span className="ml-2 font-semibold text-gray-900 dark:text-white">{stats.best_team.total_points.toLocaleString()}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Players:</span>
+                      <span className="ml-2 font-semibold text-gray-900 dark:text-white">{stats.best_team.player_count}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Top 10 Players */}
+            {stats.top_players.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-2xl font-bold text-white mb-4">Top 10 Players by Points</h2>
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-cricket-green text-white">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-sm font-semibold">Rank</th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold">Player</th>
+                          <th className="px-6 py-3 text-left text-sm font-semibold">IRL Team</th>
+                          <th className="px-6 py-3 text-right text-sm font-semibold">Fantasy Points</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {stats.top_players.map((player, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="text-lg font-semibold text-gray-900 dark:text-white">{idx + 1}</span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm font-medium text-gray-900 dark:text-white">{player.player_name}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-700 dark:text-gray-300">{player.team_name}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                              <div className="text-lg font-bold text-cricket-green">
+                                {player.total_points.toLocaleString()}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

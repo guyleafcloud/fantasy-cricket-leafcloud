@@ -333,9 +333,10 @@ async def list_clubs(
             {
                 "id": club.id,
                 "name": club.name,
-                "full_name": club.full_name,
-                "country": club.country,
-                "cricket_board": club.cricket_board,
+                "tier": club.tier,
+                "location": club.location,
+                "founded_year": club.founded_year,
+                "season_id": club.season_id,
                 "teams_count": len(club.teams) if club.teams else 0,
                 "players_count": len(club.players) if club.players else 0
             }

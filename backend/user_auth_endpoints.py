@@ -14,6 +14,7 @@ import bcrypt
 import os
 import re
 import redis
+import requests
 from jose import jwt, JWTError
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -33,6 +34,9 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
+# Turnstile configuration
+TURNSTILE_SECRET_KEY = os.getenv("TURNSTILE_SECRET_KEY", "")
+
 # Rate limiter
 limiter = Limiter(key_func=get_remote_address)
 
@@ -45,11 +49,13 @@ class UserRegister(BaseModel):
     email: EmailStr
     password: str
     full_name: str
+    turnstile_token: str
 
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    turnstile_token: str
 
 
 class TokenResponse(BaseModel):
@@ -81,6 +87,37 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
             return pwd_context.verify(plain_password, hashed_password)
         except:
             return False
+
+
+def verify_turnstile_token(token: str, remote_ip: str = None) -> bool:
+    """
+    Verify Cloudflare Turnstile token with Cloudflare API
+    Returns True if verification succeeds, False otherwise
+    """
+    if not TURNSTILE_SECRET_KEY:
+        # If Turnstile is not configured, skip verification (development mode)
+        print("Warning: TURNSTILE_SECRET_KEY not configured, skipping verification")
+        return True
+
+    try:
+        # Call Cloudflare Turnstile verification endpoint
+        verify_url = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+        payload = {
+            "secret": TURNSTILE_SECRET_KEY,
+            "response": token
+        }
+
+        if remote_ip:
+            payload["remoteip"] = remote_ip
+
+        response = requests.post(verify_url, json=payload, timeout=5)
+        result = response.json()
+
+        return result.get("success", False)
+    except Exception as e:
+        print(f"Turnstile verification error: {e}")
+        # Fail closed for security - if verification fails, deny access
+        return False
 
 
 def validate_password_strength(password: str) -> tuple[bool, str]:
@@ -191,8 +228,16 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) 
 # =============================================================================
 
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=TokenResponse)
-async def register(user_data: UserRegister, db: Session = Depends(get_db)):
+async def register(user_data: UserRegister, request: Request, db: Session = Depends(get_db)):
     """Register a new user account"""
+
+    # Verify Turnstile token
+    client_ip = request.client.host if request.client else None
+    if not verify_turnstile_token(user_data.turnstile_token, client_ip):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Security verification failed. Please try again."
+        )
 
     # Check if email already exists
     existing_user = db.query(User).filter_by(email=user_data.email.lower()).first()
@@ -246,6 +291,14 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
 @limiter.limit("5/minute")  # Only 5 login attempts per minute per IP
 async def login(request: Request, credentials: UserLogin, db: Session = Depends(get_db)):
     """Login with email and password"""
+
+    # Verify Turnstile token
+    client_ip = request.client.host if request.client else None
+    if not verify_turnstile_token(credentials.turnstile_token, client_ip):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Security verification failed. Please try again."
+        )
 
     email_lower = credentials.email.lower()
 

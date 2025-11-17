@@ -3,21 +3,29 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!turnstileToken) {
+      setError('Please complete the security verification');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await apiClient.login({ email, password });
+      const response = await apiClient.login({ email, password, turnstile_token: turnstileToken });
       if (response.user.is_admin) {
         router.push('/admin');
       } else {
@@ -83,10 +91,20 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* Cloudflare Turnstile */}
+          <div className="flex justify-center">
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
+              onSuccess={(token) => setTurnstileToken(token)}
+              onError={() => setError('Security verification failed. Please try again.')}
+              onExpire={() => setTurnstileToken('')}
+            />
+          </div>
+
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !turnstileToken}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-cricket-green hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cricket-green disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing in...' : 'Sign in'}

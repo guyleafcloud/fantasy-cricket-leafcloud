@@ -113,6 +113,11 @@ def verify_turnstile_token(token: str, remote_ip: str = None) -> bool:
         response = requests.post(verify_url, json=payload, timeout=5)
         result = response.json()
 
+        # Log verification result for debugging
+        print(f"Turnstile verification result: {result}")
+        if not result.get("success", False):
+            print(f"Turnstile verification failed. Error codes: {result.get('error-codes', [])}")
+
         return result.get("success", False)
     except Exception as e:
         print(f"Turnstile verification error: {e}")

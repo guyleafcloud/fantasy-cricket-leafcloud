@@ -12,7 +12,7 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
-from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, DateTime, Text, ForeignKey, Table, func
+from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, DateTime, Text, ForeignKey, Table, func, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship
 from sqlalchemy.dialects.postgresql import UUID, JSONB
@@ -184,6 +184,7 @@ class PlayerResponse(BaseModel):
 
 class LeaderboardEntry(BaseModel):
     rank: int
+    team_id: str
     team_name: str
     owner_name: str
     total_points: float
@@ -324,6 +325,7 @@ async def get_leaderboard(
 
         result.append(LeaderboardEntry(
             rank=rank,
+            team_id=str(team.id),
             team_name=team.team_name,
             owner_name=owner_name,
             total_points=team.total_points,
@@ -331,6 +333,58 @@ async def get_leaderboard(
         ))
 
     return result
+
+@app.get("/api/leagues/{league_id}/teams/{team_id}")
+async def get_league_team_details(
+    league_id: str,
+    team_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get details of any finalized team in the league (for leaderboard modal)"""
+    # Verify team exists, is finalized, and is in this league
+    team = db.query(FantasyTeam).filter(
+        FantasyTeam.id == team_id,
+        FantasyTeam.league_id == league_id,
+        FantasyTeam.is_finalized == True
+    ).first()
+
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found or not finalized")
+
+    # Get all players in the team with their details
+    from database_models import FantasyTeamPlayer, Player, Team
+
+    players_query = db.query(
+        FantasyTeamPlayer,
+        Player,
+        Team.name.label('team_name')
+    ).join(
+        Player, FantasyTeamPlayer.player_id == Player.id
+    ).outerjoin(
+        Team, Player.team_id == Team.id
+    ).filter(
+        FantasyTeamPlayer.fantasy_team_id == team_id
+    ).all()
+
+    players = []
+    for ftp, player, team_name in players_query:
+        players.append({
+            'id': str(player.id),
+            'name': player.name,
+            'club_name': team_name or 'Unknown',
+            'total_points': ftp.total_points or 0,
+            'is_captain': ftp.is_captain,
+            'is_vice_captain': ftp.is_vice_captain,
+            'is_wicket_keeper': player.is_wicket_keeper
+        })
+
+    return {
+        'team_id': str(team.id),
+        'team_name': team.team_name,
+        'total_points': team.total_points,
+        'players': players
+    }
 
 @app.get("/api/leagues/{league_id}/stats")
 async def get_league_stats(
@@ -373,30 +427,34 @@ async def get_league_stats(
     ).all()
 
     # Aggregate player performances from player_performances table for best batsman/bowler/fielder
-    from database_models import PlayerPerformance
-
+    # Use raw SQL since the PlayerPerformance model may not match the table schema
     player_stats_agg = {}
-    performances = db.query(PlayerPerformance).filter(
-        PlayerPerformance.league_id == league_id
-    ).all()
 
-    for perf in performances:
-        if perf.player_id not in player_stats_agg:
-            player_stats_agg[perf.player_id] = {
-                'runs': 0,
-                'wickets': 0,
-                'catches': 0,
-                'balls_faced': 0,
-                'overs': 0,
-                'runs_conceded': 0
-            }
+    # Query player_performances table directly with raw SQL
+    perf_query = text("""
+        SELECT player_id,
+               SUM(runs) as total_runs,
+               SUM(wickets) as total_wickets,
+               SUM(catches) as total_catches,
+               SUM(balls_faced) as total_balls,
+               SUM(overs) as total_overs,
+               SUM(runs_conceded) as total_runs_conceded
+        FROM player_performances
+        WHERE league_id = :league_id
+        GROUP BY player_id
+    """)
 
-        player_stats_agg[perf.player_id]['runs'] += perf.runs or 0
-        player_stats_agg[perf.player_id]['wickets'] += perf.wickets or 0
-        player_stats_agg[perf.player_id]['catches'] += perf.catches or 0
-        player_stats_agg[perf.player_id]['balls_faced'] += perf.balls_faced or 0
-        player_stats_agg[perf.player_id]['overs'] += perf.overs or 0
-        player_stats_agg[perf.player_id]['runs_conceded'] += perf.runs_conceded or 0
+    perf_results = db.execute(perf_query, {'league_id': league_id})
+
+    for row in perf_results:
+        player_stats_agg[row.player_id] = {
+            'runs': row.total_runs or 0,
+            'wickets': row.total_wickets or 0,
+            'catches': row.total_catches or 0,
+            'balls_faced': row.total_balls or 0,
+            'overs': row.total_overs or 0,
+            'runs_conceded': row.total_runs_conceded or 0
+        }
 
     # Calculate top performers
     best_batsman = None

@@ -27,7 +27,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Database connection
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://fantasy_user:fantasy_password@localhost:5432/fantasy_cricket')
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
@@ -119,26 +119,54 @@ def get_team_players(team_id):
 
 async def simulate_weekly_matches():
     """
-    Simulate a week's worth of matches across all clubs
-    Returns: dict mapping (player_name, club_name) -> performance
+    Simulate a week's worth of matches across all clubs using REAL players from database
+    Returns: dict mapping player_id -> performance
     """
     import random
 
-    # Get actual club names from database
     session = Session()
     try:
-        query = text("SELECT DISTINCT name FROM teams WHERE name IS NOT NULL ORDER BY name")
+        # Get actual club names and their players from database
+        query = text("""
+            SELECT t.id as team_id, t.name as team_name,
+                   p.id as player_id, p.name as player_name, p.is_wicket_keeper
+            FROM teams t
+            LEFT JOIN players p ON p.team_id = t.id
+            WHERE t.name IS NOT NULL
+            ORDER BY t.name, p.name
+        """)
         result = session.execute(query)
-        all_clubs = [row.name for row in result]
+
+        # Organize players by team
+        teams_data = {}
+        for row in result:
+            team_name = row.team_name
+            if team_name not in teams_data:
+                teams_data[team_name] = {
+                    'team_id': row.team_id,
+                    'players': []
+                }
+            if row.player_id:  # Only add if player exists
+                teams_data[team_name]['players'].append({
+                    'player_id': str(row.player_id),
+                    'player_name': row.player_name,
+                    'is_wicket_keeper': row.is_wicket_keeper
+                })
+
+        all_clubs = list(teams_data.keys())
+
+        if not all_clubs:
+            print("❌ No teams found in database")
+            return {}
+
+        print(f"\n📋 Using {len(all_clubs)} clubs from database:")
+        print(f"   {', '.join(all_clubs[:5])}{'...' if len(all_clubs) > 5 else ''}")
+
+        total_players = sum(len(t['players']) for t in teams_data.values())
+        print(f"   Total players in database: {total_players}")
+
     finally:
         session.close()
-
-    if not all_clubs:
-        # Fallback to default clubs if database is empty
-        all_clubs = ['ACC 1', 'ACC 2', 'VRA 1', 'HCC 1', 'VOC 1', 'Quick 1']
-
-    print(f"\n📋 Using {len(all_clubs)} clubs from database:")
-    print(f"   {', '.join(all_clubs[:5])}{'...' if len(all_clubs) > 5 else ''}")
 
     # Generate 20-30 matches this week across all clubs/grades
     num_matches = random.randint(20, 30)
@@ -146,7 +174,7 @@ async def simulate_weekly_matches():
     print(f"\n🎮 Simulating {num_matches} matches across all clubs...")
     print("="*80)
 
-    all_performances = {}  # (player_name, club_name) -> performance
+    all_performances = {}  # player_id -> {performance, player_name, club_name, is_wicket_keeper}
 
     for match_num in range(num_matches):
         # Random matchup
@@ -156,32 +184,57 @@ async def simulate_weekly_matches():
 
         print(f"  Match {match_num+1}: {home_club} vs {away_club} ({grade})")
 
-        # Generate 11-14 players per team (22-28 total)
-        num_players_home = random.randint(11, 14)
-        num_players_away = random.randint(11, 14)
+        # Get players from each team
+        home_players = teams_data[home_club]['players']
+        away_players = teams_data[away_club]['players']
+
+        if not home_players or not away_players:
+            print(f"    ⚠️  Skipping - one team has no players")
+            continue
+
+        # Simulate 11 random players from each team (or all if less than 11)
+        num_home = min(11, len(home_players))
+        num_away = min(11, len(away_players))
+
+        selected_home = random.sample(home_players, num_home)
+        selected_away = random.sample(away_players, num_away)
 
         # Simulate home team players
-        for _ in range(num_players_home):
-            player_name = generate_random_player_name()
+        for player in selected_home:
             perf = generate_random_performance()
-            key = (player_name, home_club)
+            player_id = player['player_id']
 
-            # If player already performed this week, aggregate (shouldn't happen but just in case)
-            if key in all_performances:
-                all_performances[key] = aggregate_performances(all_performances[key], perf)
+            # If player already performed this week, aggregate
+            if player_id in all_performances:
+                all_performances[player_id]['performance'] = aggregate_performances(
+                    all_performances[player_id]['performance'],
+                    perf
+                )
             else:
-                all_performances[key] = perf
+                all_performances[player_id] = {
+                    'performance': perf,
+                    'player_name': player['player_name'],
+                    'club_name': home_club,
+                    'is_wicket_keeper': player['is_wicket_keeper']
+                }
 
         # Simulate away team players
-        for _ in range(num_players_away):
-            player_name = generate_random_player_name()
+        for player in selected_away:
             perf = generate_random_performance()
-            key = (player_name, away_club)
+            player_id = player['player_id']
 
-            if key in all_performances:
-                all_performances[key] = aggregate_performances(all_performances[key], perf)
+            if player_id in all_performances:
+                all_performances[player_id]['performance'] = aggregate_performances(
+                    all_performances[player_id]['performance'],
+                    perf
+                )
             else:
-                all_performances[key] = perf
+                all_performances[player_id] = {
+                    'performance': perf,
+                    'player_name': player['player_name'],
+                    'club_name': away_club,
+                    'is_wicket_keeper': player['is_wicket_keeper']
+                }
 
     print(f"\n✅ Generated {len(all_performances)} player performances across {num_matches} matches")
     return all_performances
@@ -371,92 +424,120 @@ def update_team_scores_in_db(all_team_scores):
         session.close()
 
 
-def store_player_performances(all_team_scores, round_number=1):
-    """Store individual player performances in player_performances table and update fantasy_team_players"""
+def store_all_player_performances(weekly_performances, league_id, round_number=1):
+    """Store ALL player performances from simulation in player_performances table"""
     import uuid
     session = Session()
     try:
-        print("\n📊 Storing individual player performances...")
+        print("\n📊 Storing ALL player performances (including non-fantasy-team players)...")
         print("-"*80)
 
-        total_performances = 0
+        total_stored = 0
+
+        for player_id, data in weekly_performances.items():
+            performance = data['performance']
+            is_wicket_keeper = data.get('is_wicket_keeper', False)
+
+            # Calculate base fantasy points for this player
+            base_points = calculate_fantasy_points(performance, is_wicketkeeper=is_wicket_keeper)
+
+            # Get player multiplier from database
+            multiplier_query = text("SELECT multiplier FROM players WHERE id = :player_id")
+            result = session.execute(multiplier_query, {'player_id': player_id})
+            row = result.fetchone()
+            multiplier = float(row.multiplier) if row else 1.0
+
+            final_points = base_points * multiplier
+
+            # Insert performance (NOT associated with any fantasy team)
+            insert_query = text("""
+                INSERT INTO player_performances (
+                    id, player_id, fantasy_team_id, league_id, round_number,
+                    runs, balls_faced, is_out,
+                    wickets, overs, runs_conceded, maidens,
+                    catches, stumpings, runouts,
+                    base_fantasy_points, multiplier_applied, captain_multiplier, final_fantasy_points,
+                    is_captain, is_vice_captain, is_wicket_keeper,
+                    match_date, created_at, updated_at
+                ) VALUES (
+                    :id, :player_id, NULL, :league_id, :round_number,
+                    :runs, :balls_faced, :is_out,
+                    :wickets, :overs, :runs_conceded, :maidens,
+                    :catches, :stumpings, :runouts,
+                    :base_fantasy_points, :multiplier_applied, 1.0, :final_fantasy_points,
+                    false, false, :is_wicket_keeper,
+                    NOW(), NOW(), NOW()
+                )
+                ON CONFLICT (player_id, league_id, round_number)
+                DO UPDATE SET
+                    runs = EXCLUDED.runs,
+                    balls_faced = EXCLUDED.balls_faced,
+                    is_out = EXCLUDED.is_out,
+                    wickets = EXCLUDED.wickets,
+                    overs = EXCLUDED.overs,
+                    runs_conceded = EXCLUDED.runs_conceded,
+                    maidens = EXCLUDED.maidens,
+                    catches = EXCLUDED.catches,
+                    stumpings = EXCLUDED.stumpings,
+                    runouts = EXCLUDED.runouts,
+                    base_fantasy_points = EXCLUDED.base_fantasy_points,
+                    multiplier_applied = EXCLUDED.multiplier_applied,
+                    final_fantasy_points = EXCLUDED.final_fantasy_points,
+                    updated_at = NOW()
+            """)
+
+            session.execute(insert_query, {
+                'id': str(uuid.uuid4()),
+                'player_id': player_id,
+                'league_id': league_id,
+                'round_number': round_number,
+                'runs': performance['runs'],
+                'balls_faced': performance['balls_faced'],
+                'is_out': performance['is_out'],
+                'wickets': performance['wickets'],
+                'overs': performance['overs'],
+                'runs_conceded': performance['runs_conceded'],
+                'maidens': performance['maidens'],
+                'catches': performance['catches'],
+                'stumpings': performance['stumpings'],
+                'runouts': performance['runouts'],
+                'base_fantasy_points': base_points,
+                'multiplier_applied': multiplier,
+                'final_fantasy_points': final_points,
+                'is_wicket_keeper': is_wicket_keeper
+            })
+
+            total_stored += 1
+
+        session.commit()
+        print(f"   ✅ Stored {total_stored} player performances (all players, not just fantasy teams)")
+
+    except Exception as e:
+        session.rollback()
+        print(f"\n❌ Error storing all player performances: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        session.close()
+
+
+def store_fantasy_team_player_totals(all_team_scores, round_number=1):
+    """Update fantasy_team_players.total_points with cumulative totals"""
+    session = Session()
+    try:
+        print("\n📊 Updating fantasy team player cumulative totals...")
+        print("-"*80)
+
         updated_players = 0
 
         for team_score in all_team_scores:
             team_id = team_score['team']['team_id']
-            league_id = team_score['team']['league_id']
 
             for player_score in team_score['player_scores']:
-                perf = player_score['performance']
                 player_id = player_score.get('player_id')
 
                 if not player_id:
                     continue
-
-                # Insert player performance for this round
-                insert_query = text("""
-                    INSERT INTO player_performances (
-                        id, player_id, fantasy_team_id, league_id, round_number,
-                        runs, balls_faced, is_out,
-                        wickets, overs, runs_conceded, maidens,
-                        catches, stumpings, runouts,
-                        base_fantasy_points, multiplier_applied, captain_multiplier, final_fantasy_points,
-                        is_captain, is_vice_captain, is_wicket_keeper,
-                        match_date, created_at, updated_at
-                    ) VALUES (
-                        :id, :player_id, :fantasy_team_id, :league_id, :round_number,
-                        :runs, :balls_faced, :is_out,
-                        :wickets, :overs, :runs_conceded, :maidens,
-                        :catches, :stumpings, :runouts,
-                        :base_fantasy_points, :multiplier_applied, :captain_multiplier, :final_fantasy_points,
-                        :is_captain, :is_vice_captain, :is_wicket_keeper,
-                        NOW(), NOW(), NOW()
-                    )
-                    ON CONFLICT (player_id, league_id, round_number)
-                    DO UPDATE SET
-                        runs = EXCLUDED.runs,
-                        balls_faced = EXCLUDED.balls_faced,
-                        is_out = EXCLUDED.is_out,
-                        wickets = EXCLUDED.wickets,
-                        overs = EXCLUDED.overs,
-                        runs_conceded = EXCLUDED.runs_conceded,
-                        maidens = EXCLUDED.maidens,
-                        catches = EXCLUDED.catches,
-                        stumpings = EXCLUDED.stumpings,
-                        runouts = EXCLUDED.runouts,
-                        base_fantasy_points = EXCLUDED.base_fantasy_points,
-                        multiplier_applied = EXCLUDED.multiplier_applied,
-                        captain_multiplier = EXCLUDED.captain_multiplier,
-                        final_fantasy_points = EXCLUDED.final_fantasy_points,
-                        updated_at = NOW()
-                """)
-
-                session.execute(insert_query, {
-                    'id': str(uuid.uuid4()),
-                    'player_id': player_id,
-                    'fantasy_team_id': team_id,
-                    'league_id': league_id,
-                    'round_number': round_number,
-                    'runs': perf['runs'],
-                    'balls_faced': perf['balls_faced'],
-                    'is_out': perf['is_out'],
-                    'wickets': perf['wickets'],
-                    'overs': perf['overs'],
-                    'runs_conceded': perf['runs_conceded'],
-                    'maidens': perf['maidens'],
-                    'catches': perf['catches'],
-                    'stumpings': perf['stumpings'],
-                    'runouts': perf['runouts'],
-                    'base_fantasy_points': player_score['base_points'],
-                    'multiplier_applied': player_score.get('multiplier', 1.0),
-                    'captain_multiplier': player_score.get('captain_multiplier', 1.0),
-                    'final_fantasy_points': player_score['final_points'],
-                    'is_captain': player_score.get('is_captain', False),
-                    'is_vice_captain': player_score.get('is_vice_captain', False),
-                    'is_wicket_keeper': player_score.get('is_wicketkeeper', False)
-                })
-
-                total_performances += 1
 
                 # Update fantasy_team_players.total_points with cumulative total
                 update_player_query = text("""
@@ -475,13 +556,11 @@ def store_player_performances(all_team_scores, round_number=1):
                 updated_players += 1
 
         session.commit()
-        print(f"   Stored {total_performances} player performances")
-        print(f"   Updated {updated_players} player totals in fantasy_team_players")
-        print("\n✅ Player performances saved successfully!")
+        print(f"   ✅ Updated {updated_players} fantasy team player totals")
 
     except Exception as e:
         session.rollback()
-        print(f"\n❌ Error storing player performances: {e}")
+        print(f"\n❌ Error updating fantasy team player totals: {e}")
         import traceback
         traceback.print_exc()
     finally:
@@ -564,16 +643,14 @@ async def simulate_round_for_teams():
         unmatched_count = 0
 
         for player in players:
-            # Look up performance by (name, club)
-            # Club might be None for some players, so handle that
-            player_club = player.get('club')
-            lookup_key = (player['name'], player_club) if player_club else None
+            # Look up performance by player_id
+            player_id = player['player_id']
 
-            if lookup_key and lookup_key in weekly_performances:
-                performance = weekly_performances[lookup_key]
+            if player_id in weekly_performances:
+                performance = weekly_performances[player_id]['performance']
                 matched_count += 1
             else:
-                # Player didn't play this week (or name/club mismatch)
+                # Player didn't play this week
                 # Give them zero performance
                 performance = {
                     'runs': 0, 'balls_faced': 0, 'is_out': False,
@@ -685,7 +762,13 @@ async def simulate_round_for_teams():
         update_team_scores_in_db(all_team_scores)
         # Get round number from function parameter (default 1)
         round_num = getattr(simulate_round_for_teams, 'round_number', 1)
-        store_player_performances(all_team_scores, round_number=round_num)
+
+        # Store ALL player performances (including non-fantasy-team players)
+        league_id = all_team_scores[0]['team']['league_id']
+        store_all_player_performances(weekly_performances, league_id, round_number=round_num)
+
+        # Update fantasy team player totals
+        store_fantasy_team_player_totals(all_team_scores, round_number=round_num)
 
     return all_team_scores
 

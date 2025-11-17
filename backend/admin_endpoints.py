@@ -1127,6 +1127,40 @@ async def admin_reset_user_password(
     }
 
 
+@router.delete("/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    admin_data: dict = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    """Admin endpoint to permanently delete a user"""
+
+    # Prevent admins from deleting themselves
+    admin_user_id = admin_data.get("sub") or admin_data.get("user_id")
+    if user_id == admin_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete your own account"
+        )
+
+    user = db.query(User).filter_by(id=user_id).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    user_email = user.email
+    db.delete(user)
+    db.commit()
+
+    return {
+        "message": f"User {user_email} deleted successfully",
+        "deleted_user_id": user_id
+    }
+
+
 @router.delete("/leagues/{league_id}")
 async def delete_league(
     league_id: str,

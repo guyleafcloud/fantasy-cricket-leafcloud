@@ -92,28 +92,21 @@ class Club(Base):
     __tablename__ = "clubs"
 
     id = Column(String(50), primary_key=True, default=generate_uuid)
-    season_id = Column(String(50), ForeignKey("seasons.id"), nullable=False)
-
-    # Club info
     name = Column(String(100), nullable=False)  # "ACC"
-    full_name = Column(String(200), nullable=False)  # "Amsterdamsche Cricket Club"
-    country = Column(String(50), default="Netherlands")
-    cricket_board = Column(String(50), default="KNCB")
-    website_url = Column(String(300), nullable=True)
-
-    # Metadata
+    tier = Column(String(50), nullable=False)  # HOOFDKLASSE, etc.
+    location = Column(String(100), nullable=True)
+    founded_year = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    season_id = Column(String(50), ForeignKey("seasons.id"), nullable=True)
 
     # Relationships
     season = relationship("Season", back_populates="clubs")
     teams = relationship("Team", back_populates="club", cascade="all, delete-orphan")
     players = relationship("Player", back_populates="club", cascade="all, delete-orphan")
 
-    # Unique constraint: one club name per season
+    # Indexes
     __table_args__ = (
-        UniqueConstraint('season_id', 'name', name='uq_season_club'),
-        Index('idx_club_season', 'season_id'),
+        Index('idx_clubs_season_id', 'season_id'),
     )
 
 
@@ -161,72 +154,44 @@ class Player(Base):
     __tablename__ = "players"
 
     id = Column(String(50), primary_key=True, default=generate_uuid)
-    club_id = Column(String(50), ForeignKey("clubs.id"), nullable=False)
-    team_id = Column(String(50), ForeignKey("teams.id"), nullable=True)
-
-    # Player info
     name = Column(String(200), nullable=False)
-    player_type = Column(String(50), nullable=True)  # batsman, bowler, all-rounder
-    is_wicket_keeper = Column(Boolean, default=False)  # Secondary flag for wicket-keepers
+    club_id = Column(String(50), ForeignKey("clubs.id"), nullable=False)
+    role = Column(String(50), nullable=False)  # BATSMAN, BOWLER, ALL_ROUNDER, WICKET_KEEPER
+    tier = Column(String(50), nullable=False)  # HOOFDKLASSE, etc.
 
-    # Performance multiplier (0.0-1.0, drifts max 15% per game based on performance)
-    # Lower multiplier = better historical performance
-    multiplier = Column(Float, default=0.5, nullable=False)  # 0.0 (best) to 1.0 (worst)
+    # Pricing
+    base_price = Column(Integer, nullable=False)
+    current_price = Column(Integer, nullable=False)
+
+    # Performance multiplier (lower = better historical performance)
+    multiplier = Column(Float, default=1.0, nullable=True)
     multiplier_updated_at = Column(DateTime, nullable=True)
 
-    # Legacy: fantasy_value kept for backward compatibility but not used in multiplier system
-    fantasy_value = Column(Float, default=25.0)  # Deprecated
-    value_calculation_date = Column(DateTime, nullable=True)
-    value_manually_adjusted = Column(Boolean, default=False)
-    value_adjustment_reason = Column(Text, nullable=True)
+    # Season statistics
+    matches_played = Column(Integer, nullable=True)
+    runs_scored = Column(Integer, nullable=True)
+    balls_faced = Column(Integer, nullable=True)
+    wickets_taken = Column(Integer, nullable=True)
+    balls_bowled = Column(Integer, nullable=True)
+    catches = Column(Integer, nullable=True)
+    stumpings = Column(Integer, nullable=True)
+    batting_average = Column(Float, nullable=True)
+    strike_rate = Column(Float, nullable=True)
+    bowling_average = Column(Float, nullable=True)
+    economy_rate = Column(Float, nullable=True)
+    total_fantasy_points = Column(Float, nullable=True)
 
-    # Season statistics (from 2025 legacy data)
-    stats = Column(JSON, nullable=True)  # Full stats object
-    """
-    stats JSON structure:
-    {
-        "matches": 12,
-        "runs": 450,
-        "batting_avg": 37.5,
-        "strike_rate": 125.0,
-        "wickets": 18,
-        "bowling_avg": 22.5,
-        "economy": 4.5,
-        "catches": 6,
-        "run_outs": 1,
-        "fours": 45,
-        "sixes": 15,
-        "fifties": 3,
-        "hundreds": 1,
-        "five_wicket_hauls": 1,
-        "maidens": 4
-    }
-    """
-
-    # Performance score (calculated by value calculator)
-    performance_score = Column(Float, nullable=True)
-    consistency_score = Column(Float, nullable=True)
-
-    # Legacy data
-    legacy_player_id = Column(String(100), nullable=True)  # Original ID from roster JSON
-
-    # Metadata
+    # Status
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    created_by = Column(String(50), nullable=True)  # Admin who added player
 
     # Relationships
     club = relationship("Club", back_populates="players")
-    team = relationship("Team", back_populates="players")
-    price_history = relationship("PlayerPriceHistory", back_populates="player", cascade="all, delete-orphan")
     fantasy_team_players = relationship("FantasyTeamPlayer", back_populates="player", cascade="all, delete-orphan")
 
     # Indexes
     __table_args__ = (
         Index('idx_player_club', 'club_id'),
-        Index('idx_player_team', 'team_id'),
-        Index('idx_player_value', 'fantasy_value'),
-        Index('idx_player_legacy', 'legacy_player_id'),
     )
 
 

@@ -134,7 +134,6 @@ class Team(Base):
 
     # Relationships
     club = relationship("Club", back_populates="teams")
-    players = relationship("Player", back_populates="team", cascade="all, delete-orphan")
 
     # Unique constraint: one team level per club
     __table_args__ = (

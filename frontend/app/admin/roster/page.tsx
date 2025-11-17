@@ -230,6 +230,16 @@ export default function RosterPage() {
             </div>
             <div className="flex space-x-4">
               <button
+                onClick={() => {
+                  if (confirm(`Confirm ACC roster with ${players.length} players and proceed to create leagues?`)) {
+                    router.push('/admin/leagues');
+                  }
+                }}
+                className="px-6 py-2 bg-cricket-green text-white rounded-md text-sm font-medium hover:bg-green-800 shadow-md"
+              >
+                ✓ Confirm Roster & Create Leagues
+              </button>
+              <button
                 onClick={() => router.push('/admin')}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900"
               >

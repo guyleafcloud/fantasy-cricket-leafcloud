@@ -369,7 +369,7 @@ export default function LeaguesPage() {
                     <option value="">Select a club...</option>
                     {clubs.map(club => (
                       <option key={club.id} value={club.id}>
-                        {club.full_name}
+                        {club.name}
                       </option>
                     ))}
                   </select>

@@ -156,8 +156,12 @@ class Player(Base):
     id = Column(String(50), primary_key=True, default=generate_uuid)
     name = Column(String(200), nullable=False)
     club_id = Column(String(50), ForeignKey("clubs.id"), nullable=False)
+
+    # Real-life team assignment (e.g., "ACC 1", "ACC ZAMI", "U17")
+    rl_team = Column(String(50), nullable=True)
+
     role = Column(String(50), nullable=False)  # BATSMAN, BOWLER, ALL_ROUNDER, WICKET_KEEPER
-    tier = Column(String(50), nullable=False)  # HOOFDKLASSE, etc.
+    tier = Column(String(50), nullable=False)  # HOOFDKLASSE, etc. (only used for web scraping)
 
     # Pricing
     base_price = Column(Integer, nullable=False)

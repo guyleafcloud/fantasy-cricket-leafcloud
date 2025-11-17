@@ -447,6 +447,7 @@ async def get_club_players(
             {
                 "id": p.id,
                 "name": p.name,
+                "rl_team": p.rl_team,
                 "role": p.role,
                 "tier": p.tier,
                 "base_price": p.base_price,
@@ -463,8 +464,9 @@ async def get_club_players(
 class PlayerManualAdd(BaseModel):
     """Add a player manually"""
     name: str
+    rl_team: str = Field(..., description="Real-life team: ACC 1-6, ZAMI 1, U13, U15, U17")
     role: str = Field(..., description="Player role: BATSMAN, BOWLER, ALL_ROUNDER, WICKET_KEEPER")
-    tier: str = Field(default="HOOFDKLASSE", description="Cricket tier")
+    tier: str = Field(default="HOOFDKLASSE", description="Cricket tier (for scraping)")
     base_price: int = Field(default=100, description="Base price in credits")
     current_price: Optional[int] = None
     multiplier: float = Field(default=1.0, ge=0.5, le=5.0, description="Performance multiplier (0.5-5.0)")
@@ -492,6 +494,7 @@ async def add_player_manually(
         new_player = Player(
             club_id=club_id,
             name=player.name,
+            rl_team=player.rl_team,
             role=player.role,
             tier=player.tier,
             base_price=player.base_price,
@@ -510,6 +513,7 @@ async def add_player_manually(
             "player": {
                 "id": new_player.id,
                 "name": new_player.name,
+                "rl_team": new_player.rl_team,
                 "role": new_player.role,
                 "tier": new_player.tier,
                 "base_price": new_player.base_price,
@@ -568,8 +572,9 @@ async def update_player_value(
 class PlayerUpdate(BaseModel):
     """Update player details"""
     name: Optional[str] = None
+    rl_team: Optional[str] = Field(None, description="Real-life team: ACC 1-6, ZAMI 1, U13, U15, U17")
     role: Optional[str] = Field(None, description="Player role: BATSMAN, BOWLER, ALL_ROUNDER, WICKET_KEEPER")
-    tier: Optional[str] = Field(None, description="Cricket tier")
+    tier: Optional[str] = Field(None, description="Cricket tier (for scraping)")
     base_price: Optional[int] = None
     current_price: Optional[int] = None
     multiplier: Optional[float] = Field(None, ge=0.5, le=5.0, description="Performance multiplier (0.5-5.0)")
@@ -596,6 +601,9 @@ async def update_player(
         # Update fields
         if update.name is not None:
             player.name = update.name
+
+        if update.rl_team is not None:
+            player.rl_team = update.rl_team
 
         if update.role is not None:
             player.role = update.role
@@ -624,6 +632,7 @@ async def update_player(
             "player": {
                 "id": player.id,
                 "name": player.name,
+                "rl_team": player.rl_team,
                 "role": player.role,
                 "tier": player.tier,
                 "base_price": player.base_price,

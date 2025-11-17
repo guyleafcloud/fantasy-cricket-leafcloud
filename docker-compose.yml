@@ -56,6 +56,8 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       KNCB_BASE_URL: https://matchcentre.kncb.nl/
       SENTRY_DSN: ${SENTRY_DSN}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY}
+      TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY}
     depends_on:
       - fantasy_cricket_db
       - fantasy_cricket_redis

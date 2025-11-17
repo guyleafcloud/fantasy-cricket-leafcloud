@@ -29,25 +29,77 @@ import re
 
 # Import centralized rules
 try:
-    from rules_set_1 import FANTASY_RULES
+    from rules_set_1 import FANTASY_RULES, calculate_total_fantasy_points
 except ImportError:
     # Fallback if module name has hyphens
     import importlib
     rules_module = importlib.import_module('rules-set-1')
     FANTASY_RULES = rules_module.FANTASY_RULES
+    calculate_total_fantasy_points = rules_module.calculate_total_fantasy_points
+
+# Import scraper configuration
+try:
+    from scraper_config import get_scraper_config, ScraperConfig, ScraperMode
+except ImportError:
+    # Fallback if config not available
+    ScraperConfig = None
+    ScraperMode = None
+    get_scraper_config = None
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 class KNCBMatchCentreScraper:
-    """Autonomous scraper for KNCB match centre"""
+    """Autonomous scraper for KNCB match centre
 
-    def __init__(self):
-        self.matchcentre_url = "https://matchcentre.kncb.nl"
-        self.kncb_api_url = "https://api.resultsvault.co.uk/rv"
-        self.api_id = "1002"
-        self.entity_id = "134453"
+    Supports both production (real KNCB API) and mock (test) modes.
+
+    Usage:
+        # Production mode (default)
+        scraper = KNCBMatchCentreScraper()
+
+        # Mock mode for testing
+        from scraper_config import get_scraper_config, ScraperMode
+        config = get_scraper_config(ScraperMode.MOCK)
+        scraper = KNCBMatchCentreScraper(config=config)
+
+        # Or use environment variable
+        # export SCRAPER_MODE=mock
+        config = get_scraper_config()  # Auto-detects from env
+        scraper = KNCBMatchCentreScraper(config=config)
+    """
+
+    def __init__(self, config: 'ScraperConfig' = None):
+        """
+        Initialize scraper with optional configuration
+
+        Args:
+            config: ScraperConfig instance (optional)
+                   If not provided, uses production settings
+        """
+        # Load configuration
+        if config is None:
+            # Default to production settings
+            self.matchcentre_url = "https://matchcentre.kncb.nl"
+            self.kncb_api_url = "https://api.resultsvault.co.uk/rv"
+            self.api_id = "1002"
+            self.entity_id = "134453"
+            self.mode = "production"
+            logger.info("🌐 Scraper initialized in PRODUCTION mode (real KNCB API)")
+        else:
+            # Use provided configuration
+            self.matchcentre_url = config.matchcentre_url
+            self.kncb_api_url = config.api_url
+            self.api_id = config.api_id
+            self.entity_id = config.entity_id
+            self.mode = config.mode.value
+
+            if config.is_mock():
+                logger.info("🧪 Scraper initialized in MOCK mode (test data)")
+                logger.info(f"   Mock API URL: {config.api_url}")
+            else:
+                logger.info("🌐 Scraper initialized in PRODUCTION mode (real KNCB API)")
 
         # Fantasy points configuration - imported from centralized rules-set-1.py
         self.rules = FANTASY_RULES
@@ -328,75 +380,42 @@ class KNCBMatchCentreScraper:
 
     def _calculate_fantasy_points(self, performance: Dict) -> int:
         """Calculate fantasy points for a single performance using centralized rules"""
-        points = 0
 
-        # Batting
+        # Extract batting stats
         batting = performance.get('batting', {})
-        if batting:
-            runs = batting.get('runs', 0)
-            balls_faced = batting.get('balls_faced', 0)
-            batting_rules = self.rules['batting']
+        runs = batting.get('runs', 0) if batting else 0
+        balls_faced = batting.get('balls_faced', 0) if batting else 0
+        is_out = batting.get('is_out', False) if batting else False
 
-            # Run points with strike rate multiplier
-            run_points = runs * batting_rules['points_per_run']
-
-            # Apply strike rate multiplier (SR 100 = 1.0x)
-            if balls_faced > 0 and runs > 0:
-                strike_rate = (runs / balls_faced) * 100
-                multiplier = strike_rate / 100
-                run_points = run_points * multiplier
-
-            points += run_points
-
-            # Milestone bonuses
-            if runs >= 100:
-                points += batting_rules['century_bonus']
-            elif runs >= 50:
-                points += batting_rules['fifty_bonus']
-            elif runs == 0 and balls_faced > 0:
-                points += batting_rules['duck_penalty']
-
-        # Bowling
+        # Extract bowling stats
         bowling = performance.get('bowling', {})
-        if bowling:
-            wickets = bowling.get('wickets', 0)
-            maidens = bowling.get('maidens', 0)
-            runs_conceded = bowling.get('runs_conceded', 0) or bowling.get('runs', 0)
-            overs = bowling.get('overs', 0.0)
-            bowling_rules = self.rules['bowling']
+        wickets = bowling.get('wickets', 0) if bowling else 0
+        maidens = bowling.get('maidens', 0) if bowling else 0
+        runs_conceded = (bowling.get('runs_conceded', 0) or bowling.get('runs', 0)) if bowling else 0
+        overs = bowling.get('overs', 0.0) if bowling else 0.0
 
-            # Wicket points with economy rate multiplier
-            wicket_points = wickets * bowling_rules['points_per_wicket']
-
-            # Apply economy rate multiplier (ER 6.0 = 1.0x)
-            if overs > 0 and wickets > 0:
-                economy_rate = runs_conceded / overs
-                if economy_rate > 0:
-                    multiplier = 6.0 / economy_rate
-                    wicket_points = wicket_points * multiplier
-                else:
-                    # Perfect economy (no runs conceded) - give maximum multiplier
-                    wicket_points = wicket_points * 6.0
-
-            points += wicket_points
-
-            # Maiden points
-            points += maidens * bowling_rules['points_per_maiden']
-
-            # Five wicket haul bonus
-            if wickets >= 5:
-                points += bowling_rules['five_wicket_haul_bonus']
-
-        # Fielding
+        # Extract fielding stats
         fielding = performance.get('fielding', {})
-        if fielding:
-            fielding_rules = self.rules['fielding']
-            points += fielding.get('catches', 0) * fielding_rules['points_per_catch']
-            points += fielding.get('stumpings', 0) * fielding_rules['points_per_stumping']
-            points += fielding.get('runouts', 0) * fielding_rules['points_per_runout']
+        catches = fielding.get('catches', 0) if fielding else 0
+        stumpings = fielding.get('stumpings', 0) if fielding else 0
+        runouts = fielding.get('runouts', 0) if fielding else 0
 
-        # No tier multiplier - all performances scored equally
-        return int(max(0, points))
+        # Use centralized calculation function from rules-set-1.py
+        result = calculate_total_fantasy_points(
+            runs=runs,
+            balls_faced=balls_faced,
+            is_out=is_out,
+            wickets=wickets,
+            overs=overs,
+            runs_conceded=runs_conceded,
+            maidens=maidens,
+            catches=catches,
+            stumpings=stumpings,
+            runouts=runouts,
+            is_wicketkeeper=False  # Determined elsewhere in the system
+        )
+
+        return int(max(0, result['grand_total']))
 
     def _determine_tier(self, grade_name: str) -> str:
         """Determine tier from grade name"""

@@ -93,6 +93,21 @@ export default function UsersPage() {
     }
   };
 
+  const handleDelete = async (user: User) => {
+    if (!confirm(`Are you sure you want to delete user ${user.email}? This will also delete all their teams. This action cannot be undone.`)) return;
+
+    try {
+      setActionLoading(true);
+      await apiClient.deleteUser(user.id);
+      alert(`User ${user.email} deleted successfully`);
+      await loadUsers();
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'Failed to delete user');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -202,6 +217,13 @@ export default function UsersPage() {
                         className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
                       >
                         Reset Password
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user)}
+                        disabled={actionLoading}
+                        className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                      >
+                        Delete
                       </button>
                     </div>
                   </td>

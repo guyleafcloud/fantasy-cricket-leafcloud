@@ -44,6 +44,8 @@ export default function LeaguesPage() {
   const [error, setError] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [deleteLeagueId, setDeleteLeagueId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     season_id: '',
@@ -154,6 +156,23 @@ export default function LeaguesPage() {
       setError('Failed to create league');
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleDeleteLeague = async () => {
+    if (!deleteLeagueId) return;
+
+    setDeleting(true);
+    setError('');
+
+    try {
+      await apiClient.deleteLeague(deleteLeagueId);
+      setDeleteLeagueId(null);
+      await loadData();
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Failed to delete league');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -285,9 +304,15 @@ export default function LeaguesPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => router.push(`/admin/leagues/${league.id}`)}
-                        className="text-cricket-green hover:text-green-900"
+                        className="text-cricket-green hover:text-green-900 mr-4"
                       >
                         Manage
+                      </button>
+                      <button
+                        onClick={() => setDeleteLeagueId(league.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Delete
                       </button>
                     </td>
                   </tr>
@@ -466,6 +491,36 @@ export default function LeaguesPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteLeagueId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">Confirm Delete</h3>
+            <p className="text-gray-700 dark:text-gray-300 mb-6">
+              Are you sure you want to delete this league? This will also delete all fantasy teams in this league. This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={() => setDeleteLeagueId(null)}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteLeague}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50"
+                disabled={deleting}
+              >
+                {deleting ? 'Deleting...' : 'Delete League'}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -59,13 +59,14 @@ class FantasyPointsCalculator:
         # Load rules from centralized configuration
         self.rules = FANTASY_RULES
 
+        # Use the centralized calculation function
+        self.calc_total = calc_total
+
         # Create convenient attribute access for backward compatibility
-        self.POINTS_PER_RUN = self.rules['batting']['points_per_run']
         self.BONUS_FIFTY = self.rules['batting']['fifty_bonus']
         self.BONUS_HUNDRED = self.rules['batting']['century_bonus']
         self.PENALTY_DUCK = self.rules['batting']['duck_penalty']
 
-        self.POINTS_PER_WICKET = self.rules['bowling']['points_per_wicket']
         self.POINTS_PER_MAIDEN = self.rules['bowling']['points_per_maiden']
         self.BONUS_5_WICKETS = self.rules['bowling']['five_wicket_haul_bonus']
 
@@ -248,26 +249,31 @@ class FantasyPointsCalculator:
         maidens: int = 0,
         catches: int = 0,
         run_outs: int = 0,
-        stumpings: int = 0
+        stumpings: int = 0,
+        is_wicketkeeper: bool = False
     ) -> Dict:
         """
-        Calculate total fantasy points from all performance stats
+        Calculate total fantasy points from all performance stats using centralized rules
 
         Returns:
             Dictionary with complete breakdown and grand total
         """
-        batting = self.calculate_batting_points(runs, balls_faced, fours, sixes, is_out)
-        bowling = self.calculate_bowling_points(wickets, overs_bowled, runs_conceded, maidens)
-        fielding = self.calculate_fielding_points(catches, run_outs, stumpings)
+        # Use centralized calculation from rules-set-1.py
+        result = self.calc_total(
+            runs=runs,
+            balls_faced=balls_faced,
+            is_out=is_out,
+            wickets=wickets,
+            overs=overs_bowled,
+            runs_conceded=runs_conceded,
+            maidens=maidens,
+            catches=catches,
+            stumpings=stumpings,
+            runouts=run_outs,
+            is_wicketkeeper=is_wicketkeeper
+        )
 
-        grand_total = batting["total"] + bowling["total"] + fielding["total"]
-
-        return {
-            "batting": batting,
-            "bowling": bowling,
-            "fielding": fielding,
-            "grand_total": grand_total
-        }
+        return result
 
     def calculate_from_performance_dict(self, performance: Dict) -> Dict:
         """

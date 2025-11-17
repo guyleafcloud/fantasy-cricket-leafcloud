@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { apiClient } from '@/lib/api';
-import PointsCalculator from '@/components/PointsCalculator';
 
 interface Player {
   id: string;
@@ -79,11 +78,11 @@ export default function TeamDetailPage() {
   // Transfer filters
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
+
+  // Rules panel state
+  const [showRules, setShowRules] = useState(false);
   const [filterTeam, setFilterTeam] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('multiplier');
-
-  // Calculator toggle
-  const [showCalculator, setShowCalculator] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -266,10 +265,16 @@ export default function TeamDetailPage() {
             </div>
             <div className="flex gap-3">
               <button
-                onClick={() => setShowCalculator(!showCalculator)}
+                onClick={() => window.open('/calculator', '_blank')}
                 className="px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600"
               >
-                {showCalculator ? 'Hide' : 'Show'} Points Calculator
+                🧮 Points Calculator
+              </button>
+              <button
+                onClick={() => setShowRules(!showRules)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
+                {showRules ? 'Hide' : 'Show'} Rules
               </button>
               <button
                 onClick={() => router.push('/teams')}
@@ -295,6 +300,175 @@ export default function TeamDetailPage() {
           </div>
         </div>
       </header>
+
+      {/* Rules Panel */}
+      {showRules && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Fantasy Cricket Rules & Scoring System</h2>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Team Building Rules */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3 border-b pb-2">Team Building</h3>
+                <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
+                  <li className="flex items-start">
+                    <span className="text-cricket-green mr-2">•</span>
+                    <span>Squad Size: {team.league_rules.squad_size} players</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-cricket-green mr-2">•</span>
+                    <span>Max {team.league_rules.max_players_per_team} players per real-life team</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-cricket-green mr-2">•</span>
+                    <span>Min {team.league_rules.min_batsmen} batsmen required</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-cricket-green mr-2">•</span>
+                    <span>Min {team.league_rules.min_bowlers} bowlers required</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-cricket-green mr-2">•</span>
+                    <span>Designate 1 Captain (2x points)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-cricket-green mr-2">•</span>
+                    <span>Designate 1 Vice-Captain (1.5x points)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-cricket-green mr-2">•</span>
+                    <span>Designate 1 Wicket-Keeper (2x catch points)</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Batting Points */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3 border-b pb-2">Batting Points</h3>
+                <div className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
+                  <div>
+                    <div className="font-medium text-gray-900 dark:text-white mb-1">Tiered Run Points:</div>
+                    <ul className="ml-4 space-y-1">
+                      <li>• Runs 1-30: 1.0 pts/run</li>
+                      <li>• Runs 31-49: 1.25 pts/run</li>
+                      <li>• Runs 50-99: 1.5 pts/run</li>
+                      <li>• Runs 100+: 1.75 pts/run</li>
+                      <li>• <span className="font-semibold">NO boundary bonuses</span> (fours/sixes count as runs only)</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900 dark:text-white mb-1">Strike Rate Multiplier:</div>
+                    <ul className="ml-4 space-y-1">
+                      <li>• Run points × (Strike Rate / 100)</li>
+                      <li>• Example: 50 runs at SR 150 = 55.25 × 1.5 = 82.9 pts</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900 dark:text-white mb-1">Milestones:</div>
+                    <ul className="ml-4 space-y-1">
+                      <li>• 50 runs: +8 points</li>
+                      <li>• 100 runs: +16 points</li>
+                      <li>• Duck (0 runs while out): -2 points</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bowling & Fielding Points */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3 border-b pb-2">Bowling & Fielding</h3>
+                <div className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
+                  <div>
+                    <div className="font-medium text-gray-900 dark:text-white mb-1">Tiered Wicket Points:</div>
+                    <ul className="ml-4 space-y-1">
+                      <li>• Wickets 1-2: 15 pts each</li>
+                      <li>• Wickets 3-4: 20 pts each</li>
+                      <li>• Wickets 5-10: 30 pts each</li>
+                      <li>• Maiden over: 15 points</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900 dark:text-white mb-1">Economy Rate Multiplier:</div>
+                    <ul className="ml-4 space-y-1">
+                      <li>• Wicket points × (6.0 / Economy Rate)</li>
+                      <li>• Example: 3 wickets at ER 4.0 = 50 × 1.5 = 75 pts</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900 dark:text-white mb-1">Bonuses & Fielding:</div>
+                    <ul className="ml-4 space-y-1">
+                      <li>• 5 wicket haul: +8 points</li>
+                      <li>• Catch: +15 points (regular)</li>
+                      <li>• Catch: +30 points (wicketkeeper 2x)</li>
+                      <li>• Stumping: +15 points</li>
+                      <li>• Run Out: +6 points</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Multiplier System */}
+            <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-3 border-b pb-2">Player Value Multiplier System (Performance Handicap)</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700 dark:text-gray-300">
+                <div>
+                  <div className="font-medium text-gray-900 dark:text-white mb-2">How Multipliers Work:</div>
+                  <ul className="space-y-2">
+                    <li className="flex items-start">
+                      <span className="text-cricket-green mr-2">•</span>
+                      <span>Each player has a multiplier between <strong>0.69</strong> (best IRL players - <strong>handicapped</strong>) and <strong>5.00</strong> (weak IRL players - <strong>boosted</strong>)</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-cricket-green mr-2">•</span>
+                      <span><strong>Lower multiplier (0.69)</strong> = Better IRL player = Fantasy points <strong>reduced/handicapped</strong></span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-cricket-green mr-2">•</span>
+                      <span><strong>Higher multiplier (5.0)</strong> = Weaker IRL player = Fantasy points <strong>boosted</strong></span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-cricket-green mr-2">•</span>
+                      <span>This creates balance: star players &quot;cost more&quot; in fantasy value, making weaker players attractive picks</span>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <div className="font-medium text-gray-900 dark:text-white mb-2">Weekly Multiplier Adjustments:</div>
+                  <ul className="space-y-2">
+                    <li className="flex items-start">
+                      <span className="text-cricket-green mr-2">•</span>
+                      <span>Multipliers adjust up to <strong>15% per week</strong> based on current performance</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-cricket-green mr-2">•</span>
+                      <span>Top weekly performers get lower multipliers (handicapped more)</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-cricket-green mr-2">•</span>
+                      <span>Poor weekly performers get higher multipliers (boosted more)</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-cricket-green mr-2">•</span>
+                      <span>Example: 100 base points × 0.69 = 69 fantasy points (star player handicapped)</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Info */}
+            <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                <strong>Note:</strong> Batting and bowling use <strong>tiered point systems</strong> where more runs/wickets earn progressively higher points per run/wicket.
+                All base points from batting, bowling, and fielding are calculated first, then multiplied by your player&apos;s multiplier.
+                Captain (2×), Vice-Captain (1.5×), and Wicket-Keeper (2× catches only) bonuses are applied after the multiplier calculation.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Error Message */}
       {error && (
@@ -341,19 +515,6 @@ export default function TeamDetailPage() {
             </p>
           </div>
         </div>
-
-        {/* Points Calculator */}
-        {showCalculator && (
-          <div className="mb-8">
-            <PointsCalculator
-              playersList={team.players.map(p => ({
-                id: p.id,
-                name: p.name,
-                player_type: p.player_type
-              }))}
-            />
-          </div>
-        )}
 
         {/* Captain & Vice Captain */}
         {(captain || viceCaptain) && (

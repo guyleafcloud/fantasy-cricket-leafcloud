@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 import os
 
 from database import get_db
-from database_models import Season, Club, Team, Player, User
+from database_models import Season, Club, Team, Player, User, League, FantasyTeam
 from season_setup_service import SeasonSetupService
 
 # Router for admin endpoints
@@ -1124,4 +1124,34 @@ async def admin_reset_user_password(
             "email": user.email,
             "full_name": user.full_name
         }
+    }
+
+
+@router.delete("/leagues/{league_id}")
+async def delete_league(
+    league_id: str,
+    admin_data: dict = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    """Admin endpoint to delete a league and all associated fantasy teams"""
+    
+    league = db.query(League).filter(League.id == league_id).first()
+    
+    if not league:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="League not found"
+        )
+    
+    # Count fantasy teams that will be deleted
+    team_count = db.query(FantasyTeam).filter(FantasyTeam.league_id == league_id).count()
+    
+    # Delete the league (cascade will delete fantasy teams)
+    db.delete(league)
+    db.commit()
+    
+    return {
+        "message": f"League '{league.name}' deleted successfully",
+        "league_id": league_id,
+        "fantasy_teams_deleted": team_count
     }

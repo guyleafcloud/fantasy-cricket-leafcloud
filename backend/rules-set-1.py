@@ -64,8 +64,8 @@ FANTASY_RULES = {
     # FIELDING POINTS
     # ---------------
     'fielding': {
-        'points_per_catch': 4,
-        'points_per_stumping': 6,
+        'points_per_catch': 15,
+        'points_per_stumping': 15,
         'points_per_runout': 6,
         'wicketkeeper_catch_multiplier': 2.0,  # Wicketkeeper catches worth 2x
     },

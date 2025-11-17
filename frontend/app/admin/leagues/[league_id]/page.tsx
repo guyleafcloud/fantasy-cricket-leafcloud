@@ -143,6 +143,18 @@ export default function LeagueDetailPage() {
     }
   };
 
+  const handleDeleteTeam = async (teamId: string, teamName: string) => {
+    if (!confirm(`Are you sure you want to delete team "${teamName}"? This action cannot be undone.`)) return;
+
+    try {
+      await apiClient.deleteTeam(teamId);
+      alert(`Team "${teamName}" deleted successfully`);
+      await loadLeagueDetails(); // Reload to show updated list
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'Failed to delete team');
+    }
+  };
+
   const handleSaveRules = async () => {
     try {
       setSaving(true);
@@ -401,12 +413,20 @@ export default function LeagueDetailPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => handleGrantTransfer(team.id)}
-                          className="text-cricket-green hover:text-green-900"
-                        >
-                          Grant Transfer
-                        </button>
+                        <div className="flex justify-end gap-3">
+                          <button
+                            onClick={() => handleGrantTransfer(team.id)}
+                            className="text-cricket-green hover:text-green-900"
+                          >
+                            Grant Transfer
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTeam(team.id, team.team_name)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))

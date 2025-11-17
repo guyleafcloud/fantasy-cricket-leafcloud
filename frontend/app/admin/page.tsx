@@ -43,12 +43,42 @@ export default function AdminDashboard() {
   const CLUB_ID = 'a7a580a7-7d3f-476c-82ea-afa6ae7ee276'; // ACC club ID
 
   useEffect(() => {
-    const token = localStorage.getItem('admin_token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-    loadDashboardData();
+    const checkAdminAndLoad = async () => {
+      const token = localStorage.getItem('admin_token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      try {
+        // Verify user is admin
+        const response = await fetch('/api/auth/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          if (!userData.is_admin) {
+            // Not an admin, redirect to user dashboard
+            router.push('/dashboard');
+            return;
+          }
+          // User is admin, load data
+          loadDashboardData();
+        } else {
+          // Token invalid
+          localStorage.removeItem('admin_token');
+          router.push('/login');
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        router.push('/login');
+      }
+    };
+
+    checkAdminAndLoad();
   }, [router]);
 
   const loadDashboardData = async () => {

@@ -21,7 +21,7 @@ from typing import List, Optional, Dict, Any, Union
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from enum import Enum
-from jose import jwt
+from jose import jwt, JWTError
 import uuid
 import redis
 import os
@@ -37,8 +37,11 @@ from player_endpoints import router as player_router
 from user_auth_endpoints import router as auth_router
 from user_team_endpoints import router as user_team_router
 
-# Import User model from database_models (centralized schema)
-from database_models import User
+# Import all models from database_models (centralized schema)
+from database_models import (
+    User, Base, Season, Club, Team, Player, League, FantasyTeam,
+    FantasyTeamPlayer, Transfer, Match, PlayerPerformance
+)
 
 # Enhanced logging
 logging.basicConfig(
@@ -115,250 +118,8 @@ class UpdateStatus(Enum):
     FAILED = "failed"
     CANCELLED = "cancelled"
 
-# User model now imported from database_models.py (see line 34)
+# All models now imported from database_models.py (see line 41)
 # Using centralized database schema with VARCHAR(50) IDs for consistency
-
-class Club(Base):
-    __tablename__ = 'clubs'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String(255), nullable=False)
-    country = Column(String(100), nullable=False, default="Netherlands")
-    cricket_board = Column(String(100), default="KNCB")
-    board_club_id = Column(String(100))
-    website_url = Column(String(500))
-    created_at = Column(DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    leagues = relationship("League", back_populates="club")
-    teams = relationship("ClubTeam", back_populates="club")
-    players = relationship("Player", back_populates="club")
-
-class ClubTeam(Base):
-    __tablename__ = 'club_teams'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    club_id = Column(UUID(as_uuid=True), ForeignKey('clubs.id'), nullable=False)
-    name = Column(String(255), nullable=False)
-    level = Column(String(50), nullable=False)  # 1st, 2nd, 3rd, youth, social, etc.
-    tier_type = Column(String(50), nullable=False, default="senior")
-    multiplier = Column(Float, default=1.0)
-    
-    # Relationships
-    club = relationship("Club", back_populates="teams")
-    players = relationship("Player", back_populates="team")
-
-class League(Base):
-    __tablename__ = 'leagues'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String(255), nullable=False)
-    club_id = Column(UUID(as_uuid=True), ForeignKey('clubs.id'), nullable=False)
-    owner_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
-    
-    # League settings
-    season = Column(String(10), nullable=False, default="2025")
-    invite_code = Column(String(10), unique=True, nullable=False, index=True)
-    squad_size = Column(Integer, default=15)
-    budget = Column(Float, default=500.0)
-    currency = Column(String(5), default="EUR")
-    
-    # Constraints
-    min_from_each_team = Column(Boolean, default=True)
-    max_from_top_tier = Column(Integer, default=6)
-    min_from_lower_tiers = Column(Integer, default=2)
-    
-    # Weekly update system
-    weekly_update_day = Column(String(10), default='tuesday')
-    weekly_update_time = Column(String(8), default='10:00')
-    auto_updates_enabled = Column(Boolean, default=True)
-    last_update_completed = Column(DateTime, nullable=True)
-    
-    # Points freeze system
-    points_frozen = Column(Boolean, default=False)
-    freeze_reason = Column(Text, nullable=True)
-    frozen_at = Column(DateTime, nullable=True)
-    frozen_by = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=True)
-    
-    # Status
-    is_active = Column(Boolean, default=True)
-    draft_started = Column(Boolean, default=False)
-    season_started = Column(Boolean, default=False)
-    teams_locked = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    club = relationship("Club", back_populates="leagues")
-    owner = relationship("User", back_populates="owned_leagues", foreign_keys=[owner_id])
-    members = relationship("User", secondary=user_league_association, back_populates="leagues")
-    fantasy_teams = relationship("FantasyTeam", back_populates="league")
-    weekly_updates = relationship("WeeklyUpdate", back_populates="league")
-
-class WeeklyUpdate(Base):
-    __tablename__ = 'weekly_updates'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    league_id = Column(UUID(as_uuid=True), ForeignKey('leagues.id'), nullable=False)
-    
-    scheduled_date = Column(DateTime, nullable=False)
-    started_at = Column(DateTime, nullable=True)
-    completed_at = Column(DateTime, nullable=True)
-    
-    status = Column(String(20), default=UpdateStatus.PENDING.value)
-    matches_processed = Column(Integer, default=0)
-    players_updated = Column(Integer, default=0)
-    teams_updated = Column(Integer, default=0)
-    
-    error_message = Column(Text, nullable=True)
-    retry_count = Column(Integer, default=0)
-    max_retries = Column(Integer, default=3)
-    
-    triggered_by = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=True)
-    auto_scheduled = Column(Boolean, default=True)
-    
-    update_summary = Column(JSONB)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    league = relationship("League", back_populates="weekly_updates")
-    triggered_by_user = relationship("User")
-
-class Player(Base):
-    __tablename__ = 'players'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    club_id = Column(UUID(as_uuid=True), ForeignKey('clubs.id'), nullable=False)
-    team_id = Column(UUID(as_uuid=True), ForeignKey('club_teams.id'), nullable=True)
-    
-    name = Column(String(255), nullable=False, index=True)
-    position = Column(String(50))
-    
-    # Career statistics
-    matches_played = Column(Integer, default=0)
-    total_runs = Column(Integer, default=0)
-    total_wickets = Column(Integer, default=0)
-    total_catches = Column(Integer, default=0)
-    average_runs = Column(Float, default=0.0)
-    strike_rate = Column(Float, default=0.0)
-    economy_rate = Column(Float, default=0.0)
-    
-    # Enhanced pricing system
-    suggested_price = Column(Float, default=20.0)
-    current_price = Column(Float, default=20.0)
-    price_locked = Column(Boolean, default=False)
-    price_justification = Column(Text)
-    performance_score = Column(Float, default=1.0)
-    league_rank_percentile = Column(Float)
-    consistency_rating = Column(Float, default=1.0)
-    admin_notes = Column(Text)
-    manual_adjustments = Column(JSONB)
-    
-    # Fantasy data
-    fantasy_points = Column(Integer, default=0)
-    weekly_points = Column(Integer, default=0)
-    form = Column(String(20), default='Average')
-    
-    is_available = Column(Boolean, default=True)
-    last_updated = Column(DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    club = relationship("Club", back_populates="players")
-    team = relationship("ClubTeam", back_populates="players")
-    fantasy_teams = relationship("FantasyTeam", secondary=team_player_association, back_populates="players")
-    performances = relationship("PlayerPerformance", back_populates="player")
-    price_history = relationship("PlayerPriceHistory", back_populates="player")
-
-class PlayerPriceHistory(Base):
-    __tablename__ = 'player_price_history'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    player_id = Column(UUID(as_uuid=True), ForeignKey('players.id'), nullable=False)
-    
-    old_price = Column(Float, nullable=False)
-    new_price = Column(Float, nullable=False)
-    change_reason = Column(String(50))
-    justification = Column(Text)
-    changed_by = Column(UUID(as_uuid=True), ForeignKey('users.id'))
-    changed_at = Column(DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    player = relationship("Player", back_populates="price_history")
-    changed_by_user = relationship("User")
-
-class FantasyTeam(Base):
-    __tablename__ = 'fantasy_teams'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    league_id = Column(UUID(as_uuid=True), ForeignKey('leagues.id'), nullable=False)
-    owner_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
-    
-    name = Column(String(255), nullable=False)
-    total_points = Column(Integer, default=0)
-    weekly_points = Column(Integer, default=0)
-    budget_used = Column(Float, default=0.0)
-    
-    is_complete = Column(Boolean, default=False)
-    is_locked = Column(Boolean, default=False)
-    
-    created_at = Column(DateTime, default=datetime.utcnow)
-    last_updated = Column(DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    league = relationship("League", back_populates="fantasy_teams")
-    owner = relationship("User", back_populates="fantasy_teams")
-    players = relationship("Player", secondary=team_player_association, back_populates="fantasy_teams")
-
-class Match(Base):
-    __tablename__ = 'matches'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    club_id = Column(UUID(as_uuid=True), ForeignKey('clubs.id'), nullable=False)
-    
-    date = Column(DateTime, nullable=False)
-    home_team = Column(String(255), nullable=False)
-    away_team = Column(String(255), nullable=False)
-    format = Column(String(20))
-    result = Column(String(500))
-    home_score = Column(String(100))
-    away_score = Column(String(100))
-    
-    match_url = Column(String(500))
-    scorecard_parsed = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    
-    performances = relationship("PlayerPerformance", back_populates="match")
-
-class PlayerPerformance(Base):
-    __tablename__ = 'player_performances'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    player_id = Column(UUID(as_uuid=True), ForeignKey('players.id'), nullable=False)
-    match_id = Column(UUID(as_uuid=True), ForeignKey('matches.id'), nullable=False)
-    
-    # Batting stats
-    runs = Column(Integer, default=0)
-    balls_faced = Column(Integer, default=0)
-    fours = Column(Integer, default=0)
-    sixes = Column(Integer, default=0)
-    
-    # Bowling stats
-    wickets = Column(Integer, default=0)
-    runs_conceded = Column(Integer, default=0)
-    overs_bowled = Column(Float, default=0.0)
-    maidens = Column(Integer, default=0)
-    
-    # Fielding stats
-    catches = Column(Integer, default=0)
-    stumpings = Column(Integer, default=0)
-    run_outs = Column(Integer, default=0)
-    
-    # Fantasy points
-    total_fantasy_points = Column(Integer, default=0)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    
-    # Relationships
-    player = relationship("Player", back_populates="performances")
-    match = relationship("Match", back_populates="performances")
 
 # =============================================================================
 # PYDANTIC MODELS
@@ -425,8 +186,8 @@ class LeaderboardEntry(BaseModel):
     rank: int
     team_name: str
     owner_name: str
-    total_points: int
-    weekly_points: int
+    total_points: float
+    weekly_points: float
 
 # =============================================================================
 # FASTAPI APPLICATION
@@ -490,7 +251,7 @@ def get_current_user(
             raise HTTPException(status_code=401, detail="User not found")
         
         return user
-    except jwt.PyJWTError:
+    except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 # =============================================================================
@@ -549,20 +310,185 @@ async def get_leaderboard(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # Only show finalized teams in leaderboard
     teams = db.query(FantasyTeam).filter(
-        FantasyTeam.league_id == league_id
+        FantasyTeam.league_id == league_id,
+        FantasyTeam.is_finalized == True
     ).order_by(FantasyTeam.total_points.desc()).all()
-    
-    return [
-        LeaderboardEntry(
+
+    result = []
+    for rank, team in enumerate(teams, 1):
+        # Get owner from user_id
+        owner = db.query(User).filter(User.id == team.user_id).first()
+        owner_name = owner.full_name if owner else "Unknown"
+
+        result.append(LeaderboardEntry(
             rank=rank,
-            team_name=team.name,
-            owner_name=team.owner.full_name,
+            team_name=team.team_name,
+            owner_name=owner_name,
             total_points=team.total_points,
-            weekly_points=team.weekly_points
-        )
-        for rank, team in enumerate(teams, 1)
-    ]
+            weekly_points=0  # Field not available in current schema
+        ))
+
+    return result
+
+@app.get("/api/leagues/{league_id}/stats")
+async def get_league_stats(
+    league_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get comprehensive league statistics including top performers and team stats"""
+    from sqlalchemy import func, desc
+
+    # Get all fantasy teams in this league
+    fantasy_teams = db.query(FantasyTeam).filter(
+        FantasyTeam.league_id == league_id
+    ).all()
+
+    if not fantasy_teams:
+        return {
+            "best_batsman": None,
+            "best_bowler": None,
+            "best_fielder": None,
+            "best_team": None,
+            "top_players": []
+        }
+
+    # Get all players from fantasy teams in this league with their fantasy points
+    team_ids = [team.id for team in fantasy_teams]
+
+    # Query fantasy_team_players with player info and points
+    from sqlalchemy import and_
+    player_fantasy_data = db.query(
+        FantasyTeamPlayer.player_id,
+        FantasyTeamPlayer.total_points,
+        FantasyTeamPlayer.fantasy_team_id,
+        Player.name,
+        Player.team_id
+    ).join(
+        Player, Player.id == FantasyTeamPlayer.player_id
+    ).filter(
+        FantasyTeamPlayer.fantasy_team_id.in_(team_ids)
+    ).all()
+
+    # Aggregate player performances from player_performances table for best batsman/bowler/fielder
+    from database_models import PlayerPerformance
+
+    player_stats_agg = {}
+    performances = db.query(PlayerPerformance).filter(
+        PlayerPerformance.league_id == league_id
+    ).all()
+
+    for perf in performances:
+        if perf.player_id not in player_stats_agg:
+            player_stats_agg[perf.player_id] = {
+                'runs': 0,
+                'wickets': 0,
+                'catches': 0,
+                'balls_faced': 0,
+                'overs': 0,
+                'runs_conceded': 0
+            }
+
+        player_stats_agg[perf.player_id]['runs'] += perf.runs or 0
+        player_stats_agg[perf.player_id]['wickets'] += perf.wickets or 0
+        player_stats_agg[perf.player_id]['catches'] += perf.catches or 0
+        player_stats_agg[perf.player_id]['balls_faced'] += perf.balls_faced or 0
+        player_stats_agg[perf.player_id]['overs'] += perf.overs or 0
+        player_stats_agg[perf.player_id]['runs_conceded'] += perf.runs_conceded or 0
+
+    # Calculate top performers
+    best_batsman = None
+    best_bowler = None
+    best_fielder = None
+    max_runs = 0
+    max_wickets = 0
+    max_catches = 0
+
+    cricket_team_points = {}  # cricket team_id -> total points
+    player_points = []  # list of player fantasy points
+
+    for pfd in player_fantasy_data:
+        player_id, total_points, fantasy_team_id, player_name, cricket_team_id = pfd
+
+        # Get player stats if available
+        stats = player_stats_agg.get(player_id, {})
+
+        # Best batsman (most runs)
+        runs = stats.get('runs', 0)
+        if runs > max_runs:
+            max_runs = runs
+            balls = stats.get('balls_faced', 1)
+            strike_rate = (runs / balls * 100) if balls > 0 else 0
+            best_batsman = {
+                'player_name': player_name,
+                'team_name': db.query(Team.name).filter(Team.id == cricket_team_id).scalar() if cricket_team_id else 'Unknown',
+                'runs': runs,
+                'average': runs,  # Simplified - would need innings count for true average
+                'strike_rate': strike_rate
+            }
+
+        # Best bowler (most wickets)
+        wickets = stats.get('wickets', 0)
+        if wickets > max_wickets:
+            max_wickets = wickets
+            overs = stats.get('overs', 1)
+            runs_conceded = stats.get('runs_conceded', 0)
+            economy = (runs_conceded / overs) if overs > 0 else 0
+            best_bowler = {
+                'player_name': player_name,
+                'team_name': db.query(Team.name).filter(Team.id == cricket_team_id).scalar() if cricket_team_id else 'Unknown',
+                'wickets': wickets,
+                'average': runs_conceded / wickets if wickets > 0 else 0,
+                'economy': economy
+            }
+
+        # Best fielder (most catches)
+        catches = stats.get('catches', 0)
+        if catches > max_catches:
+            max_catches = catches
+            best_fielder = {
+                'player_name': player_name,
+                'team_name': db.query(Team.name).filter(Team.id == cricket_team_id).scalar() if cricket_team_id else 'Unknown',
+                'catches': catches
+            }
+
+        # Add to player points list
+        player_points.append({
+            'player_name': player_name,
+            'team_name': db.query(Team.name).filter(Team.id == cricket_team_id).scalar() if cricket_team_id else 'Unknown',
+            'total_points': total_points or 0
+        })
+
+        # Aggregate by cricket team
+        if cricket_team_id:
+            if cricket_team_id not in cricket_team_points:
+                cricket_team_points[cricket_team_id] = 0
+            cricket_team_points[cricket_team_id] += (total_points or 0)
+
+    # Find best team
+    best_team = None
+    if cricket_team_points:
+        best_team_id = max(cricket_team_points, key=cricket_team_points.get)
+        team = db.query(Team).filter(Team.id == best_team_id).first()
+        if team:
+            best_team = {
+                'team_name': team.name,
+                'total_points': cricket_team_points[best_team_id],
+                'player_count': sum(1 for pfd in player_fantasy_data if pfd[4] == best_team_id)
+            }
+
+    # Top 25 players by points
+    top_players = sorted(player_points, key=lambda x: x['total_points'], reverse=True)[:25]
+
+    return {
+        "best_batsman": best_batsman,
+        "best_bowler": best_bowler,
+        "best_fielder": best_fielder,
+        "best_team": best_team,
+        "top_players": top_players
+    }
 
 # Weekly update endpoints
 @app.post("/api/leagues/{league_id}/admin/trigger-weekly-update")

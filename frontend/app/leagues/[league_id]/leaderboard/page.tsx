@@ -352,10 +352,10 @@ export default function LeaderboardPage() {
               </div>
             )}
 
-            {/* Top 10 Players */}
+            {/* Top 25 Players */}
             {stats.top_players.length > 0 && (
               <div className="mt-6">
-                <h2 className="text-2xl font-bold text-white mb-4">Top 10 Players by Points</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">Top 25 Players by Points</h2>
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full">

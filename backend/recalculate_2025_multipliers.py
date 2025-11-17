@@ -131,7 +131,7 @@ def calculate_multiplier(
 
 def load_2025_roster():
     """Load the 2025 ACC roster data"""
-    roster_file = 'rosters/acc_2025_complete.json'
+    roster_file = 'rosters/acc_legacy_database.json'
 
     print(f"📂 Loading 2025 ACC roster from: {roster_file}")
     with open(roster_file, 'r') as f:
@@ -308,7 +308,7 @@ def main():
     print("🎯 RECALCULATING ACC PLAYER MULTIPLIERS FROM 2025 SEASON")
     print("=" * 70)
     print(f"Using rules from: rules-set-1.py")
-    print(f"Season data: rosters/acc_2025_complete.json")
+    print(f"Season data: rosters/acc_legacy_database.json")
     print(f"Database: {DB_HOST}")
     print()
 

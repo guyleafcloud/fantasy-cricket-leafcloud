@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
 import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const turnstileRef = useRef<any>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -37,6 +38,11 @@ export default function RegisterPage() {
       router.push('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Registration failed. Please try again.');
+      // Reset Turnstile widget to get a new token
+      setTurnstileToken('');
+      if (turnstileRef.current) {
+        turnstileRef.current.reset();
+      }
     } finally {
       setLoading(false);
     }
@@ -113,6 +119,7 @@ export default function RegisterPage() {
           {/* Cloudflare Turnstile */}
           <div className="flex justify-center">
             <Turnstile
+              ref={turnstileRef}
               siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
               onSuccess={(token) => setTurnstileToken(token)}
               onError={() => setError('Security verification failed. Please try again.')}

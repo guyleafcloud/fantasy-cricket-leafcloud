@@ -26,7 +26,7 @@ export default function RosterPage() {
     multiplier: 1.0
   });
 
-  const CLUB_ID = 'a7a580a7-7d3f-476c-82ea-afa6ae7ee276'; // ACC club ID
+  const CLUB_ID = '625f1c55-6d5b-40a9-be1d-8f7abe6fa00e'; // ACC club ID
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');

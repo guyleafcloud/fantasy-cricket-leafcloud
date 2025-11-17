@@ -218,7 +218,7 @@ class PlayerPriceHistory(Base):
     changed_by = Column(String(50), nullable=True)  # Admin user ID if manual
 
     # Relationships
-    player = relationship("Player", back_populates="price_history")
+    player = relationship("Player")
 
     # Indexes
     __table_args__ = (

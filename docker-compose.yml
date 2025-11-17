@@ -76,9 +76,11 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: https://api.fantcric.fun
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY}
     container_name: fantasy_cricket_frontend
     environment:
       NEXT_PUBLIC_API_URL: https://api.fantcric.fun
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY}
       NODE_ENV: production
     networks:
       - cricket_network

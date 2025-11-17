@@ -1,8 +1,10 @@
 FROM node:20-alpine AS base
 
-# Accept API URL as build argument
+# Accept build arguments
 ARG NEXT_PUBLIC_API_URL=https://api.fantcric.fun
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
 
 WORKDIR /app
 

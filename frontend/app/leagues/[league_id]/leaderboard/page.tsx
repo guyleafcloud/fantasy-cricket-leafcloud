@@ -5,10 +5,21 @@ import { useParams, useRouter } from 'next/navigation';
 
 interface LeaderboardEntry {
   rank: number;
+  team_id: string;
   team_name: string;
   owner_name: string;
   total_points: number;
   weekly_points: number;
+}
+
+interface TeamPlayer {
+  id: string;
+  name: string;
+  club_name: string;
+  total_points: number;
+  is_captain: boolean;
+  is_vice_captain: boolean;
+  is_wicket_keeper: boolean;
 }
 
 interface LeagueStats {
@@ -52,6 +63,9 @@ export default function LeaderboardPage() {
   const [stats, setStats] = useState<LeagueStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<LeaderboardEntry | null>(null);
+  const [teamPlayers, setTeamPlayers] = useState<TeamPlayer[]>([]);
+  const [loadingTeam, setLoadingTeam] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,6 +105,31 @@ export default function LeaderboardPage() {
       fetchData();
     }
   }, [league_id]);
+
+  const fetchTeamDetails = async (team: LeaderboardEntry) => {
+    setSelectedTeam(team);
+    setLoadingTeam(true);
+    try {
+      const token = localStorage.getItem('admin_token');
+      const response = await fetch(`/api/leagues/${league_id}/teams/${team.team_id}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setTeamPlayers(data.players || []);
+      }
+    } catch (err) {
+      console.error('Error fetching team details:', err);
+    } finally {
+      setLoadingTeam(false);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedTeam(null);
+    setTeamPlayers([]);
+  };
 
   if (loading) {
     return (
@@ -184,9 +223,12 @@ export default function LeaderboardPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        <button
+                          onClick={() => fetchTeamDetails(entry)}
+                          className="text-sm font-medium text-cricket-green hover:text-green-700 underline cursor-pointer"
+                        >
                           {entry.team_name}
-                        </div>
+                        </button>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-700 dark:text-gray-300">{entry.owner_name}</div>
@@ -393,6 +435,107 @@ export default function LeaderboardPage() {
               </div>
             )}
           </>
+        )}
+
+        {/* Team Details Modal */}
+        {selectedTeam && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={closeModal}>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+              {/* Modal Header */}
+              <div className="bg-cricket-green text-white px-6 py-4 flex justify-between items-center">
+                <div>
+                  <h2 className="text-2xl font-bold">{selectedTeam.team_name}</h2>
+                  <p className="text-sm opacity-90">Owner: {selectedTeam.owner_name}</p>
+                </div>
+                <button
+                  onClick={closeModal}
+                  className="text-white hover:text-gray-200 text-3xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                {loadingTeam ? (
+                  <div className="text-center py-8">
+                    <div className="text-gray-600 dark:text-gray-400">Loading team details...</div>
+                  </div>
+                ) : teamPlayers.length === 0 ? (
+                  <div className="text-center py-8">
+                    <div className="text-gray-600 dark:text-gray-400">No players found</div>
+                  </div>
+                ) : (
+                  <>
+                    {/* Team Summary */}
+                    <div className="mb-6 grid grid-cols-2 gap-4">
+                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Total Points</div>
+                        <div className="text-2xl font-bold text-cricket-green">
+                          {selectedTeam.total_points.toLocaleString()}
+                        </div>
+                      </div>
+                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Squad Size</div>
+                        <div className="text-2xl font-bold text-cricket-green">
+                          {teamPlayers.length} players
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Players Table */}
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-100 dark:bg-gray-700">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Player</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">IRL Team</th>
+                            <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300">Points</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                          {teamPlayers.map((player) => (
+                            <tr key={player.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                              <td className="px-4 py-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                    {player.name}
+                                  </span>
+                                  {player.is_captain && (
+                                    <span className="text-xs bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded font-semibold">
+                                      C
+                                    </span>
+                                  )}
+                                  {player.is_vice_captain && (
+                                    <span className="text-xs bg-gray-400 text-gray-900 px-2 py-0.5 rounded font-semibold">
+                                      VC
+                                    </span>
+                                  )}
+                                  {player.is_wicket_keeper && (
+                                    <span className="text-xs bg-blue-400 text-blue-900 px-2 py-0.5 rounded font-semibold">
+                                      WK
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                {player.club_name}
+                              </td>
+                              <td className="px-4 py-3 text-right">
+                                <span className="text-lg font-bold text-cricket-green">
+                                  {player.total_points.toFixed(0)}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

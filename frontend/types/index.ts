@@ -56,6 +56,7 @@ export interface Season {
 export interface LoginRequest {
   email: string;
   password: string;
+  turnstile_token?: string;
 }
 
 export interface LoginResponse {

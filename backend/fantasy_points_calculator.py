@@ -74,6 +74,12 @@ class FantasyPointsCalculator:
         self.POINTS_PER_RUN_OUT = self.rules['fielding']['points_per_runout']
         self.POINTS_PER_STUMPING = self.rules['fielding']['points_per_stumping']
 
+        # Add missing constants for backward compatibility
+        # NOTE: Actual scoring uses tiered system from rules-set-1.py
+        # These are base values for the lowest tier
+        self.POINTS_PER_RUN = 1.0  # Base tier 1 value (1-30 runs)
+        self.POINTS_PER_WICKET = 15  # Base tier 1 value (1-2 wickets)
+
     def calculate_batting_points(
         self,
         runs: int,

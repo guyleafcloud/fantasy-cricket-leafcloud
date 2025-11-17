@@ -50,12 +50,11 @@ class SeasonUpdate(BaseModel):
 
 class ClubCreate(BaseModel):
     """Create a new club"""
-    season_id: str = Field(..., description="Season ID this club belongs to")
+    season_id: Optional[str] = Field(None, description="Season ID this club belongs to")
     name: str = Field(..., example="ACC")
-    full_name: str = Field(..., example="Amsterdamsche Cricket Club")
-    country: str = Field(default="Netherlands")
-    cricket_board: str = Field(default="KNCB")
-    website_url: Optional[str] = None
+    tier: str = Field(default="HOOFDKLASSE", example="HOOFDKLASSE")
+    location: Optional[str] = Field(None, example="Amsterdam")
+    founded_year: Optional[int] = Field(None, example=1921)
 
 class TeamCreate(BaseModel):
     """Create a team within a club"""
@@ -69,12 +68,6 @@ class PlayerValueUpdate(BaseModel):
     player_id: str
     new_value: float = Field(..., ge=1.0, le=100.0)
     reason: Optional[str] = None
-
-class PlayerAssignment(BaseModel):
-    """Assign player to team"""
-    player_id: str
-    team_id: str
-    position: Optional[str] = None
 
 class LeagueTemplate(BaseModel):
     """League configuration template"""
@@ -301,14 +294,13 @@ async def create_club(
     db: Session = Depends(get_db)
 ):
     """Create a new club (Admin only)"""
-    # Create club in database
+    # Create club in database with correct schema
     db_club = Club(
-        season_id=club.season_id,
         name=club.name,
-        full_name=club.full_name,
-        country=club.country,
-        cricket_board=club.cricket_board,
-        website_url=club.website_url
+        tier=club.tier,
+        location=club.location,
+        founded_year=club.founded_year,
+        season_id=club.season_id
     )
 
     db.add(db_club)
@@ -321,10 +313,10 @@ async def create_club(
         "club": {
             "id": db_club.id,
             "name": db_club.name,
-            "full_name": db_club.full_name,
-            "country": db_club.country,
-            "cricket_board": db_club.cricket_board,
-            "website_url": db_club.website_url
+            "tier": db_club.tier,
+            "location": db_club.location,
+            "founded_year": db_club.founded_year,
+            "season_id": db_club.season_id
         }
     }
 
@@ -422,23 +414,10 @@ async def update_team_multiplier(
 # PLAYER MANAGEMENT ENDPOINTS
 # =============================================================================
 
-@router.post("/players/assign-team")
-async def assign_player_to_team(
-    assignment: PlayerAssignment,
-    admin: dict = Depends(verify_admin)
-):
-    """Assign a player to a specific team (Admin only)"""
-    # TODO: Update player's team_id in database
-    return {
-        "message": "Player assigned to team",
-        "player_id": assignment.player_id,
-        "team_id": assignment.team_id
-    }
-
 @router.get("/clubs/{club_id}/players")
 async def get_club_players(
     club_id: str,
-    team_name: Optional[str] = None,
+    role: Optional[str] = None,
     min_multiplier: Optional[float] = None,
     max_multiplier: Optional[float] = None,
     admin: dict = Depends(verify_admin),
@@ -447,13 +426,13 @@ async def get_club_players(
     """
     Get all players for a club (Admin only)
 
-    Supports filtering by team name and multiplier range.
+    Supports filtering by role and multiplier range.
     """
     query = db.query(Player).filter_by(club_id=club_id)
 
     # Apply filters
-    if team_name:
-        query = query.join(Team).filter(Team.name == team_name)
+    if role:
+        query = query.filter(Player.role == role)
     if min_multiplier:
         query = query.filter(Player.multiplier >= min_multiplier)
     if max_multiplier:
@@ -468,14 +447,13 @@ async def get_club_players(
             {
                 "id": p.id,
                 "name": p.name,
-                "team_id": p.team_id,
-                "team_name": p.team.name if p.team else None,
-                "team_level": p.team.level if p.team else None,
+                "role": p.role,
+                "tier": p.tier,
+                "base_price": p.base_price,
+                "current_price": p.current_price,
                 "multiplier": p.multiplier,
                 "multiplier_updated_at": p.multiplier_updated_at.isoformat() if p.multiplier_updated_at else None,
-                "stats": p.stats,
-                "player_type": p.player_type,
-                "is_wicket_keeper": p.is_wicket_keeper,
+                "is_active": p.is_active,
                 "created_at": p.created_at.isoformat()
             }
             for p in players
@@ -485,10 +463,11 @@ async def get_club_players(
 class PlayerManualAdd(BaseModel):
     """Add a player manually"""
     name: str
-    team_id: str
-    player_type: Optional[str] = None
+    role: str = Field(..., description="Player role: BATSMAN, BOWLER, ALL_ROUNDER, WICKET_KEEPER")
+    tier: str = Field(default="HOOFDKLASSE", description="Cricket tier")
+    base_price: int = Field(default=100, description="Base price in credits")
+    current_price: Optional[int] = None
     multiplier: float = Field(default=1.0, ge=0.5, le=5.0, description="Performance multiplier (0.5-5.0)")
-    stats: Optional[Dict] = None
 
 @router.post("/clubs/{club_id}/players", status_code=status.HTTP_201_CREATED)
 async def add_player_manually(
@@ -509,24 +488,17 @@ async def add_player_manually(
         if not club:
             raise HTTPException(status_code=404, detail=f"Club not found: {club_id}")
 
-        # Verify team exists and belongs to club
-        team = db.query(Team).filter_by(id=player.team_id, club_id=club_id).first()
-        if not team:
-            raise HTTPException(status_code=404, detail=f"Team not found or doesn't belong to this club")
-
         # Create player
         new_player = Player(
             club_id=club_id,
-            team_id=player.team_id,
             name=player.name,
-            player_type=player.player_type,
+            role=player.role,
+            tier=player.tier,
+            base_price=player.base_price,
+            current_price=player.current_price or player.base_price,
             multiplier=player.multiplier,
             multiplier_updated_at=datetime.utcnow(),
-            stats=player.stats or {},
-            fantasy_value=25.0,  # Deprecated field
-            value_calculation_date=datetime.utcnow(),
-            value_manually_adjusted=True,
-            created_by=admin["user_id"]
+            is_active=True
         )
 
         db.add(new_player)
@@ -538,10 +510,11 @@ async def add_player_manually(
             "player": {
                 "id": new_player.id,
                 "name": new_player.name,
-                "team_name": new_player.team.name,
-                "multiplier": new_player.multiplier,
-                "player_type": new_player.player_type,
-                "stats": new_player.stats
+                "role": new_player.role,
+                "tier": new_player.tier,
+                "base_price": new_player.base_price,
+                "current_price": new_player.current_price,
+                "multiplier": new_player.multiplier
             }
         }
 
@@ -595,11 +568,12 @@ async def update_player_value(
 class PlayerUpdate(BaseModel):
     """Update player details"""
     name: Optional[str] = None
-    team_id: Optional[str] = None
-    player_type: Optional[str] = None
-    is_wicket_keeper: Optional[bool] = None
+    role: Optional[str] = Field(None, description="Player role: BATSMAN, BOWLER, ALL_ROUNDER, WICKET_KEEPER")
+    tier: Optional[str] = Field(None, description="Cricket tier")
+    base_price: Optional[int] = None
+    current_price: Optional[int] = None
     multiplier: Optional[float] = Field(None, ge=0.5, le=5.0, description="Performance multiplier (0.5-5.0)")
-    stats: Optional[Dict] = None
+    is_active: Optional[bool] = None
 
 @router.put("/players/{player_id}")
 async def update_player(
@@ -611,7 +585,7 @@ async def update_player(
     """
     Update player details (Admin only)
 
-    Allows editing player name, team assignment, player type, multiplier, and stats.
+    Allows editing player name, role, tier, pricing, multiplier, and active status.
     """
     try:
         # Get player
@@ -623,27 +597,24 @@ async def update_player(
         if update.name is not None:
             player.name = update.name
 
-        if update.team_id is not None:
-            # Verify team exists and belongs to same club
-            team = db.query(Team).filter_by(id=update.team_id, club_id=player.club_id).first()
-            if not team:
-                raise HTTPException(status_code=404, detail=f"Team not found or doesn't belong to this club")
-            player.team_id = update.team_id
+        if update.role is not None:
+            player.role = update.role
 
-        if update.player_type is not None:
-            player.player_type = update.player_type
+        if update.tier is not None:
+            player.tier = update.tier
 
-        if update.is_wicket_keeper is not None:
-            player.is_wicket_keeper = update.is_wicket_keeper
+        if update.base_price is not None:
+            player.base_price = update.base_price
+
+        if update.current_price is not None:
+            player.current_price = update.current_price
 
         if update.multiplier is not None:
             player.multiplier = update.multiplier
             player.multiplier_updated_at = datetime.utcnow()
 
-        if update.stats is not None:
-            player.stats = update.stats
-
-        player.updated_at = datetime.utcnow()
+        if update.is_active is not None:
+            player.is_active = update.is_active
 
         db.commit()
         db.refresh(player)
@@ -653,13 +624,13 @@ async def update_player(
             "player": {
                 "id": player.id,
                 "name": player.name,
-                "team_id": player.team_id,
-                "team_name": player.team.name if player.team else None,
-                "player_type": player.player_type,
-                "is_wicket_keeper": player.is_wicket_keeper,
+                "role": player.role,
+                "tier": player.tier,
+                "base_price": player.base_price,
+                "current_price": player.current_price,
                 "multiplier": player.multiplier,
                 "multiplier_updated_at": player.multiplier_updated_at.isoformat() if player.multiplier_updated_at else None,
-                "stats": player.stats
+                "is_active": player.is_active
             }
         }
 

@@ -456,12 +456,17 @@ async def get_available_players(
                 "id": player.id,
                 "name": player.name,
                 "club_name": player.club.name if player.club else "Unknown",
-                "team_name": player.team.name if player.team else "Unassigned",
-                "player_type": player.player_type,
-                "is_wicket_keeper": player.is_wicket_keeper,
-                "fantasy_value": player.fantasy_value,
-                "multiplier": player.multiplier,
-                "stats": player.stats
+                "team_name": player.rl_team if player.rl_team else "Unassigned",
+                "player_type": player.role if player.role else "Unknown",
+                "is_wicket_keeper": player.role == "WICKET_KEEPER" if player.role else False,
+                "fantasy_value": player.current_price if player.current_price else 0,
+                "multiplier": player.multiplier if player.multiplier else 1.0,
+                "stats": {
+                    "matches": player.matches_played or 0,
+                    "runs": player.runs_scored or 0,
+                    "wickets": player.wickets_taken or 0,
+                    "catches": player.catches or 0
+                }
             })
 
     return {

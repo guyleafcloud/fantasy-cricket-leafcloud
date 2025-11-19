@@ -442,7 +442,8 @@ async def get_league_stats(
     player_stats_agg = {}
 
     # Query player_performances table directly with raw SQL
-    # Note: matches table doesn't have league_id, but has season_id + club_id
+    # For simulated data: use league_id directly (no matches table)
+    # For real data: would join with matches table
     perf_query = text("""
         SELECT pp.player_id,
                SUM(pp.runs) as total_runs,
@@ -452,25 +453,25 @@ async def get_league_stats(
                SUM(pp.overs_bowled) as total_overs,
                SUM(pp.runs_conceded) as total_runs_conceded
         FROM player_performances pp
-        JOIN matches m ON pp.match_id = m.id
-        WHERE m.season_id = :season_id AND m.club_id = :club_id
+        WHERE pp.league_id = :league_id
         GROUP BY pp.player_id
     """)
 
-    perf_results = db.execute(perf_query, {
-        'season_id': league.season_id,
-        'club_id': league.club_id
-    })
+    try:
+        perf_results = db.execute(perf_query, {'league_id': league_id})
 
-    for row in perf_results:
-        player_stats_agg[row.player_id] = {
-            'runs': row.total_runs or 0,
-            'wickets': row.total_wickets or 0,
-            'catches': row.total_catches or 0,
-            'balls_faced': row.total_balls or 0,
-            'overs': row.total_overs or 0,
-            'runs_conceded': row.total_runs_conceded or 0
-        }
+        for row in perf_results:
+            player_stats_agg[row.player_id] = {
+                'runs': row.total_runs or 0,
+                'wickets': row.total_wickets or 0,
+                'catches': row.total_catches or 0,
+                'balls_faced': row.total_balls or 0,
+                'overs': row.total_overs or 0,
+                'runs_conceded': row.total_runs_conceded or 0
+            }
+    except Exception as e:
+        logger.warning(f"Could not query player_performances: {e}")
+        # Continue without performance stats
 
     # Calculate top performers
     best_batsman = None
@@ -481,7 +482,7 @@ async def get_league_stats(
     max_catches = 0
 
     rl_team_points = {}  # rl_team string -> total points
-    player_points = []  # list of player fantasy points
+    player_points_dict = {}  # player_id -> {player_name, rl_team, total_points}
 
     for pfd in player_fantasy_data:
         player_id, total_points, fantasy_team_id, player_name, rl_team = pfd
@@ -528,12 +529,16 @@ async def get_league_stats(
                 'catches': catches
             }
 
-        # Add to player points list
-        player_points.append({
-            'player_name': player_name,
-            'team_name': rl_team if rl_team else 'Unknown',
-            'total_points': total_points or 0
-        })
+        # Aggregate player points (avoid duplicates)
+        if player_id not in player_points_dict:
+            player_points_dict[player_id] = {
+                'player_name': player_name,
+                'team_name': rl_team if rl_team else 'Unknown',
+                'total_points': total_points or 0
+            }
+        else:
+            # Player is in multiple fantasy teams - sum their points
+            player_points_dict[player_id]['total_points'] += (total_points or 0)
 
         # Aggregate by RL team
         if rl_team:
@@ -551,8 +556,9 @@ async def get_league_stats(
             'player_count': sum(1 for pfd in player_fantasy_data if pfd[4] == best_rl_team)
         }
 
-    # Top 25 players by points
-    top_players = sorted(player_points, key=lambda x: x['total_points'], reverse=True)[:25]
+    # Top 25 players by points (deduplicated)
+    player_points_list = list(player_points_dict.values())
+    top_players = sorted(player_points_list, key=lambda x: x['total_points'], reverse=True)[:25]
 
     return {
         "best_batsman": best_batsman,

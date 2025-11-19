@@ -85,14 +85,14 @@ def get_team_players(team_id):
                 p.id as player_id,
                 p.name as player_name,
                 p.multiplier,
-                t.name as club,
+                COALESCE(p.rl_team, c.name) as club,
                 ftp.is_captain,
                 ftp.is_vice_captain,
                 ftp.is_wicket_keeper as is_wicketkeeper,
                 ftp.position
             FROM fantasy_team_players ftp
             JOIN players p ON ftp.player_id = p.id
-            LEFT JOIN teams t ON p.team_id = t.id
+            LEFT JOIN clubs c ON p.club_id = c.id
             WHERE ftp.fantasy_team_id = :team_id
             ORDER BY ftp.position
         """)
@@ -126,24 +126,25 @@ async def simulate_weekly_matches():
 
     session = Session()
     try:
-        # Get actual club names and their players from database
+        # Get actual team names (using rl_team) and their players from database
         query = text("""
-            SELECT t.id as team_id, t.name as team_name,
-                   p.id as player_id, p.name as player_name, p.is_wicket_keeper
-            FROM teams t
-            LEFT JOIN players p ON p.team_id = t.id
-            WHERE t.name IS NOT NULL
-            ORDER BY t.name, p.name
+            SELECT
+                p.rl_team as team_name,
+                p.id as player_id,
+                p.name as player_name,
+                FALSE as is_wicket_keeper
+            FROM players p
+            WHERE p.rl_team IS NOT NULL
+            ORDER BY p.rl_team, p.name
         """)
         result = session.execute(query)
 
-        # Organize players by team
+        # Organize players by team (using rl_team)
         teams_data = {}
         for row in result:
             team_name = row.team_name
             if team_name not in teams_data:
                 teams_data[team_name] = {
-                    'team_id': row.team_id,
                     'players': []
                 }
             if row.player_id:  # Only add if player exists
@@ -452,15 +453,15 @@ def store_all_player_performances(weekly_performances, league_id, round_number=1
             # Insert performance (NOT associated with any fantasy team)
             insert_query = text("""
                 INSERT INTO player_performances (
-                    id, player_id, fantasy_team_id, league_id, round_number,
+                    id, match_id, player_id, fantasy_team_id, league_id, round_number,
                     runs, balls_faced, is_out,
-                    wickets, overs, runs_conceded, maidens,
-                    catches, stumpings, runouts,
+                    wickets, overs_bowled, runs_conceded, maidens,
+                    catches, stumpings, run_outs,
                     base_fantasy_points, multiplier_applied, captain_multiplier, final_fantasy_points,
                     is_captain, is_vice_captain, is_wicket_keeper,
                     match_date, created_at, updated_at
                 ) VALUES (
-                    :id, :player_id, NULL, :league_id, :round_number,
+                    :id, :match_id, :player_id, NULL, :league_id, :round_number,
                     :runs, :balls_faced, :is_out,
                     :wickets, :overs, :runs_conceded, :maidens,
                     :catches, :stumpings, :runouts,
@@ -469,17 +470,18 @@ def store_all_player_performances(weekly_performances, league_id, round_number=1
                     NOW(), NOW(), NOW()
                 )
                 ON CONFLICT (player_id, league_id, round_number)
+                WHERE league_id IS NOT NULL AND round_number IS NOT NULL
                 DO UPDATE SET
                     runs = EXCLUDED.runs,
                     balls_faced = EXCLUDED.balls_faced,
                     is_out = EXCLUDED.is_out,
                     wickets = EXCLUDED.wickets,
-                    overs = EXCLUDED.overs,
+                    overs_bowled = EXCLUDED.overs_bowled,
                     runs_conceded = EXCLUDED.runs_conceded,
                     maidens = EXCLUDED.maidens,
                     catches = EXCLUDED.catches,
                     stumpings = EXCLUDED.stumpings,
-                    runouts = EXCLUDED.runouts,
+                    run_outs = EXCLUDED.run_outs,
                     base_fantasy_points = EXCLUDED.base_fantasy_points,
                     multiplier_applied = EXCLUDED.multiplier_applied,
                     final_fantasy_points = EXCLUDED.final_fantasy_points,
@@ -488,6 +490,7 @@ def store_all_player_performances(weekly_performances, league_id, round_number=1
 
             session.execute(insert_query, {
                 'id': str(uuid.uuid4()),
+                'match_id': None,  # NULL for simulated matches
                 'player_id': player_id,
                 'league_id': league_id,
                 'round_number': round_number,

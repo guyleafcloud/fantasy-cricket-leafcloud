@@ -105,7 +105,9 @@ A fantasy cricket game for ACC (Amsterdam Cricket Club) where users create fanta
 - Squad size (typically 11 players)
 - Minimum batsmen (usually 3-4)
 - Minimum bowlers (usually 3-4)
-- Max players per real-life team (optional, disabled in production)
+- Required wicketkeeper (at least 1)
+- Max players per real-life team (e.g., max 2 from ACC 1)
+- Require players from each RL team (if enabled, need at least 1 from each of the 10 ACC teams)
 - No budget constraints - select any players within role requirements
 
 ### Data Integrity

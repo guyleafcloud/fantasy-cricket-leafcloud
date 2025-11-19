@@ -108,25 +108,19 @@ def validate_league_rules(
             batsmen_count += 1
             bowlers_count += 1
 
-    # Count players per team (disabled - team_id not available in production schema)
-    # team_counts = Counter()
-    # unique_teams = set()
-    # for player in proposed_squad:
-    #     if player.team_id:
-    #         team_counts[player.team_id] += 1
-    #         unique_teams.add(player.team_id)
+    # Count players per RL team using rl_team string field
+    team_counts = Counter()
+    unique_teams = set()
+    for player in proposed_squad:
+        if player.rl_team:
+            team_counts[player.rl_team] += 1
+            unique_teams.add(player.rl_team)
 
-    # Validate max_players_per_team (disabled - team_id not available)
-    # if league.max_players_per_team:
-    #     for team_id, count in team_counts.items():
-    #         if count > league.max_players_per_team:
-    #             # Get team name for better error message
-    #             if db:
-    #                 team = db.query(Team).filter_by(id=team_id).first()
-    #                 team_name = team.name if team else "a team"
-    #             else:
-    #                 team_name = "a team"
-    #             return False, f"Cannot have more than {league.max_players_per_team} players from {team_name}"
+    # Validate max_players_per_team
+    if league.max_players_per_team:
+        for rl_team, count in team_counts.items():
+            if count > league.max_players_per_team:
+                return False, f"Cannot have more than {league.max_players_per_team} players from {rl_team}"
 
     # For adding a player (not finalizing), we need to check if we're moving towards the rule, not enforce it strictly
     is_adding_player = player_to_add is not None and len(proposed_squad) < league.squad_size
@@ -141,14 +135,23 @@ def validate_league_rules(
         if not is_adding_player and bowlers_count < league.min_bowlers:
             return False, f"Team must have at least {league.min_bowlers} bowlers (currently {bowlers_count})"
 
-    # Validate require_from_each_team (disabled - team_id not available in production schema)
-    # if league.require_from_each_team and league.min_players_per_team:
-    #     if not is_adding_player:
-    #         # Get total number of teams in the club
-    #         if db:
-    #             total_teams = db.query(Team).filter_by(club_id=league.club_id).count()
-    #             if len(unique_teams) < total_teams:
-    #                 return False, f"Team must have players from all {total_teams} teams (currently have players from {len(unique_teams)} teams)"
+    # Validate require_from_each_team using rl_team
+    if league.require_from_each_team and league.min_players_per_team:
+        if not is_adding_player:
+            # Get total number of distinct RL teams in the club
+            if db:
+                from sqlalchemy import func
+                total_teams = db.query(func.count(func.distinct(Player.rl_team)))\
+                    .filter(Player.club_id == league.club_id, Player.rl_team.isnot(None))\
+                    .scalar()
+
+                if len(unique_teams) < total_teams:
+                    return False, f"Team must have players from all {total_teams} RL teams (currently have players from {len(unique_teams)} teams)"
+
+                # Also check that each team has at least min_players_per_team
+                for rl_team, count in team_counts.items():
+                    if count < league.min_players_per_team:
+                        return False, f"Must have at least {league.min_players_per_team} player(s) from each RL team (only {count} from {rl_team})"
 
     return True, None
 

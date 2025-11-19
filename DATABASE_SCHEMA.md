@@ -211,7 +211,7 @@ Unique Constraint: (club_id, level)
 
 **CRITICAL**: The `teams` table exists but is **NOT directly linked to players**.
 - Players have `rl_team` (string) instead of `team_id` (FK)
-- Team-based validation rules are disabled in production
+- Team-based validation rules use the `rl_team` string field (e.g., "ACC 1", "ACC 2", "ZAMI 1")
 
 #### player_performances
 Match-by-match player statistics.

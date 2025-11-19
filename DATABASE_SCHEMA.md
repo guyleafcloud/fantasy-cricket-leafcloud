@@ -379,7 +379,7 @@ Before deploying database model changes:
 
 ### ACC Club ID (Production)
 ```
-a7a580a7-7d3f-476c-82ea-afa6ae7ee276
+625f1c55-6d5b-40a9-be1d-8f7abe6fa00e
 ```
 
 ### Total Players in Production

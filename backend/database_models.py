@@ -305,6 +305,10 @@ class FantasyTeam(Base):
     total_points = Column(Float, default=0.0)
     rank = Column(Integer, nullable=True)
 
+    # Captain and Vice-Captain
+    captain_id = Column(String(50), ForeignKey("players.id"), nullable=True)
+    vice_captain_id = Column(String(50), ForeignKey("players.id"), nullable=True)
+
     # Transfer tracking
     transfers_used = Column(Integer, default=0)  # Transfers used this season
     extra_transfers_granted = Column(Integer, default=0)  # Additional transfers from admin

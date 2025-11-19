@@ -303,6 +303,7 @@ class FantasyTeam(Base):
     # Status
     is_finalized = Column(Boolean, default=False)  # Locked in for season
     total_points = Column(Float, default=0.0)
+    last_round_points = Column(Float, default=0.0)  # Points from most recent round
     rank = Column(Integer, nullable=True)
 
     # Captain and Vice-Captain

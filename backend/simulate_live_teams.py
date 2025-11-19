@@ -396,10 +396,11 @@ def update_team_scores_in_db(all_team_scores):
             cumulative_total = team_score['cumulative_total']
             round_points = team_score['round_points']
 
-            # Update team in database with cumulative total
+            # Update team in database with cumulative total and last round points
             update_query = text("""
                 UPDATE fantasy_teams
                 SET total_points = :points,
+                    last_round_points = :round_points,
                     rank = :rank,
                     updated_at = NOW()
                 WHERE id = :team_id
@@ -407,6 +408,7 @@ def update_team_scores_in_db(all_team_scores):
 
             session.execute(update_query, {
                 'points': cumulative_total,
+                'round_points': round_points,
                 'rank': rank,
                 'team_id': team_id
             })

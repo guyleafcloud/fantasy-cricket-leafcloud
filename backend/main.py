@@ -329,7 +329,7 @@ async def get_leaderboard(
             team_name=team.team_name,
             owner_name=owner_name,
             total_points=team.total_points,
-            weekly_points=0  # Field not available in current schema
+            weekly_points=team.last_round_points  # Now using last_round_points column
         ))
 
     return result

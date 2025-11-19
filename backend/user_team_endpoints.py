@@ -553,6 +553,21 @@ async def add_player_to_team(
         is_wicket_keeper=request.is_wicket_keeper
     )
 
+    # Update team captain/vice-captain if player has those roles
+    if request.is_captain:
+        # Remove captain from any other player in this team
+        for ftp in team.players:
+            if ftp.is_captain:
+                ftp.is_captain = False
+        team.captain_id = request.player_id
+
+    if request.is_vice_captain:
+        # Remove vice-captain from any other player in this team
+        for ftp in team.players:
+            if ftp.is_vice_captain:
+                ftp.is_vice_captain = False
+        team.vice_captain_id = request.player_id
+
     db.add(team_player)
     db.commit()
     db.refresh(team_player)
@@ -593,9 +608,11 @@ async def remove_player_from_team(
     if not team_player:
         raise HTTPException(status_code=404, detail="Player not in team")
 
-    # Refund budget
-    team.budget_used -= team_player.purchase_value
-    team.budget_remaining += team_player.purchase_value
+    # Clear captain/vice-captain if this player had those roles
+    if team.captain_id == player_id:
+        team.captain_id = None
+    if team.vice_captain_id == player_id:
+        team.vice_captain_id = None
 
     # Remove player
     db.delete(team_player)
@@ -603,7 +620,6 @@ async def remove_player_from_team(
 
     return {
         "message": "Player removed from team",
-        "team_budget_remaining": team.budget_remaining,
         "squad_size": len(team.players) - 1
     }
 
@@ -647,6 +663,56 @@ async def finalize_team(
         raise HTTPException(
             status_code=400,
             detail=error_message
+        )
+
+    # Validate captain is selected
+    if not team.captain_id:
+        raise HTTPException(
+            status_code=400,
+            detail="You must select a captain before finalizing your team"
+        )
+
+    # Verify captain is in team
+    captain_in_team = any(
+        ftp.player_id == team.captain_id and ftp.is_captain
+        for ftp in team.players
+    )
+    if not captain_in_team:
+        raise HTTPException(
+            status_code=400,
+            detail="Captain must be a player in your team"
+        )
+
+    # Validate vice-captain is selected
+    if not team.vice_captain_id:
+        raise HTTPException(
+            status_code=400,
+            detail="You must select a vice-captain before finalizing your team"
+        )
+
+    # Verify vice-captain is in team and different from captain
+    if team.vice_captain_id == team.captain_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Vice-captain must be different from captain"
+        )
+
+    vice_captain_in_team = any(
+        ftp.player_id == team.vice_captain_id and ftp.is_vice_captain
+        for ftp in team.players
+    )
+    if not vice_captain_in_team:
+        raise HTTPException(
+            status_code=400,
+            detail="Vice-captain must be a player in your team"
+        )
+
+    # Validate at least one wicketkeeper is selected
+    has_wicketkeeper = any(ftp.is_wicket_keeper for ftp in team.players)
+    if not has_wicketkeeper:
+        raise HTTPException(
+            status_code=400,
+            detail="You must select at least one wicketkeeper before finalizing your team"
         )
 
     # Finalize team

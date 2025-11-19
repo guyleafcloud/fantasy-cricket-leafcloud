@@ -395,6 +395,17 @@ async def get_league_stats(
     """Get comprehensive league statistics including top performers and team stats"""
     from sqlalchemy import func, desc
 
+    # Get league info to find season_id and club_id for matching performances
+    league = db.query(League).filter(League.id == league_id).first()
+    if not league:
+        return {
+            "best_batsman": None,
+            "best_bowler": None,
+            "best_fielder": None,
+            "best_team": None,
+            "top_players": []
+        }
+
     # Get all fantasy teams in this league
     fantasy_teams = db.query(FantasyTeam).filter(
         FantasyTeam.league_id == league_id
@@ -431,6 +442,7 @@ async def get_league_stats(
     player_stats_agg = {}
 
     # Query player_performances table directly with raw SQL
+    # Note: matches table doesn't have league_id, but has season_id + club_id
     perf_query = text("""
         SELECT pp.player_id,
                SUM(pp.runs) as total_runs,
@@ -441,11 +453,14 @@ async def get_league_stats(
                SUM(pp.runs_conceded) as total_runs_conceded
         FROM player_performances pp
         JOIN matches m ON pp.match_id = m.id
-        WHERE m.league_id = :league_id
+        WHERE m.season_id = :season_id AND m.club_id = :club_id
         GROUP BY pp.player_id
     """)
 
-    perf_results = db.execute(perf_query, {'league_id': league_id})
+    perf_results = db.execute(perf_query, {
+        'season_id': league.season_id,
+        'club_id': league.club_id
+    })
 
     for row in perf_results:
         player_stats_agg[row.player_id] = {

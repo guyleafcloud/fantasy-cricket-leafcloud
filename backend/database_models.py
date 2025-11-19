@@ -165,10 +165,6 @@ class Player(Base):
     # Pricing
     base_price = Column(Integer, nullable=False)
     current_price = Column(Integer, nullable=False)
-    fantasy_value = Column(Float, nullable=True)
-    value_calculation_date = Column(DateTime, nullable=True)
-    value_manually_adjusted = Column(Boolean, default=False)
-    value_adjustment_reason = Column(String, nullable=True)
 
     # Performance multiplier (lower = better historical performance)
     multiplier = Column(Float, default=1.0, nullable=True)

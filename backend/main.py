@@ -353,30 +353,27 @@ async def get_league_team_details(
         raise HTTPException(status_code=404, detail="Team not found or not finalized")
 
     # Get all players in the team with their details
-    from database_models import FantasyTeamPlayer, Player, Team
+    from database_models import FantasyTeamPlayer, Player
 
     players_query = db.query(
         FantasyTeamPlayer,
-        Player,
-        Team.name.label('team_name')
+        Player
     ).join(
         Player, FantasyTeamPlayer.player_id == Player.id
-    ).outerjoin(
-        Team, Player.team_id == Team.id
     ).filter(
         FantasyTeamPlayer.fantasy_team_id == team_id
     ).all()
 
     players = []
-    for ftp, player, team_name in players_query:
+    for ftp, player in players_query:
         players.append({
             'id': str(player.id),
             'name': player.name,
-            'club_name': team_name or 'Unknown',
+            'club_name': player.rl_team or 'Unknown',  # Use rl_team field
             'total_points': ftp.total_points or 0,
             'is_captain': ftp.is_captain,
             'is_vice_captain': ftp.is_vice_captain,
-            'is_wicket_keeper': player.is_wicket_keeper
+            'is_wicket_keeper': ftp.is_wicket_keeper  # Use ftp.is_wicket_keeper
         })
 
     return {

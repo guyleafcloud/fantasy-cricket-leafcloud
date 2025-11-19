@@ -99,11 +99,11 @@ def validate_league_rules(
     bowlers_count = 0
 
     for player in proposed_squad:
-        if player.role == 'batsman':
+        if player.role == 'BATSMAN':
             batsmen_count += 1
-        elif player.role == 'bowler':
+        elif player.role == 'BOWLER':
             bowlers_count += 1
-        elif player.role == 'all-rounder':
+        elif player.role == 'ALL_ROUNDER':
             # All-rounders count as both batsman and bowler
             batsmen_count += 1
             bowlers_count += 1

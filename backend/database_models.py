@@ -492,6 +492,22 @@ class PlayerPerformance(Base):
     # Fantasy points
     fantasy_points = Column(Float, default=0.0)
     points_breakdown = Column(JSON, nullable=True)  # Detailed breakdown of how points were earned
+
+    # Extended fantasy points tracking (for simulate_live_teams.py)
+    base_fantasy_points = Column(Float, default=0.0)  # Points before multipliers
+    multiplier_applied = Column(Float, default=1.0)  # Player handicap multiplier (0.69-5.0)
+    captain_multiplier = Column(Float, default=1.0)  # Captain/VC multiplier (1.0/1.5/2.0)
+    final_fantasy_points = Column(Float, default=0.0)  # After all multipliers
+
+    # Fantasy team context (when performance is part of a fantasy team)
+    fantasy_team_id = Column(String(50), ForeignKey("fantasy_teams.id"), nullable=True)
+    league_id = Column(String(50), ForeignKey("leagues.id"), nullable=True)
+    round_number = Column(Integer, nullable=True)  # Which round/week this performance occurred
+
+    # Player roles in fantasy team
+    is_captain = Column(Boolean, default=False)
+    is_vice_captain = Column(Boolean, default=False)
+    is_wicket_keeper = Column(Boolean, default=False)
     """
     points_breakdown JSON structure:
     {
@@ -525,6 +541,8 @@ class PlayerPerformance(Base):
     # Relationships
     match = relationship("Match", back_populates="player_performances")
     player = relationship("Player")
+    fantasy_team = relationship("FantasyTeam", foreign_keys=[fantasy_team_id])
+    league = relationship("League", foreign_keys=[league_id])
 
     # Indexes and constraints
     __table_args__ = (
@@ -532,6 +550,12 @@ class PlayerPerformance(Base):
         Index('idx_perf_match', 'match_id'),
         Index('idx_perf_player', 'player_id'),
         Index('idx_perf_points', 'fantasy_points'),
+        Index('idx_perf_fantasy_team', 'fantasy_team_id'),
+        Index('idx_perf_league', 'league_id'),
+        Index('idx_perf_round', 'round_number'),
+        Index('idx_perf_league_round', 'league_id', 'round_number'),  # For weekly queries
+        # Note: simulate_live_teams.py uses ON CONFLICT (player_id, league_id, round_number)
+        # But we keep match_id+player_id as primary uniqueness for real scraped data
     )
 
 

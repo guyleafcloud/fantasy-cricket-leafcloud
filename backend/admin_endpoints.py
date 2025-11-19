@@ -1149,24 +1149,52 @@ async def delete_league(
     db: Session = Depends(get_db)
 ):
     """Admin endpoint to delete a league and all associated fantasy teams"""
-    
+
     league = db.query(League).filter(League.id == league_id).first()
-    
+
     if not league:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="League not found"
         )
-    
+
     # Count fantasy teams that will be deleted
     team_count = db.query(FantasyTeam).filter(FantasyTeam.league_id == league_id).count()
-    
+
     # Delete the league (cascade will delete fantasy teams)
     db.delete(league)
     db.commit()
-    
+
     return {
         "message": f"League '{league.name}' deleted successfully",
         "league_id": league_id,
         "fantasy_teams_deleted": team_count
+    }
+
+
+@router.delete("/teams/{team_id}")
+async def delete_team(
+    team_id: str,
+    admin_data: dict = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    """Admin endpoint to delete a fantasy team"""
+
+    team = db.query(FantasyTeam).filter(FantasyTeam.id == team_id).first()
+
+    if not team:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Fantasy team not found"
+        )
+
+    team_name = team.team_name
+
+    # Delete the team (cascade will delete team players)
+    db.delete(team)
+    db.commit()
+
+    return {
+        "message": f"Fantasy team '{team_name}' deleted successfully",
+        "team_id": team_id
     }

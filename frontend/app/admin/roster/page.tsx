@@ -26,7 +26,7 @@ export default function RosterPage() {
     multiplier: 1.0
   });
 
-  const CLUB_ID = '625f1c55-6d5b-40a9-be1d-8f7abe6fa00e'; // ACC club ID
+  const CLUB_ID = 'a7a580a7-7d3f-476c-82ea-afa6ae7ee276'; // ACC club ID
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -231,13 +231,13 @@ export default function RosterPage() {
             <div className="flex space-x-4">
               <button
                 onClick={() => {
-                  if (confirm(`Confirm ACC roster with ${players.length} players and proceed to create leagues?`)) {
-                    router.push('/admin/leagues');
+                  if (confirm(`Confirm ACC roster with ${players.length} players and return to dashboard?`)) {
+                    router.push('/admin');
                   }
                 }}
                 className="px-6 py-2 bg-cricket-green text-white rounded-md text-sm font-medium hover:bg-green-800 shadow-md"
               >
-                ✓ Confirm Roster & Create Leagues
+                ✓ Confirm Roster
               </button>
               <button
                 onClick={() => router.push('/admin')}

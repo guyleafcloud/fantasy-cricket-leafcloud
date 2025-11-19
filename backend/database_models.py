@@ -134,7 +134,6 @@ class Team(Base):
 
     # Relationships
     club = relationship("Club", back_populates="teams")
-    players = relationship("Player", back_populates="team", foreign_keys="[Player.team_id]")
 
     # Unique constraint: one team level per club
     __table_args__ = (
@@ -156,12 +155,11 @@ class Player(Base):
     id = Column(String(50), primary_key=True, default=generate_uuid)
     name = Column(String(200), nullable=False)
     club_id = Column(String(50), ForeignKey("clubs.id"), nullable=False)
-    team_id = Column(String(50), ForeignKey("teams.id"), nullable=True)
 
     # Real-life team assignment (e.g., "ACC 1", "ACC ZAMI", "U17")
     rl_team = Column(String(50), nullable=True)
 
-    player_type = Column(String(50), nullable=True)  # batsman, bowler, all-rounder, wicket-keeper
+    role = Column(String(50), nullable=False)  # BATSMAN, BOWLER, ALL_ROUNDER, WICKET_KEEPER
     tier = Column(String(50), nullable=False)  # HOOFDKLASSE, etc. (only used for web scraping)
 
     # Pricing
@@ -196,14 +194,11 @@ class Player(Base):
 
     # Relationships
     club = relationship("Club", back_populates="players")
-    team = relationship("Team", foreign_keys=[team_id])
     fantasy_team_players = relationship("FantasyTeamPlayer", back_populates="player", cascade="all, delete-orphan")
 
     # Indexes
     __table_args__ = (
         Index('idx_player_club', 'club_id'),
-        Index('idx_player_team', 'team_id'),
-        Index('idx_player_value', 'fantasy_value'),
     )
 
 

@@ -99,34 +99,34 @@ def validate_league_rules(
     bowlers_count = 0
 
     for player in proposed_squad:
-        if player.player_type == 'batsman':
+        if player.role == 'batsman':
             batsmen_count += 1
-        elif player.player_type == 'bowler':
+        elif player.role == 'bowler':
             bowlers_count += 1
-        elif player.player_type == 'all-rounder':
+        elif player.role == 'all-rounder':
             # All-rounders count as both batsman and bowler
             batsmen_count += 1
             bowlers_count += 1
 
-    # Count players per team
-    team_counts = Counter()
-    unique_teams = set()
-    for player in proposed_squad:
-        if player.team_id:
-            team_counts[player.team_id] += 1
-            unique_teams.add(player.team_id)
+    # Count players per team (disabled - team_id not available in production schema)
+    # team_counts = Counter()
+    # unique_teams = set()
+    # for player in proposed_squad:
+    #     if player.team_id:
+    #         team_counts[player.team_id] += 1
+    #         unique_teams.add(player.team_id)
 
-    # Validate max_players_per_team
-    if league.max_players_per_team:
-        for team_id, count in team_counts.items():
-            if count > league.max_players_per_team:
-                # Get team name for better error message
-                if db:
-                    team = db.query(Team).filter_by(id=team_id).first()
-                    team_name = team.name if team else "a team"
-                else:
-                    team_name = "a team"
-                return False, f"Cannot have more than {league.max_players_per_team} players from {team_name}"
+    # Validate max_players_per_team (disabled - team_id not available)
+    # if league.max_players_per_team:
+    #     for team_id, count in team_counts.items():
+    #         if count > league.max_players_per_team:
+    #             # Get team name for better error message
+    #             if db:
+    #                 team = db.query(Team).filter_by(id=team_id).first()
+    #                 team_name = team.name if team else "a team"
+    #             else:
+    #                 team_name = "a team"
+    #             return False, f"Cannot have more than {league.max_players_per_team} players from {team_name}"
 
     # For adding a player (not finalizing), we need to check if we're moving towards the rule, not enforce it strictly
     is_adding_player = player_to_add is not None and len(proposed_squad) < league.squad_size
@@ -141,14 +141,14 @@ def validate_league_rules(
         if not is_adding_player and bowlers_count < league.min_bowlers:
             return False, f"Team must have at least {league.min_bowlers} bowlers (currently {bowlers_count})"
 
-    # Validate require_from_each_team (only enforce when squad is complete)
-    if league.require_from_each_team and league.min_players_per_team:
-        if not is_adding_player:
-            # Get total number of teams in the club
-            if db:
-                total_teams = db.query(Team).filter_by(club_id=league.club_id).count()
-                if len(unique_teams) < total_teams:
-                    return False, f"Team must have players from all {total_teams} teams (currently have players from {len(unique_teams)} teams)"
+    # Validate require_from_each_team (disabled - team_id not available in production schema)
+    # if league.require_from_each_team and league.min_players_per_team:
+    #     if not is_adding_player:
+    #         # Get total number of teams in the club
+    #         if db:
+    #             total_teams = db.query(Team).filter_by(club_id=league.club_id).count()
+    #             if len(unique_teams) < total_teams:
+    #                 return False, f"Team must have players from all {total_teams} teams (currently have players from {len(unique_teams)} teams)"
 
     return True, None
 
@@ -502,7 +502,7 @@ async def add_player_to_team(
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
 
-    logger.info(f"Player: {player.name}, Team: {player.team.name if player.team else 'None'}, Value: {player.fantasy_value}")
+    logger.info(f"Player: {player.name}, Value: {player.fantasy_value}")
 
     # Verify player is from the correct club
     if player.club_id != league.club_id:

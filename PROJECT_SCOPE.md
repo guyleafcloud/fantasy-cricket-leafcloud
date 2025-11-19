@@ -68,11 +68,10 @@ A fantasy cricket game for ACC (Amsterdam Cricket Club) where users create fanta
 ## Key Features
 
 ### Fantasy Team Building
-- Budget system (e.g., 100M currency)
 - Squad size limits (typically 11 players)
 - Role requirements (min batsmen, min bowlers)
-- Player pricing based on historical performance
-- Captain/Vice-Captain bonuses
+- Player multipliers based on historical performance (lower = better)
+- Captain/Vice-Captain bonuses (2x and 1.5x points)
 
 ### Scoring System (Rules Set 1)
 **Batting:**
@@ -103,17 +102,16 @@ A fantasy cricket game for ACC (Amsterdam Cricket Club) where users create fanta
 ## Important Constraints
 
 ### Squad Building Rules
-- Total budget (league-specific)
 - Squad size (typically 11 players)
 - Minimum batsmen (usually 3-4)
 - Minimum bowlers (usually 3-4)
 - Max players per real-life team (optional, disabled in production)
+- No budget constraints - select any players within role requirements
 
 ### Data Integrity
 - Cannot modify finalized teams
 - Cannot delete seasons with active leagues
-- Cannot exceed budget when adding players
-- Must validate squad composition before finalizing
+- Must validate squad composition before finalizing (role requirements, squad size)
 
 ## Deployment
 

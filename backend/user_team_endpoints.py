@@ -381,9 +381,7 @@ async def get_team_details(
             "club_name": player.club.name if player.club else "Unknown",
             "team_name": player.rl_team if player.rl_team else "Unassigned",
             "player_type": player.role.lower().replace('_', '-') if player.role else "unknown",
-            "current_price": player.current_price,
             "multiplier": player.multiplier,
-            "purchase_value": ftp.purchase_value,
             "is_captain": ftp.is_captain,
             "is_vice_captain": ftp.is_vice_captain,
             "is_wicket_keeper": ftp.is_wicket_keeper,
@@ -400,8 +398,6 @@ async def get_team_details(
         "total_points": team.total_points,
         "rank": team.rank,
         "is_finalized": team.is_finalized,
-        "budget_remaining": team.budget_remaining,
-        "budget_used": team.budget_used,
         "transfers_used": team.transfers_used,
         "transfers_remaining": (
             team.league.transfers_per_season
@@ -459,7 +455,6 @@ async def get_available_players(
                 "team_name": player.rl_team if player.rl_team else "Unassigned",
                 "player_type": player.role.lower().replace('_', '-') if player.role else "unknown",
                 "is_wicket_keeper": player.role == "WICKET_KEEPER" if player.role else False,
-                "fantasy_value": player.current_price if player.current_price else 0,
                 "multiplier": player.multiplier if player.multiplier else 1.0,
                 "stats": {
                     "matches": player.matches_played or 0,
@@ -471,7 +466,6 @@ async def get_available_players(
 
     return {
         "available_players": available_players,
-        "team_budget_remaining": team.budget_remaining,
         "current_squad_size": len(team.players),
         "max_squad_size": league.squad_size
     }
@@ -530,14 +524,6 @@ async def add_player_to_team(
             detail=f"Team is full (max {league.squad_size} players)"
         )
 
-    # Check budget
-    if player.current_price > team.budget_remaining:
-        logger.warning(f"Not enough budget for {player.name}. Cost: {player.current_price}, Remaining: {team.budget_remaining}")
-        raise HTTPException(
-            status_code=400,
-            detail=f"Not enough budget. Player costs {player.current_price}, you have {team.budget_remaining} remaining"
-        )
-
     # Validate league rules before adding player
     logger.info(f"Validating league rules for team {team_id}")
     is_valid, error_message = validate_league_rules(
@@ -558,15 +544,11 @@ async def add_player_to_team(
     team_player = FantasyTeamPlayer(
         fantasy_team_id=team_id,
         player_id=request.player_id,
-        purchase_value=player.current_price,
+        purchase_value=0,
         is_captain=request.is_captain,
         is_vice_captain=request.is_vice_captain,
         is_wicket_keeper=request.is_wicket_keeper
     )
-
-    # Update team budget
-    team.budget_used += player.current_price
-    team.budget_remaining -= player.current_price
 
     db.add(team_player)
     db.commit()
@@ -576,10 +558,8 @@ async def add_player_to_team(
         "message": "Player added to team",
         "player": {
             "id": player.id,
-            "name": player.name,
-            "current_price": player.current_price
+            "name": player.name
         },
-        "team_budget_remaining": team.budget_remaining,
         "squad_size": len(team.players) + 1
     }
 
@@ -774,18 +754,6 @@ async def transfer_player(
                 detail="Player is already in your team"
             )
 
-        # Calculate budget impact (internal validation only, don't expose to user)
-        budget_difference = player_in.current_price - team_player_out.purchase_value
-        print(f"DEBUG: budget_difference={budget_difference}, budget_remaining={team.budget_remaining}")
-
-        # Check if enough budget for the transfer (keep internal validation)
-        if budget_difference > team.budget_remaining:
-            print("DEBUG: Not enough budget")
-            raise HTTPException(
-                status_code=400,
-                detail="Cannot complete this transfer. Please try a different player."
-            )
-
         print("DEBUG: About to validate league rules")
         # Validate league rules after transfer
         is_valid, error_message = validate_league_rules(
@@ -811,21 +779,16 @@ async def transfer_player(
         was_vice_captain = team_player_out.is_vice_captain
 
         # Remove old player
-        team.budget_used -= team_player_out.purchase_value
-        team.budget_remaining += team_player_out.purchase_value
         db.delete(team_player_out)
 
         # Add new player with preserved roles
         team_player_in = FantasyTeamPlayer(
             fantasy_team_id=team_id,
             player_id=request.player_in_id,
-            purchase_value=player_in.current_price,
+            purchase_value=0,
             is_captain=was_captain,
             is_vice_captain=was_vice_captain
         )
-
-        team.budget_used += player_in.current_price
-        team.budget_remaining -= player_in.current_price
 
         # Increment transfers used
         team.transfers_used += 1

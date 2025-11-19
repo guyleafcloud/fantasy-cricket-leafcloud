@@ -90,8 +90,8 @@ id                 | VARCHAR      | Primary key
 team_name          | VARCHAR      | User-chosen name
 user_id            | VARCHAR      | FK to users.id
 league_id          | VARCHAR      | FK to leagues.id
-budget_used        | INTEGER      | Money spent on players
-budget_remaining   | INTEGER      | Money left to spend
+budget_used        | INTEGER      | LEGACY - not used
+budget_remaining   | INTEGER      | LEGACY - not used
 squad_size         | INTEGER      | Number of players
 captain_id         | VARCHAR      | FK to players.id (2x points)
 vice_captain_id    | VARCHAR      | FK to players.id (1.5x points)
@@ -99,6 +99,9 @@ is_finalized       | BOOLEAN      | Team locked for play
 total_points       | DOUBLE PRECISION | Cumulative score
 created_at         | TIMESTAMP    |
 updated_at         | TIMESTAMP    |
+
+**NOTE:** budget_used and budget_remaining are legacy fields kept for schema compatibility.
+The game does NOT use budgets. Players are selected based on role requirements only.
 
 Foreign Keys:
   - user_id → users.id
@@ -116,11 +119,13 @@ Column             | Type              | Notes
 id                 | VARCHAR           | Primary key
 fantasy_team_id    | VARCHAR           | FK to fantasy_teams.id
 player_id          | VARCHAR           | FK to players.id
-purchase_value     | INTEGER           | Price when added
+purchase_value     | INTEGER           | LEGACY - not used (always 0)
 is_captain         | BOOLEAN           | 2x point multiplier
 is_vice_captain    | BOOLEAN           | 1.5x point multiplier
 is_wicket_keeper   | BOOLEAN           | For catch bonuses
 joined_at          | TIMESTAMP         |
+
+**NOTE:** purchase_value is a legacy field kept for schema compatibility. Always set to 0.
 
 Unique Constraint: (fantasy_team_id, player_id)
 ```
@@ -297,12 +302,13 @@ class Player(Base):
     role = Column(String(50), nullable=False)
     tier = Column(String(50), nullable=False)
 
-    # Pricing
+    # Legacy pricing fields (NOT USED - kept for schema compatibility)
     base_price = Column(Integer, nullable=False)
     current_price = Column(Integer, nullable=False)
 
     # Note: NO fantasy_value fields in production
     # These were added in local dev but don't exist in production
+    # Note: The game does NOT use budgets or player pricing
 
     # Performance multiplier
     multiplier = Column(Float, default=1.0)

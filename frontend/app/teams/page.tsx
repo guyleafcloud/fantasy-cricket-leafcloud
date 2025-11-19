@@ -193,12 +193,6 @@ export default function MyTeamsPage() {
                           {team.players_count} / 11 players
                         </span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Budget:</span>
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">
-                          €{team.budget_remaining.toFixed(2)} left
-                        </span>
-                      </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
                           className="bg-cricket-green h-2 rounded-full"

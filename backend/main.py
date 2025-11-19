@@ -419,7 +419,7 @@ async def get_league_stats(
         FantasyTeamPlayer.total_points,
         FantasyTeamPlayer.fantasy_team_id,
         Player.name,
-        Player.team_id
+        Player.rl_team
     ).join(
         Player, Player.id == FantasyTeamPlayer.player_id
     ).filter(
@@ -464,11 +464,11 @@ async def get_league_stats(
     max_wickets = 0
     max_catches = 0
 
-    cricket_team_points = {}  # cricket team_id -> total points
+    rl_team_points = {}  # rl_team string -> total points
     player_points = []  # list of player fantasy points
 
     for pfd in player_fantasy_data:
-        player_id, total_points, fantasy_team_id, player_name, cricket_team_id = pfd
+        player_id, total_points, fantasy_team_id, player_name, rl_team = pfd
 
         # Get player stats if available
         stats = player_stats_agg.get(player_id, {})
@@ -481,7 +481,7 @@ async def get_league_stats(
             strike_rate = (runs / balls * 100) if balls > 0 else 0
             best_batsman = {
                 'player_name': player_name,
-                'team_name': db.query(Team.name).filter(Team.id == cricket_team_id).scalar() if cricket_team_id else 'Unknown',
+                'team_name': rl_team if rl_team else 'Unknown',
                 'runs': runs,
                 'average': runs,  # Simplified - would need innings count for true average
                 'strike_rate': strike_rate
@@ -496,7 +496,7 @@ async def get_league_stats(
             economy = (runs_conceded / overs) if overs > 0 else 0
             best_bowler = {
                 'player_name': player_name,
-                'team_name': db.query(Team.name).filter(Team.id == cricket_team_id).scalar() if cricket_team_id else 'Unknown',
+                'team_name': rl_team if rl_team else 'Unknown',
                 'wickets': wickets,
                 'average': runs_conceded / wickets if wickets > 0 else 0,
                 'economy': economy
@@ -508,34 +508,32 @@ async def get_league_stats(
             max_catches = catches
             best_fielder = {
                 'player_name': player_name,
-                'team_name': db.query(Team.name).filter(Team.id == cricket_team_id).scalar() if cricket_team_id else 'Unknown',
+                'team_name': rl_team if rl_team else 'Unknown',
                 'catches': catches
             }
 
         # Add to player points list
         player_points.append({
             'player_name': player_name,
-            'team_name': db.query(Team.name).filter(Team.id == cricket_team_id).scalar() if cricket_team_id else 'Unknown',
+            'team_name': rl_team if rl_team else 'Unknown',
             'total_points': total_points or 0
         })
 
-        # Aggregate by cricket team
-        if cricket_team_id:
-            if cricket_team_id not in cricket_team_points:
-                cricket_team_points[cricket_team_id] = 0
-            cricket_team_points[cricket_team_id] += (total_points or 0)
+        # Aggregate by RL team
+        if rl_team:
+            if rl_team not in rl_team_points:
+                rl_team_points[rl_team] = 0
+            rl_team_points[rl_team] += (total_points or 0)
 
-    # Find best team
+    # Find best RL team
     best_team = None
-    if cricket_team_points:
-        best_team_id = max(cricket_team_points, key=cricket_team_points.get)
-        team = db.query(Team).filter(Team.id == best_team_id).first()
-        if team:
-            best_team = {
-                'team_name': team.name,
-                'total_points': cricket_team_points[best_team_id],
-                'player_count': sum(1 for pfd in player_fantasy_data if pfd[4] == best_team_id)
-            }
+    if rl_team_points:
+        best_rl_team = max(rl_team_points, key=rl_team_points.get)
+        best_team = {
+            'team_name': best_rl_team,
+            'total_points': rl_team_points[best_rl_team],
+            'player_count': sum(1 for pfd in player_fantasy_data if pfd[4] == best_rl_team)
+        }
 
     # Top 25 players by points
     top_players = sorted(player_points, key=lambda x: x['total_points'], reverse=True)[:25]

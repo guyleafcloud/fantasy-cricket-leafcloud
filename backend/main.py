@@ -432,16 +432,17 @@ async def get_league_stats(
 
     # Query player_performances table directly with raw SQL
     perf_query = text("""
-        SELECT player_id,
-               SUM(runs) as total_runs,
-               SUM(wickets) as total_wickets,
-               SUM(catches) as total_catches,
-               SUM(balls_faced) as total_balls,
-               SUM(overs) as total_overs,
-               SUM(runs_conceded) as total_runs_conceded
-        FROM player_performances
-        WHERE league_id = :league_id
-        GROUP BY player_id
+        SELECT pp.player_id,
+               SUM(pp.runs) as total_runs,
+               SUM(pp.wickets) as total_wickets,
+               SUM(pp.catches) as total_catches,
+               SUM(pp.balls_faced) as total_balls,
+               SUM(pp.overs_bowled) as total_overs,
+               SUM(pp.runs_conceded) as total_runs_conceded
+        FROM player_performances pp
+        JOIN matches m ON pp.match_id = m.id
+        WHERE m.league_id = :league_id
+        GROUP BY pp.player_id
     """)
 
     perf_results = db.execute(perf_query, {'league_id': league_id})

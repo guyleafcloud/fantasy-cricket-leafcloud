@@ -4,21 +4,36 @@ Scraper Configuration
 =====================
 Centralized configuration for KNCB scraper with support for:
 - Production mode (real KNCB API)
-- Test mode (mock server)
+- Mock mode (test server with pre-loaded 2025 scorecards as 2026 data)
 - Environment variable overrides
 
 Usage:
     from scraper_config import get_scraper_config, ScraperMode
 
-    # Use production
+    # Use production (real KNCB API)
     config = get_scraper_config(ScraperMode.PRODUCTION)
 
-    # Use mock for testing
+    # Use mock for testing (2025 scorecards as 2026 data)
     config = get_scraper_config(ScraperMode.MOCK)
 
     # Or use environment variable
     # export SCRAPER_MODE=mock
     config = get_scraper_config()
+
+Full Season Testing on Production:
+    To run a full season test on production using mock server:
+
+    1. Pre-load scorecards:
+       python3 load_2025_scorecards_to_mock.py
+
+    2. Start services with mock server:
+       docker-compose --profile testing up -d
+
+    3. Run scraper/simulation with SCRAPER_MODE=mock:
+       docker exec fantasy_cricket_api bash -c "export SCRAPER_MODE=mock && python3 run_weekly_simulation.sh 1"
+
+    The scraper will fetch from fantasy_cricket_mock_server:5001 instead of
+    matchcentre.kncb.nl, serving pre-loaded 2025 data as 2026 data.
 """
 
 import os
@@ -72,8 +87,8 @@ CONFIGS = {
     ),
     ScraperMode.MOCK: ScraperConfig(
         mode=ScraperMode.MOCK,
-        api_url="http://localhost:5001/rv",  # Mock server inside container
-        matchcentre_url="http://localhost:5001",  # Not used in mock mode
+        api_url="http://fantasy_cricket_mock_server:5001/rv",  # Mock server service name
+        matchcentre_url="http://fantasy_cricket_mock_server:5001",  # Mock server service name
         api_id="1002",
         entity_id="134453"
     )

@@ -5,18 +5,29 @@ Mock KNCB Match Centre API Server
 Serves simulated match data in the exact format the KNCB API provides.
 This allows testing the scraper without depending on real matches.
 
+TWO MODES:
+1. RANDOM MODE: Generates random match data on-the-fly (default)
+2. PRELOADED MODE: Serves pre-fetched 2025 scorecards as 2026 data
+
 Usage:
     python3 mock_kncb_server.py
 
 The server will run on http://localhost:5001
-Configure the scraper to use this URL instead of api.resultsvault.co.uk
+Configure the scraper to use this URL instead of matchcentre.kncb.nl
+
+Environment Variables:
+    MOCK_DATA_DIR: Path to directory with pre-loaded scorecards (optional)
+                   If set, server will use PRELOADED MODE
 """
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from datetime import datetime, timedelta
 import random
 import logging
+import os
+import json
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -25,7 +36,126 @@ app = Flask(__name__)
 CORS(app)
 
 # ============================================================================
-# SIMULATED DATA GENERATION
+# CONFIGURATION
+# ============================================================================
+
+MOCK_DATA_DIR = os.environ.get('MOCK_DATA_DIR', None)
+PRELOADED_MODE = MOCK_DATA_DIR is not None and os.path.exists(MOCK_DATA_DIR)
+
+# In-memory cache for preloaded data
+preloaded_index = None
+preloaded_scorecards = {}
+
+
+# ============================================================================
+# PRELOADED DATA LOADING
+# ============================================================================
+
+def load_preloaded_index():
+    """Load the index file with all match metadata"""
+    global preloaded_index
+
+    if not PRELOADED_MODE:
+        return None
+
+    index_path = Path(MOCK_DATA_DIR) / "index.json"
+
+    if not index_path.exists():
+        logger.error(f"❌ Index file not found: {index_path}")
+        return None
+
+    try:
+        with open(index_path, 'r') as f:
+            preloaded_index = json.load(f)
+
+        logger.info(f"✅ Loaded preloaded index: {preloaded_index['total_matches']} matches")
+        logger.info(f"   Season: {preloaded_index['season_year']}")
+        logger.info(f"   Teams: {len(preloaded_index['matches_by_team'])}")
+        logger.info(f"   Weeks: {len(preloaded_index['matches_by_week'])}")
+
+        return preloaded_index
+    except Exception as e:
+        logger.error(f"❌ Failed to load index: {str(e)}")
+        return None
+
+
+def load_scorecard_by_match_id(match_id):
+    """Load a specific scorecard by match ID (lazy loading)"""
+    if not PRELOADED_MODE:
+        return None
+
+    # Check cache first
+    if match_id in preloaded_scorecards:
+        return preloaded_scorecards[match_id]
+
+    # Load from file
+    scorecard_path = Path(MOCK_DATA_DIR) / "by_match_id" / f"{match_id}.json"
+
+    if not scorecard_path.exists():
+        logger.warning(f"⚠️  Scorecard not found: {match_id}")
+        return None
+
+    try:
+        with open(scorecard_path, 'r') as f:
+            scorecard_data = json.load(f)
+
+        # Cache it
+        preloaded_scorecards[match_id] = scorecard_data
+
+        logger.info(f"📄 Loaded scorecard for match {match_id} ({scorecard_data['team']})")
+        return scorecard_data
+    except Exception as e:
+        logger.error(f"❌ Failed to load scorecard {match_id}: {str(e)}")
+        return None
+
+
+def get_scorecards_by_week(week_number):
+    """Get all scorecards for a specific week"""
+    if not PRELOADED_MODE:
+        return []
+
+    week_path = Path(MOCK_DATA_DIR) / "by_week" / f"week_{week_number:02d}.json"
+
+    if not week_path.exists():
+        logger.warning(f"⚠️  Week file not found: week {week_number}")
+        return []
+
+    try:
+        with open(week_path, 'r') as f:
+            week_data = json.load(f)
+
+        logger.info(f"📅 Loaded {len(week_data)} matches for week {week_number}")
+        return week_data
+    except Exception as e:
+        logger.error(f"❌ Failed to load week {week_number}: {str(e)}")
+        return []
+
+
+def get_scorecards_by_team(team_name):
+    """Get all scorecards for a specific team"""
+    if not PRELOADED_MODE:
+        return []
+
+    team_file = team_name.replace(' ', '_') + '.json'
+    team_path = Path(MOCK_DATA_DIR) / "by_team" / team_file
+
+    if not team_path.exists():
+        logger.warning(f"⚠️  Team file not found: {team_name}")
+        return []
+
+    try:
+        with open(team_path, 'r') as f:
+            team_data = json.load(f)
+
+        logger.info(f"🏏 Loaded {len(team_data)} matches for team {team_name}")
+        return team_data
+    except Exception as e:
+        logger.error(f"❌ Failed to load team {team_name}: {str(e)}")
+        return []
+
+
+# ============================================================================
+# SIMULATED DATA GENERATION (Random Mode)
 # ============================================================================
 
 # Club names (from your system)
@@ -376,12 +506,137 @@ def get_match_scorecard(match_id):
     return jsonify(scorecard)
 
 
+@app.route('/match/<path:match_path>/scorecard/', methods=['GET'])
+@app.route('/match/<path:match_path>/scorecard', methods=['GET'])
+def get_scorecard_html(match_path):
+    """
+    Return scorecard HTML for a match
+
+    This mimics the KNCB matchcentre.kncb.nl format:
+    /match/{entity_id}-{match_id}/scorecard/
+
+    In PRELOADED MODE: Serves pre-fetched 2025 HTML as 2026 data
+    In RANDOM MODE: Generates basic HTML with simulated data
+    """
+    # Extract match_id from path (format: "134453-12345" or just "12345")
+    if '-' in match_path:
+        parts = match_path.split('-')
+        match_id_str = parts[-1]  # Last part is match ID
+    else:
+        match_id_str = match_path
+
+    try:
+        match_id = int(match_id_str)
+    except ValueError:
+        logger.error(f"❌ Invalid match ID in path: {match_path}")
+        return Response("Invalid match ID", status=404)
+
+    logger.info(f"📄 GET /match/{match_path}/scorecard/ - Match ID: {match_id}")
+
+    # PRELOADED MODE: Serve pre-fetched scorecard HTML
+    if PRELOADED_MODE:
+        scorecard_data = load_scorecard_by_match_id(match_id)
+
+        if scorecard_data and 'scorecard_html' in scorecard_data:
+            html = scorecard_data['scorecard_html']
+            logger.info(f"✅ Serving preloaded scorecard HTML ({len(html)} bytes)")
+            return Response(html, mimetype='text/html')
+        else:
+            logger.warning(f"⚠️  Scorecard {match_id} not found in preloaded data")
+            return Response(f"Scorecard not found: {match_id}", status=404)
+
+    # RANDOM MODE: Generate basic HTML with simulated data
+    else:
+        if match_id in simulated_matches:
+            scorecard = simulated_matches[match_id]
+        else:
+            # Generate on the fly
+            home_club = random.choice(CLUBS)
+            away_club = random.choice([c for c in CLUBS if c != home_club])
+            grade = random.choice(GRADES)
+            scorecard = generate_match_scorecard(
+                match_id, home_club, away_club, grade['grade_name']
+            )
+            simulated_matches[match_id] = scorecard
+
+        # Generate simple HTML representation
+        html = generate_scorecard_html(scorecard)
+        logger.info(f"✅ Serving generated scorecard HTML ({len(html)} bytes)")
+        return Response(html, mimetype='text/html')
+
+
+def generate_scorecard_html(scorecard: Dict) -> str:
+    """Generate basic HTML representation of scorecard (for RANDOM mode)"""
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>Match {scorecard['match_id']} - {scorecard['home_club']} vs {scorecard['away_club']}</title>
+</head>
+<body>
+    <h1>{scorecard['home_club']} vs {scorecard['away_club']}</h1>
+    <p>Grade: {scorecard['grade_name']}</p>
+    <p>Match ID: {scorecard['match_id']}</p>
+    <p>Result: {scorecard['result']}</p>
+
+    <h2>Innings</h2>
+"""
+
+    for idx, innings in enumerate(scorecard['innings'], 1):
+        html += f"""
+    <h3>Innings {idx} - {innings['batting_team']}</h3>
+    <p>Total: {innings['total']}/{innings['wickets']} (Extras: {innings['extras']})</p>
+
+    <h4>Batting</h4>
+    <table border="1">
+        <tr><th>Batsman</th><th>Runs</th><th>Balls</th><th>4s</th><th>6s</th><th>Dismissal</th></tr>
+"""
+        for bat in innings['batting']:
+            html += f"""
+        <tr>
+            <td>{bat['player_name']}</td>
+            <td>{bat['runs']}</td>
+            <td>{bat['balls_faced']}</td>
+            <td>{bat['fours']}</td>
+            <td>{bat['sixes']}</td>
+            <td>{bat['dismissal_type']}</td>
+        </tr>
+"""
+        html += """
+    </table>
+
+    <h4>Bowling</h4>
+    <table border="1">
+        <tr><th>Bowler</th><th>Overs</th><th>Maidens</th><th>Runs</th><th>Wickets</th></tr>
+"""
+        for bowl in innings['bowling']:
+            html += f"""
+        <tr>
+            <td>{bowl['player_name']}</td>
+            <td>{bowl['overs']}</td>
+            <td>{bowl['maidens']}</td>
+            <td>{bowl['runs']}</td>
+            <td>{bowl['wickets']}</td>
+        </tr>
+"""
+        html += """
+    </table>
+"""
+
+    html += """
+</body>
+</html>
+"""
+    return html
+
+
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""
     return jsonify({
         "status": "healthy",
+        "mode": "PRELOADED" if PRELOADED_MODE else "RANDOM",
         "matches_in_memory": len(simulated_matches),
+        "preloaded_scorecards_cached": len(preloaded_scorecards),
         "message": "Mock KNCB API Server"
     })
 
@@ -403,8 +658,57 @@ def index():
 
 
 if __name__ == '__main__':
+    logger.info("=" * 80)
     logger.info("🚀 Starting Mock KNCB API Server")
-    logger.info("📍 Server will be available at http://localhost:5001")
-    logger.info("🔧 Configure scraper to use this URL instead of api.resultsvault.co.uk")
+    logger.info("=" * 80)
+    logger.info("")
 
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    # Check mode
+    if PRELOADED_MODE:
+        logger.info("🧪 MODE: PRELOADED (Serving pre-fetched 2025 scorecards as 2026 data)")
+        logger.info(f"   Data directory: {MOCK_DATA_DIR}")
+
+        # Load index
+        index = load_preloaded_index()
+
+        if index:
+            logger.info("")
+            logger.info("✅ Preloaded data ready:")
+            logger.info(f"   Total matches: {index['total_matches']}")
+            logger.info(f"   Season: {index['season_year']}")
+            logger.info(f"   Teams: {len(index['matches_by_team'])}")
+            logger.info(f"   Weeks: {len(index['matches_by_week'])}")
+            logger.info("")
+            logger.info("📋 Teams available:")
+            for team in sorted(index['matches_by_team'].keys()):
+                count = len(index['matches_by_team'][team])
+                logger.info(f"   - {team}: {count} matches")
+        else:
+            logger.error("")
+            logger.error("❌ Failed to load preloaded data!")
+            logger.error("   Make sure to run load_2025_scorecards_to_mock.py first")
+            logger.error("")
+            exit(1)
+    else:
+        logger.info("🎲 MODE: RANDOM (Generating random match data on-the-fly)")
+        logger.info("   To use preloaded mode, set MOCK_DATA_DIR environment variable")
+
+    logger.info("")
+    logger.info("📍 Server will be available at http://localhost:5001")
+    logger.info("")
+    logger.info("🔧 Configure scraper to point to:")
+    logger.info("   matchcentre_url: http://localhost:5001")
+    logger.info("   kncb_api_url: http://localhost:5001/rv")
+    logger.info("")
+    logger.info("📊 Endpoints:")
+    logger.info("   GET /health                                  - Health check")
+    logger.info("   GET /                                        - API info")
+    logger.info("   GET /match/{entity_id}-{match_id}/scorecard/ - Scorecard HTML")
+    logger.info("   GET /rv/{entity_id}/grades/                  - List grades")
+    logger.info("   GET /rv/{entity_id}/matches/                 - List matches")
+    logger.info("   GET /rv/match/{match_id}/                    - Match details (JSON)")
+    logger.info("")
+    logger.info("=" * 80)
+    logger.info("")
+
+    app.run(host='0.0.0.0', port=5001, debug=False)

@@ -136,19 +136,32 @@ def validate_league_rules(
             return False, f"Team must have at least {league.min_bowlers} bowlers (currently {bowlers_count})"
 
     # Validate require_from_each_team using rl_team
-    if league.require_from_each_team and league.min_players_per_team:
-        if not is_adding_player:
-            # Get total number of distinct RL teams in the club
-            if db:
-                from sqlalchemy import func
-                total_teams = db.query(func.count(func.distinct(Player.rl_team)))\
-                    .filter(Player.club_id == league.club_id, Player.rl_team.isnot(None))\
-                    .scalar()
+    # IMPORTANT: Always check this for transfers (when player_to_remove_id is set)
+    # Only skip for partial squads during initial team building
+    is_transfer = player_to_remove_id is not None
+    should_validate_team_distribution = is_transfer or not is_adding_player
 
-                if len(unique_teams) < total_teams:
-                    return False, f"Team must have players from all {total_teams} RL teams (currently have players from {len(unique_teams)} teams)"
+    if league.require_from_each_team and should_validate_team_distribution:
+        # Get total number of distinct RL teams in the club
+        if db:
+            from sqlalchemy import func
 
-                # Also check that each team has at least min_players_per_team
+            # Get all distinct team names for this club
+            all_team_names_query = db.query(Player.rl_team)\
+                .filter(Player.club_id == league.club_id, Player.rl_team.isnot(None))\
+                .distinct()\
+                .all()
+
+            all_team_names = {t[0] for t in all_team_names_query if t[0]}
+            total_teams = len(all_team_names)
+
+            if len(unique_teams) < total_teams:
+                missing_teams = all_team_names - unique_teams
+                missing_teams_str = ', '.join(sorted(missing_teams))
+                return False, f"Team must have players from all {total_teams} RL teams. Missing: {missing_teams_str}"
+
+            # Check minimum players per team (if specified)
+            if league.min_players_per_team:
                 for rl_team, count in team_counts.items():
                     if count < league.min_players_per_team:
                         return False, f"Must have at least {league.min_players_per_team} player(s) from each RL team (only {count} from {rl_team})"
@@ -822,6 +835,25 @@ async def transfer_player(
                 status_code=400,
                 detail="Player is already in your team"
             )
+
+        # Pre-transfer validation: Provide helpful error messages for common violations
+        if league.require_from_each_team and player_out.rl_team and player_in.rl_team:
+            # Check if player_out is the only player from their team
+            players_from_same_team = [
+                ftp for ftp in team.players
+                if ftp.player.rl_team == player_out.rl_team
+            ]
+
+            if len(players_from_same_team) == 1:
+                # This is the only player from this team
+                if player_in.rl_team != player_out.rl_team:
+                    print(f"DEBUG: {player_out.name} is the only player from {player_out.rl_team}")
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"{player_out.name} is your only player from {player_out.rl_team}. "
+                               f"You must transfer in a player from {player_out.rl_team} to replace them, "
+                               f"or first transfer in another {player_out.rl_team} player before removing {player_out.name}."
+                    )
 
         print("DEBUG: About to validate league rules")
         # Validate league rules after transfer

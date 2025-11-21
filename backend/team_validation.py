@@ -87,40 +87,49 @@ def validate_team_composition(
 
     # Validate players per team constraints (if applicable)
     if league.require_from_each_team or league.max_players_per_team:
+        # Use rl_team (string field) for team distribution, consistent with user_team_endpoints
         team_distribution = {}
         for ftp, player in team_players:
-            team_id = player.team_id
-            if team_id:
-                team_distribution[team_id] = team_distribution.get(team_id, 0) + 1
+            rl_team = player.rl_team
+            if rl_team:
+                team_distribution[rl_team] = team_distribution.get(rl_team, 0) + 1
 
         # Check max players per team
         if league.max_players_per_team:
-            for team_id, count in team_distribution.items():
+            for rl_team, count in team_distribution.items():
                 if count > league.max_players_per_team:
                     errors.append(
-                        f"Cannot have more than {league.max_players_per_team} players from the same team"
+                        f"Cannot have more than {league.max_players_per_team} players from {rl_team}"
                     )
                     break
 
         # Check if all teams are represented (if required)
         if league.require_from_each_team:
-            # Get all teams in the league's season
-            from database_models import Team, Club
-            teams_in_season = (
-                db.query(Team)
-                .join(Club)
-                .filter(Club.season_id == league.season_id)
+            # Get all distinct RL team names for this club
+            from sqlalchemy import func
+
+            all_team_names_query = db.query(Player.rl_team)\
+                .filter(Player.club_id == league.club_id, Player.rl_team.isnot(None))\
+                .distinct()\
                 .all()
-            )
 
-            required_team_ids = {t.id for t in teams_in_season}
-            represented_team_ids = set(team_distribution.keys())
+            all_team_names = {t[0] for t in all_team_names_query if t[0]}
+            represented_teams = set(team_distribution.keys())
 
-            missing_teams = required_team_ids - represented_team_ids
+            missing_teams = all_team_names - represented_teams
             if missing_teams:
+                missing_teams_str = ', '.join(sorted(missing_teams))
                 errors.append(
-                    f"Team must have at least 1 player from each club team ({len(missing_teams)} teams missing)"
+                    f"Team must have at least 1 player from each club team. Missing: {missing_teams_str}"
                 )
+
+            # Check minimum players per team (if specified)
+            if league.min_players_per_team:
+                for rl_team, count in team_distribution.items():
+                    if count < league.min_players_per_team:
+                        errors.append(
+                            f"Must have at least {league.min_players_per_team} player(s) from each RL team (only {count} from {rl_team})"
+                        )
 
     is_valid = len(errors) == 0
     return is_valid, errors

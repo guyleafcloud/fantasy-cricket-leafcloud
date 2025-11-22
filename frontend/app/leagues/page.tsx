@@ -128,8 +128,8 @@ export default function BrowseLeaguesPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
-          <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-4">
-            <p className="text-red-700">{error}</p>
+          <div className="mb-4 bg-red-50 dark:bg-red-900/30 border-l-4 border-red-400 dark:border-red-600 p-4">
+            <p className="text-red-700 dark:text-red-400">{error}</p>
           </div>
         )}
 
@@ -157,7 +157,7 @@ export default function BrowseLeaguesPage() {
                       </p>
                     </div>
                     {league.is_full && (
-                      <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 dark:text-gray-400 rounded">
+                      <span className="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded">
                         FULL
                       </span>
                     )}
@@ -238,8 +238,8 @@ export default function BrowseLeaguesPage() {
               </div>
 
               {error && (
-                <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-3">
-                  <p className="text-sm text-red-700">{error}</p>
+                <div className="mb-4 bg-red-50 dark:bg-red-900/30 border-l-4 border-red-400 dark:border-red-600 p-3">
+                  <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
                 </div>
               )}
 

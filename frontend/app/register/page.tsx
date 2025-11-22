@@ -61,8 +61,8 @@ export default function RegisterPage() {
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="text-sm text-red-800">{error}</div>
+            <div className="rounded-md bg-red-50 dark:bg-red-900/30 p-4">
+              <div className="text-sm text-red-800 dark:text-red-400">{error}</div>
             </div>
           )}
           <div className="rounded-md shadow-sm -space-y-px">

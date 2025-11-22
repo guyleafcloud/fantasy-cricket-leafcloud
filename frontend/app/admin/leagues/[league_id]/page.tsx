@@ -240,7 +240,7 @@ export default function LeagueDetailPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{league.name}</h1>
               <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                {league.season_name} • Join Code: <code className="px-2 py-1 bg-gray-100 text-cricket-green font-mono text-sm rounded">{league.league_code}</code>
+                {league.season_name} • Join Code: <code className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-cricket-green dark:text-green-400 font-mono text-sm rounded">{league.league_code}</code>
               </p>
             </div>
             <div className="flex space-x-4">

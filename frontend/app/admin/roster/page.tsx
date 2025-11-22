@@ -574,34 +574,84 @@ export default function RosterPage() {
                   )}
                 </div>
 
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4 rounded-md">
+                  <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                    📋 CSV Format Requirements
+                  </h4>
+
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <p className="font-medium text-blue-800 dark:text-blue-200 mb-1">Required Columns:</p>
+                      <ul className="text-blue-700 dark:text-blue-300 space-y-1 ml-4">
+                        <li>• <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">name</code> - Full player name (e.g., &quot;MickBoendermaker&quot;)</li>
+                        <li>• <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">team_name</code> - Team assignment (e.g., &quot;ACC 1&quot;, &quot;ACC 2&quot;)</li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <p className="font-medium text-blue-800 dark:text-blue-200 mb-1">Optional Columns:</p>
+                      <ul className="text-blue-700 dark:text-blue-300 space-y-1 ml-4">
+                        <li>• <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">player_type</code> - batsman, bowler, or all-rounder</li>
+                        <li>• <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">multiplier</code> - 0.5 to 5.0 (handicap, lower = better)</li>
+                        <li>• <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">is_wicket_keeper</code> - true or false</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-blue-100 dark:bg-blue-900/50 p-2 rounded">
+                      <p className="font-medium text-blue-900 dark:text-blue-100 mb-1">🔄 Duplicate Handling:</p>
+                      <p className="text-blue-800 dark:text-blue-200 text-xs">
+                        CSV is the source of truth. If a player name already exists, their team assignment will be updated to match the CSV.
+                        Multipliers are only updated if explicitly provided in the CSV.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CSV Format:</p>
-                  <pre className="text-xs text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 p-2 rounded border">
-{`name,team_name,player_type,multiplier
-John Doe,ACC 1,batsman,1.5
-Jane Smith,ACC 2,bowler,2.0`}
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Example CSV:</p>
+                  <pre className="text-xs text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 p-3 rounded border overflow-x-auto">
+{`name,team_name,player_type,multiplier,is_wicket_keeper
+MickBoendermaker,ACC 1,batsman,1.5,false
+GurlabhSingh,ACC 5,all-rounder,1.46,true
+IrfanAlim,ACC 2,bowler,2.1,false`}
                   </pre>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    * team_name must match existing team names<br/>
-                    * player_type: batsman, bowler, or all-rounder<br/>
-                    * multiplier: between 0.5 and 5.0
+                    💡 <strong>Tip:</strong> Team names must exactly match existing teams (case-sensitive)
                   </p>
                 </div>
 
                 {uploadResult && (
-                  <div className={`p-4 rounded-md ${
-                    uploadResult.error_count > 0 ? 'bg-yellow-50 border border-yellow-200' : 'bg-green-50 border border-green-200'
+                  <div className={`p-4 rounded-md border ${
+                    uploadResult.error_count > 0
+                      ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300 dark:border-yellow-700'
+                      : 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700'
                   }`}>
-                    <p className="font-medium mb-2">
-                      {uploadResult.created_count} players created successfully
-                      {uploadResult.error_count > 0 && ` • ${uploadResult.error_count} errors`}
+                    <p className="font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                      Upload Complete!
                     </p>
+                    <div className="grid grid-cols-3 gap-4 mb-3 text-sm">
+                      {uploadResult.created_count > 0 && (
+                        <div className="text-green-700 dark:text-green-300">
+                          ✅ <strong>{uploadResult.created_count}</strong> created
+                        </div>
+                      )}
+                      {uploadResult.updated_count > 0 && (
+                        <div className="text-blue-700 dark:text-blue-300">
+                          🔄 <strong>{uploadResult.updated_count}</strong> updated
+                        </div>
+                      )}
+                      {uploadResult.error_count > 0 && (
+                        <div className="text-red-700 dark:text-red-300">
+                          ❌ <strong>{uploadResult.error_count}</strong> errors
+                        </div>
+                      )}
+                    </div>
                     {uploadResult.errors && uploadResult.errors.length > 0 && (
-                      <div className="mt-2">
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Errors:</p>
-                        <ul className="text-sm text-red-600 space-y-1">
+                      <div className="mt-3 bg-white dark:bg-gray-800 p-3 rounded border border-red-300 dark:border-red-700">
+                        <p className="text-sm font-medium text-red-900 dark:text-red-100 mb-2">Errors:</p>
+                        <ul className="text-xs text-red-700 dark:text-red-300 space-y-1 max-h-40 overflow-y-auto">
                           {uploadResult.errors.map((error: string, idx: number) => (
-                            <li key={idx}>• {error}</li>
+                            <li key={idx} className="font-mono">• {error}</li>
                           ))}
                         </ul>
                       </div>

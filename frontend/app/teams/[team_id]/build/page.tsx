@@ -267,10 +267,10 @@ export default function TeamBuilderPage() {
   };
 
   const getPlayerTypeColor = (type: string) => {
-    if (type === 'batsman') return 'bg-blue-100 text-blue-800';
-    if (type === 'bowler') return 'bg-green-100 text-green-800';
-    if (type === 'all-rounder') return 'bg-orange-100 text-orange-800';
-    return 'bg-gray-100 text-gray-800 dark:text-gray-200';
+    if (type === 'batsman') return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+    if (type === 'bowler') return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+    if (type === 'all-rounder') return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300';
+    return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
   };
 
   const getMultiplierColor = (multiplier: number) => {
@@ -449,7 +449,7 @@ export default function TeamBuilderPage() {
 
       {/* Rules Panel */}
       {showRules && (
-        <div className="bg-blue-50 border-b border-blue-200">
+        <div className="bg-blue-50 dark:bg-blue-900/30 border-b border-blue-200 dark:border-blue-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Fantasy Cricket Rules & Scoring System</h2>
 
@@ -605,7 +605,7 @@ export default function TeamBuilderPage() {
             </div>
 
             {/* Additional Info */}
-            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg">
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 <strong>Note:</strong> Batting and bowling use <strong>tiered point systems</strong> where more runs/wickets earn progressively higher points per run/wicket.
                 All base points from batting, bowling, and fielding are calculated first, then multiplied by your player&apos;s multiplier.
@@ -631,7 +631,7 @@ export default function TeamBuilderPage() {
               </div>
             </div>
             <div className="w-1/2">
-              <div className="w-full bg-gray-200 rounded-full h-4">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
                 <div
                   className="bg-cricket-green h-4 rounded-full transition-all"
                   style={{
@@ -654,21 +654,21 @@ export default function TeamBuilderPage() {
                 {/* Batsmen */}
                 <div className={`p-3 rounded-lg border-2 ${
                   analysis.batsmenNeeded > 0
-                    ? 'bg-blue-50 border-blue-400'
+                    ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-400 dark:border-blue-600'
                     : 'bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600'
                 }`}>
                   <div className="flex items-center justify-between">
                     <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Batsmen</div>
                     <div className={`text-lg font-bold ${
                       analysis.batsmenNeeded > 0
-                        ? 'text-blue-600'
-                        : 'text-green-600'
+                        ? 'text-blue-600 dark:text-blue-400'
+                        : 'text-green-600 dark:text-green-400'
                     }`}>
                       {analysis.batsmen} / {team.league_rules.min_batsmen}
                     </div>
                   </div>
                   {analysis.batsmenNeeded > 0 && (
-                    <div className="text-xs text-blue-600 font-medium mt-1">
+                    <div className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-1">
                       Need {analysis.batsmenNeeded} more
                     </div>
                   )}
@@ -677,21 +677,21 @@ export default function TeamBuilderPage() {
                 {/* Bowlers */}
                 <div className={`p-3 rounded-lg border-2 ${
                   analysis.bowlersNeeded > 0
-                    ? 'bg-green-50 border-green-400'
+                    ? 'bg-green-50 dark:bg-green-900/30 border-green-400 dark:border-green-600'
                     : 'bg-gray-50 dark:bg-gray-900 border-gray-300 dark:border-gray-600'
                 }`}>
                   <div className="flex items-center justify-between">
                     <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Bowlers</div>
                     <div className={`text-lg font-bold ${
                       analysis.bowlersNeeded > 0
-                        ? 'text-green-600'
-                        : 'text-green-600'
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-green-600 dark:text-green-400'
                     }`}>
                       {analysis.bowlers} / {team.league_rules.min_bowlers}
                     </div>
                   </div>
                   {analysis.bowlersNeeded > 0 && (
-                    <div className="text-xs text-green-600 font-medium mt-1">
+                    <div className="text-xs text-green-600 dark:text-green-400 font-medium mt-1">
                       Need {analysis.bowlersNeeded} more
                     </div>
                   )}
@@ -720,12 +720,12 @@ export default function TeamBuilderPage() {
 
             if (analysis.requiredRole === 'batsman') {
               return (
-                <div className="mt-3 p-3 bg-blue-100 border-l-4 border-blue-500 rounded">
+                <div className="mt-3 p-3 bg-blue-100 dark:bg-blue-900/30 border-l-4 border-blue-500 dark:border-blue-600 rounded">
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm font-medium text-blue-800">
+                    <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
                       Only showing batsmen - you need {analysis.batsmenNeeded} more to meet minimum requirements
                     </span>
                   </div>
@@ -733,12 +733,12 @@ export default function TeamBuilderPage() {
               );
             } else if (analysis.requiredRole === 'bowler') {
               return (
-                <div className="mt-3 p-3 bg-green-100 border-l-4 border-green-500 rounded">
+                <div className="mt-3 p-3 bg-green-100 dark:bg-green-900/30 border-l-4 border-green-500 dark:border-green-600 rounded">
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-green-600 dark:text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm font-medium text-green-800">
+                    <span className="text-sm font-medium text-green-800 dark:text-green-300">
                       Only showing bowlers - you need {analysis.bowlersNeeded} more to meet minimum requirements
                     </span>
                   </div>
@@ -746,12 +746,12 @@ export default function TeamBuilderPage() {
               );
             } else if (analysis.requiredRole === 'batsman-or-bowler') {
               return (
-                <div className="mt-3 p-3 bg-orange-100 border-l-4 border-orange-500 rounded">
+                <div className="mt-3 p-3 bg-orange-100 dark:bg-orange-900/30 border-l-4 border-orange-500 dark:border-orange-600 rounded">
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-orange-600 dark:text-orange-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm font-medium text-orange-800">
+                    <span className="text-sm font-medium text-orange-800 dark:text-orange-300">
                       Only showing batsmen and bowlers - you need {analysis.batsmenNeeded} batsmen and {analysis.bowlersNeeded} bowlers
                     </span>
                   </div>
@@ -808,8 +808,8 @@ export default function TeamBuilderPage() {
 
       {error && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="bg-red-50 border-l-4 border-red-400 p-4">
-            <p className="text-red-700">{error}</p>
+          <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-400 dark:border-red-600 p-4">
+            <p className="text-red-700 dark:text-red-400">{error}</p>
           </div>
         </div>
       )}
@@ -834,9 +834,9 @@ export default function TeamBuilderPage() {
                       key={player.id}
                       className={`p-3 rounded-md ${
                         player.is_captain
-                          ? 'bg-yellow-100 border-2 border-yellow-400'
+                          ? 'bg-yellow-100 dark:bg-yellow-900/30 border-2 border-yellow-400 dark:border-yellow-600'
                           : player.is_vice_captain
-                          ? 'bg-blue-100 border-2 border-blue-400'
+                          ? 'bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-400 dark:border-blue-600'
                           : 'bg-gray-50 dark:bg-gray-900'
                       }`}
                     >
@@ -854,12 +854,12 @@ export default function TeamBuilderPage() {
                               {player.player_type}
                             </span>
                             {player.is_captain && (
-                              <span className="px-2 py-0.5 text-xs font-bold bg-yellow-200 text-yellow-900 rounded">
+                              <span className="px-2 py-0.5 text-xs font-bold bg-yellow-200 dark:bg-yellow-700 text-yellow-900 dark:text-yellow-100 rounded">
                                 (C)
                               </span>
                             )}
                             {player.is_vice_captain && (
-                              <span className="px-2 py-0.5 text-xs font-bold bg-blue-200 text-blue-900 rounded">
+                              <span className="px-2 py-0.5 text-xs font-bold bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-100 rounded">
                                 (VC)
                               </span>
                             )}
@@ -891,8 +891,8 @@ export default function TeamBuilderPage() {
                           disabled={saving || player.is_captain}
                           className={`flex-1 px-2 py-1 text-xs font-medium rounded transition-colors ${
                             player.is_captain
-                              ? 'bg-yellow-300 text-yellow-900 cursor-default'
-                              : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border border-yellow-300'
+                              ? 'bg-yellow-300 dark:bg-yellow-700 text-yellow-900 dark:text-yellow-100 cursor-default'
+                              : 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700'
                           } disabled:opacity-50`}
                         >
                           {player.is_captain ? 'Captain' : 'Make Captain'}
@@ -902,8 +902,8 @@ export default function TeamBuilderPage() {
                           disabled={saving || player.is_vice_captain}
                           className={`flex-1 px-2 py-1 text-xs font-medium rounded transition-colors ${
                             player.is_vice_captain
-                              ? 'bg-blue-300 text-blue-900 cursor-default'
-                              : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-300'
+                              ? 'bg-blue-300 dark:bg-blue-700 text-blue-900 dark:text-blue-100 cursor-default'
+                              : 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-300 dark:border-blue-700'
                           } disabled:opacity-50`}
                         >
                           {player.is_vice_captain ? 'Vice Captain' : 'Make Vice Captain'}
@@ -913,8 +913,8 @@ export default function TeamBuilderPage() {
                           disabled={saving || player.is_wicket_keeper}
                           className={`flex-1 px-2 py-1 text-xs font-medium rounded transition-colors ${
                             player.is_wicket_keeper
-                              ? 'bg-purple-300 text-purple-900 cursor-default'
-                              : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-300'
+                              ? 'bg-purple-300 dark:bg-purple-700 text-purple-900 dark:text-purple-100 cursor-default'
+                              : 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-900/50 border border-purple-300 dark:border-purple-700'
                           } disabled:opacity-50`}
                         >
                           {player.is_wicket_keeper ? 'Wicket-Keeper' : 'Make WK'}

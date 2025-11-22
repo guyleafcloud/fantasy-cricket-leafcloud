@@ -51,6 +51,9 @@ interface LeagueStats {
     player_name: string;
     team_name: string;
     total_points: number;
+    multiplier?: number;
+    target_multiplier?: number;
+    drift?: number;
   }>;
 }
 
@@ -407,6 +410,9 @@ export default function LeaderboardPage() {
                           <th className="px-6 py-3 text-left text-sm font-semibold">Player</th>
                           <th className="px-6 py-3 text-left text-sm font-semibold">IRL Team</th>
                           <th className="px-6 py-3 text-right text-sm font-semibold">Fantasy Points</th>
+                          <th className="px-6 py-3 text-center text-sm font-semibold">Current</th>
+                          <th className="px-6 py-3 text-center text-sm font-semibold">Target</th>
+                          <th className="px-6 py-3 text-center text-sm font-semibold">Trend</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
@@ -425,6 +431,37 @@ export default function LeaderboardPage() {
                               <div className="text-lg font-bold text-cricket-green">
                                 {player.total_points.toLocaleString()}
                               </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              {player.multiplier !== undefined ? (
+                                <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                                  {player.multiplier}x
+                                </div>
+                              ) : (
+                                <span className="text-xs text-gray-400">—</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              {player.target_multiplier !== undefined ? (
+                                <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                                  {player.target_multiplier}x
+                                </div>
+                              ) : (
+                                <span className="text-xs text-gray-400">—</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              {player.drift !== undefined ? (
+                                Math.abs(player.drift) < 0.01 ? (
+                                  <span className="text-2xl text-gray-500" title="Stable">→</span>
+                                ) : player.drift < 0 ? (
+                                  <span className="text-2xl text-green-600" title="Strengthening (multiplier decreasing)">↓</span>
+                                ) : (
+                                  <span className="text-2xl text-red-600" title="Declining (multiplier increasing)">↑</span>
+                                )
+                              ) : (
+                                <span className="text-xs text-gray-400">—</span>
+                              )}
                             </td>
                           </tr>
                         ))}

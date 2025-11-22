@@ -354,7 +354,7 @@ export default function AdminDashboard() {
                         {league.season_name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <code className="px-2 py-1 bg-gray-100 text-cricket-green font-mono text-sm rounded">
+                        <code className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-cricket-green dark:text-green-400 font-mono text-sm rounded">
                           {league.league_code}
                         </code>
                       </td>

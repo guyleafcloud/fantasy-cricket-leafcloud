@@ -14,10 +14,29 @@ interface UserProfile {
   last_login: string | null;
 }
 
+interface TeamData {
+  id: string;
+  team_name: string;
+  league_id: string;
+  league_name: string;
+  season_name: string;
+  club_name: string;
+  total_points: number;
+  rank: number | null;
+  is_finalized: boolean;
+  players_count: number;
+  budget_remaining: number;
+  budget_used: number;
+  transfers_used: number;
+  transfers_remaining: number;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [teams, setTeams] = useState<TeamData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [teamsLoading, setTeamsLoading] = useState(true);
   const [error, setError] = useState('');
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [leagueCode, setLeagueCode] = useState('');
@@ -27,6 +46,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadUserProfile();
+    loadMyTeams();
   }, []);
 
   const loadUserProfile = async () => {
@@ -47,6 +67,19 @@ export default function DashboardPage() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMyTeams = async () => {
+    try {
+      setTeamsLoading(true);
+      const teamsData = await apiClient.getMyTeams();
+      setTeams(teamsData);
+    } catch (err: any) {
+      console.error('Failed to load teams:', err);
+      // Don't show error - just leave teams empty
+    } finally {
+      setTeamsLoading(false);
     }
   };
 
@@ -176,24 +209,137 @@ export default function DashboardPage() {
         {/* My Leagues Section */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">My Leagues</h2>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-              <div className="text-4xl mb-2">🏏</div>
-              <p>You haven&apos;t joined any leagues yet</p>
-              <p className="text-sm mt-2">Get started by browsing available leagues or joining with a code!</p>
+          {teamsLoading ? (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                Loading your leagues...
+              </div>
             </div>
-          </div>
+          ) : teams.length === 0 ? (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                <div className="text-4xl mb-2">🏏</div>
+                <p>You haven&apos;t joined any leagues yet</p>
+                <p className="text-sm mt-2">Get started by browsing available leagues or joining with a code!</p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {teams.map((team) => (
+                <div
+                  key={team.id}
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700"
+                >
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">
+                          {team.league_name}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {team.season_name}
+                        </p>
+                      </div>
+                      {team.rank && (
+                        <div className="bg-cricket-green text-white px-3 py-1 rounded-full text-sm font-medium">
+                          #{team.rank}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600 dark:text-gray-400">Team:</span>
+                        <span className="font-medium text-gray-900 dark:text-white">{team.team_name}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600 dark:text-gray-400">Points:</span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {team.total_points?.toFixed(1) || '0.0'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600 dark:text-gray-400">Players:</span>
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {team.players_count}/11
+                        </span>
+                      </div>
+                      {!team.is_finalized && team.players_count < 11 && (
+                        <div className="text-xs text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900 px-2 py-1 rounded">
+                          ⚠️ Team incomplete
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => router.push(team.is_finalized ? `/teams/${team.id}` : `/teams/${team.id}/build`)}
+                        className="flex-1 px-3 py-2 text-sm bg-cricket-green text-white rounded hover:bg-green-800"
+                      >
+                        {team.is_finalized ? 'View Team' : 'Build Team'}
+                      </button>
+                      <button
+                        onClick={() => router.push(`/leagues/${team.league_id}/leaderboard`)}
+                        className="flex-1 px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+                      >
+                        Leaderboard
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Recent Activity Section */}
         <div>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h2>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-              <div className="text-4xl mb-2">📊</div>
-              <p>No recent activity</p>
-              <p className="text-sm mt-2">Your league updates and team changes will appear here</p>
-            </div>
+            {teamsLoading ? (
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                Loading activity...
+              </div>
+            ) : teams.length === 0 ? (
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                <div className="text-4xl mb-2">📊</div>
+                <p>No recent activity</p>
+                <p className="text-sm mt-2">Your league updates and team changes will appear here</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {teams.slice(0, 5).map((team) => (
+                  <div
+                    key={team.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="text-2xl">🏏</div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {team.league_name}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {team.team_name} • {team.total_points?.toFixed(1) || '0.0'} pts
+                          {team.rank && ` • Rank #${team.rank}`}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => router.push(`/teams/${team.id}/build`)}
+                      className="text-sm text-cricket-green hover:text-green-800"
+                    >
+                      View →
+                    </button>
+                  </div>
+                ))}
+                {teams.length > 5 && (
+                  <p className="text-center text-sm text-gray-500 dark:text-gray-400 pt-2">
+                    Showing 5 most recent teams
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </main>

@@ -170,9 +170,21 @@ class MatchPerformanceService:
 
             matched_count += 1
 
-            # Calculate fantasy points
+            # Get player object to access current multiplier
+            player = self.session.query(Player).filter(Player.id == player_id).first()
+            player_multiplier = player.multiplier if player else 1.0
+
+            # Calculate base fantasy points (before multiplier)
             points_breakdown = self.calculator.calculate_from_performance_dict(perf_data)
-            fantasy_points = points_breakdown['grand_total']
+            base_fantasy_points = points_breakdown['grand_total']
+
+            # Apply player multiplier to get final fantasy points
+            fantasy_points = base_fantasy_points * player_multiplier
+
+            logger.debug(
+                f"Player {player_name}: base={base_fantasy_points:.2f}, "
+                f"multiplier={player_multiplier:.2f}, final={fantasy_points:.2f}"
+            )
 
             # Calculate strike rate and economy
             batting_sr = None
@@ -202,7 +214,10 @@ class MatchPerformanceService:
                 catches=perf_data.get('catches', 0),
                 run_outs=perf_data.get('run_outs', 0),
                 stumpings=perf_data.get('stumpings', 0),
-                fantasy_points=fantasy_points,
+                # Store both base and final fantasy points
+                base_fantasy_points=base_fantasy_points,
+                multiplier_applied=player_multiplier,
+                fantasy_points=fantasy_points,  # Final points after multiplier
                 points_breakdown=points_breakdown
             )
 

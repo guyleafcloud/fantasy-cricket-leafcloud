@@ -79,51 +79,28 @@ class MultiplierAdjuster:
             ratio = (player_score - median_score) / (max_score - median_score)
             return self.neutral_multiplier - (ratio * (self.neutral_multiplier - self.min_multiplier))
 
-    def calculate_player_season_points(self, player: Player) -> float:
+    def calculate_player_season_points(self, player: Player, db: Session) -> float:
         """
-        Calculate total fantasy points for a player's season using current stats
+        Calculate total fantasy points for a player's season using actual performances
+
+        IMPORTANT: Uses final fantasy_points (after multiplier) from PlayerPerformance records.
+        This is correct because drift should be based on actual fantasy points earned,
+        not base points.
 
         Returns:
-            Total fantasy points based on season performance
+            Total fantasy points based on season performance (after multipliers)
         """
-        if not player.stats:
-            return 0.0
+        from database_models import PlayerPerformance
 
-        stats = player.stats
+        # Sum all fantasy_points from PlayerPerformance records
+        # This gives us the total points AFTER multipliers were applied
+        total_points = db.query(
+            db.func.coalesce(db.func.sum(PlayerPerformance.fantasy_points), 0.0)
+        ).filter(
+            PlayerPerformance.player_id == player.id
+        ).scalar()
 
-        # Calculate points for all performances
-        total_points = 0.0
-
-        # Use aggregate season stats if available
-        runs = stats.get('total_runs', 0)
-        balls_faced = stats.get('total_balls_faced', 0)
-        fours = stats.get('total_fours', 0)
-        sixes = stats.get('total_sixes', 0)
-        wickets = stats.get('total_wickets', 0)
-        overs = stats.get('total_overs', 0.0)
-        runs_conceded = stats.get('total_runs_conceded', 0)
-        maidens = stats.get('total_maidens', 0)
-        catches = stats.get('total_catches', 0)
-        run_outs = stats.get('total_run_outs', 0)
-        stumpings = stats.get('total_stumpings', 0)
-
-        # Calculate total points
-        result = self.calculator.calculate_total_points(
-            runs=runs,
-            balls_faced=balls_faced,
-            fours=fours,
-            sixes=sixes,
-            is_out=False,  # Not relevant for season totals
-            wickets=wickets,
-            overs_bowled=overs,
-            runs_conceded=runs_conceded,
-            maidens=maidens,
-            catches=catches,
-            run_outs=run_outs,
-            stumpings=stumpings
-        )
-
-        return result['grand_total']
+        return float(total_points) if total_points else 0.0
 
     def adjust_multipliers(
         self,
@@ -161,7 +138,7 @@ class MultiplierAdjuster:
         player_data = []
 
         for player in players:
-            score = self.calculate_player_season_points(player)
+            score = self.calculate_player_season_points(player, db)
             player_scores.append(score)
             player_data.append({
                 'player': player,

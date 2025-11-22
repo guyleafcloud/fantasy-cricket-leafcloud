@@ -529,6 +529,7 @@ async def get_league_stats(
         # Aggregate player points (avoid duplicates)
         if player_id not in player_points_dict:
             player_points_dict[player_id] = {
+                'player_id': player_id,
                 'player_name': player_name,
                 'team_name': rl_team if rl_team else 'Unknown',
                 'total_points': total_points or 0
@@ -556,6 +557,79 @@ async def get_league_stats(
     # Top 25 players by points (deduplicated)
     player_points_list = list(player_points_dict.values())
     top_players = sorted(player_points_list, key=lambda x: x['total_points'], reverse=True)[:25]
+
+    # Enrich top players with multiplier data
+    if top_players:
+        # Get player IDs from top players
+        top_player_ids = [p['player_id'] for p in top_players]
+
+        # Fetch Player objects with multipliers
+        players_with_multipliers = db.query(Player).filter(Player.id.in_(top_player_ids)).all()
+        player_multiplier_map = {p.id: {'current': p.multiplier, 'starting': p.starting_multiplier or p.multiplier} for p in players_with_multipliers}
+
+        # Calculate statistics for target multiplier calculation
+        all_points = [p['total_points'] for p in player_points_list if p['total_points'] > 0]
+        if all_points:
+            from statistics import median
+            min_points = min(all_points)
+            max_points = max(all_points)
+            median_points = median(all_points)
+
+            # Helper function to calculate target multiplier
+            def calculate_target_multiplier(score, min_score, median_score, max_score):
+                """Calculate target multiplier based on score relative to league"""
+                MIN_MULTIPLIER = 0.69
+                MAX_MULTIPLIER = 5.0
+                NEUTRAL_MULTIPLIER = 1.0
+
+                if median_score == 0:
+                    return NEUTRAL_MULTIPLIER
+
+                if score <= median_score:
+                    # Below median: interpolate from max_multiplier to neutral
+                    if median_score == min_score:
+                        return NEUTRAL_MULTIPLIER
+                    ratio = (score - min_score) / (median_score - min_score)
+                    return MAX_MULTIPLIER - (ratio * (MAX_MULTIPLIER - NEUTRAL_MULTIPLIER))
+                else:
+                    # Above median: interpolate from neutral to min_multiplier
+                    if max_score == median_score:
+                        return NEUTRAL_MULTIPLIER
+                    ratio = (score - median_score) / (max_score - median_score)
+                    return NEUTRAL_MULTIPLIER - (ratio * (NEUTRAL_MULTIPLIER - MIN_MULTIPLIER))
+
+            # Add multiplier data to each top player
+            for player in top_players:
+                player_id = player['player_id']
+                mult_data = player_multiplier_map.get(player_id, {'current': 1.0, 'starting': 1.0})
+                current_multiplier = mult_data['current']
+                starting_multiplier = mult_data['starting']
+                player_points = player['total_points']
+
+                # Calculate target multiplier
+                target_multiplier = calculate_target_multiplier(
+                    player_points, min_points, median_points, max_points
+                )
+
+                # Calculate drift (current - starting)
+                drift = current_multiplier - starting_multiplier
+
+                # Add to player data
+                player['starting_multiplier'] = round(starting_multiplier, 2)
+                player['current_multiplier'] = round(current_multiplier, 2)
+                player['drift'] = round(drift, 2)
+
+                # Remove player_id from response (internal use only)
+                del player['player_id']
+        else:
+            # No points data, just add default multipliers
+            for player in top_players:
+                player_id = player['player_id']
+                mult_data = player_multiplier_map.get(player_id, {'current': 1.0, 'starting': 1.0})
+                player['starting_multiplier'] = round(mult_data['starting'], 2)
+                player['current_multiplier'] = round(mult_data['current'], 2)
+                player['drift'] = 0.0
+                del player['player_id']
 
     return {
         "best_batsman": best_batsman,

@@ -51,8 +51,8 @@ interface LeagueStats {
     player_name: string;
     team_name: string;
     total_points: number;
-    multiplier?: number;
-    target_multiplier?: number;
+    starting_multiplier?: number;
+    current_multiplier?: number;
     drift?: number;
   }>;
 }
@@ -410,8 +410,8 @@ export default function LeaderboardPage() {
                           <th className="px-6 py-3 text-left text-sm font-semibold">Player</th>
                           <th className="px-6 py-3 text-left text-sm font-semibold">IRL Team</th>
                           <th className="px-6 py-3 text-right text-sm font-semibold">Fantasy Points</th>
+                          <th className="px-6 py-3 text-center text-sm font-semibold">Starting</th>
                           <th className="px-6 py-3 text-center text-sm font-semibold">Current</th>
-                          <th className="px-6 py-3 text-center text-sm font-semibold">Target</th>
                           <th className="px-6 py-3 text-center text-sm font-semibold">Trend</th>
                         </tr>
                       </thead>
@@ -433,18 +433,18 @@ export default function LeaderboardPage() {
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-center">
-                              {player.multiplier !== undefined ? (
+                              {player.starting_multiplier !== undefined ? (
                                 <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                                  {player.multiplier}x
+                                  {player.starting_multiplier}x
                                 </div>
                               ) : (
                                 <span className="text-xs text-gray-400">—</span>
                               )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-center">
-                              {player.target_multiplier !== undefined ? (
+                              {player.current_multiplier !== undefined ? (
                                 <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                                  {player.target_multiplier}x
+                                  {player.current_multiplier}x
                                 </div>
                               ) : (
                                 <span className="text-xs text-gray-400">—</span>

@@ -168,6 +168,7 @@ class Player(Base):
 
     # Performance multiplier (lower = better historical performance)
     multiplier = Column(Float, default=1.0, nullable=True)
+    starting_multiplier = Column(Float, default=1.0, nullable=True)  # Initial multiplier at season start
     multiplier_updated_at = Column(DateTime, nullable=True)
 
     # Season statistics

@@ -290,6 +290,61 @@ def adjust_multipliers_weekly():
         return {"status": "error", "error": str(e)}
 
 
+@app.task(name='celery_tasks.update_fantasy_team_points')
+def update_fantasy_team_points(league_id: str = None):
+    """
+    Update fantasy team points and leaderboard ranks
+    Should be called after match processing
+
+    Args:
+        league_id: Optional league ID to update. If None, updates all leagues.
+    """
+    logger.info("📊 Updating fantasy team points...")
+
+    try:
+        from fantasy_team_points_service import FantasyTeamPointsService
+        from database_setup import SessionLocal
+
+        # Create database session
+        db = SessionLocal()
+
+        try:
+            service = FantasyTeamPointsService()
+
+            if league_id:
+                # Update specific league
+                result = service.update_league_leaderboard(league_id, db)
+                logger.info(f"✅ Updated league {league_id}: {result['teams_updated']} teams")
+
+                return {
+                    "status": "success",
+                    "league_id": league_id,
+                    "teams_updated": result['teams_updated']
+                }
+            else:
+                # Update all leagues
+                result = service.update_all_leagues(db)
+                logger.info(
+                    f"✅ Updated {result['total_teams_updated']} teams "
+                    f"across {result['leagues_processed']} leagues"
+                )
+
+                return {
+                    "status": "success",
+                    "leagues_processed": result['leagues_processed'],
+                    "total_teams_updated": result['total_teams_updated']
+                }
+
+        finally:
+            db.close()
+
+    except Exception as e:
+        logger.error(f"❌ Fantasy team points update failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "error": str(e)}
+
+
 # =============================================================================
 # DATA ACCESS HELPERS
 # =============================================================================

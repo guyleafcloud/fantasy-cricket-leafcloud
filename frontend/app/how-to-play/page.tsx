@@ -60,54 +60,9 @@ export default function HowToPlay() {
                 </div>
               </div>
             </div>
-
-            <div className="grid md:grid-cols-2 gap-4 mb-4">
-              <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-4 border-2 border-green-300 dark:border-green-700">
-                <h4 className="font-semibold text-green-800 dark:text-green-300 mb-2 flex items-center">
-                  <span className="text-xl mr-2">📉</span>
-                  Low Multiplier = Better Value
-                </h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                  <strong>Elite players</strong> have lower multipliers (0.69 - 1.5)
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 italic">
-                  Example: Top international player with multiplier 0.69x
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                  They&apos;re harder to earn points with, making team selection strategic!
-                </p>
-              </div>
-
-              <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg p-4 border-2 border-orange-300 dark:border-orange-700">
-                <h4 className="font-semibold text-orange-800 dark:text-orange-300 mb-2 flex items-center">
-                  <span className="text-xl mr-2">📈</span>
-                  High Multiplier = Higher Potential
-                </h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                  <strong>Emerging players</strong> have higher multipliers (1.5 - 5.0)
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 italic">
-                  Example: Young talent with multiplier 3.5x
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                  They can earn massive points if they perform well!
-                </p>
-              </div>
-            </div>
           </div>
 
-          <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-5 border-l-4 border-yellow-500">
-            <h4 className="font-semibold text-yellow-900 dark:text-yellow-200 mb-2 flex items-center">
-              <span className="text-xl mr-2">💡</span>
-              Strategy Tip
-            </h4>
-            <p className="text-sm text-gray-800 dark:text-gray-300">
-              Balance your team between <strong>elite players</strong> (consistent but lower multipliers) and
-              <strong> emerging talents</strong> (risky but higher multipliers). Finding undervalued players is key to winning!
-            </p>
-          </div>
-
-          <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg p-5">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-5">
             <h4 className="font-semibold text-gray-900 dark:text-white mb-3">📐 Complete Formula:</h4>
             <div className="font-mono text-sm bg-gray-100 dark:bg-gray-900 p-4 rounded border border-gray-300 dark:border-gray-700">
               <div className="text-gray-800 dark:text-gray-200 space-y-2">
@@ -328,12 +283,16 @@ export default function HowToPlay() {
 
         {/* Example Calculation */}
         <div className="bg-gradient-to-r from-cricket-green to-green-600 rounded-lg shadow-lg p-8 text-white mb-8">
-          <h2 className="text-3xl font-bold mb-6">📊 Example Calculation</h2>
+          <h2 className="text-3xl font-bold mb-6">📊 Complete Example Calculation</h2>
 
           <div className="bg-white/95 dark:bg-gray-800/10 backdrop-blur rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">All-Rounder Performance</h3>
+            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">All-Rounder Performance (Player Multiplier: 1.2x, Captain)</h3>
 
             <div className="space-y-3 mb-4 text-gray-900 dark:text-white">
+              <div className="font-semibold text-lg border-b border-gray-300 dark:border-white/30 pb-2 mb-3">
+                Step 1: Calculate Base Points
+              </div>
+
               <div className="flex justify-between">
                 <span>Batting: 45 runs @ SR 125</span>
                 <span className="font-mono">59.1 pts</span>
@@ -366,12 +325,43 @@ export default function HowToPlay() {
                 <span>Fielding: 1 catch</span>
                 <span className="font-mono">15 pts</span>
               </div>
+
+              <div className="border-t border-gray-300 dark:border-white/30 pt-2 mt-2">
+                <div className="flex justify-between font-semibold">
+                  <span>Base Points Subtotal:</span>
+                  <span className="font-mono">164 pts</span>
+                </div>
+              </div>
+
+              <div className="font-semibold text-lg border-b border-gray-300 dark:border-white/30 pb-2 mt-4 mb-3">
+                Step 2: Apply Player Multiplier
+              </div>
+
+              <div className="flex justify-between">
+                <span>Base Points × Player Multiplier</span>
+                <span className="font-mono">164 × 1.2</span>
+              </div>
+              <div className="border-t border-gray-300 dark:border-white/30 pt-2 mt-2">
+                <div className="flex justify-between font-semibold">
+                  <span>After Multiplier:</span>
+                  <span className="font-mono">196.8 pts</span>
+                </div>
+              </div>
+
+              <div className="font-semibold text-lg border-b border-gray-300 dark:border-white/30 pb-2 mt-4 mb-3">
+                Step 3: Apply Captain Bonus
+              </div>
+
+              <div className="flex justify-between">
+                <span>After Multiplier × Captain Bonus (2x)</span>
+                <span className="font-mono">196.8 × 2.0</span>
+              </div>
             </div>
 
-            <div className="border-t border-gray-300 dark:border-white/30 pt-3 mt-3">
+            <div className="border-t-2 border-gray-400 dark:border-white/50 pt-4 mt-4 bg-cricket-green/10 dark:bg-cricket-green/20 rounded-lg p-3">
               <div className="flex justify-between text-2xl font-bold text-gray-900 dark:text-white">
-                <span>TOTAL:</span>
-                <span>164 points</span>
+                <span>FINAL FANTASY POINTS:</span>
+                <span className="text-cricket-green dark:text-green-400">393.6 points</span>
               </div>
             </div>
           </div>

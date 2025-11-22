@@ -410,37 +410,30 @@ export default function TeamBuilderPage() {
                 {team.league_name} • {team.season_name}
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               <button
                 onClick={() => window.open('/calculator', '_blank')}
-                className="px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600"
               >
-                🧮 Points Calculator
+                🧮 Calculator
               </button>
               <button
                 onClick={() => setShowRules(!showRules)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 {showRules ? 'Hide' : 'Show'} Rules
               </button>
               <button
                 onClick={() => router.push(`/leagues/${team.league_id}/leaderboard`)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
               >
-                League Stats
+                Stats
               </button>
               <button
                 onClick={() => router.push('/teams')}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
               >
-                Back to Teams
-              </button>
-              <button
-                onClick={handleFinalizeTeam}
-                disabled={saving || team.players.length !== team.league_rules.squad_size}
-                className="px-4 py-2 text-sm font-medium text-white bg-cricket-green rounded-md hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Finalize Team
+                Back
               </button>
             </div>
           </div>
@@ -802,6 +795,72 @@ export default function TeamBuilderPage() {
             }
 
             return null;
+          })()}
+
+          {/* Finalize Team Button - Prominent and Centered */}
+          {(() => {
+            const analysis = getSquadAnalysis();
+            if (!analysis) return null;
+
+            const isTeamComplete = team.players.length === team.league_rules.squad_size;
+            const hasValidRoles = analysis.batsmenNeeded === 0 && analysis.bowlersNeeded === 0;
+            const hasValidTeams = !team.league_rules.require_from_each_team || analysis.missingTeams.length === 0;
+            const canFinalize = isTeamComplete && hasValidRoles && hasValidTeams;
+
+            return (
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col items-center">
+                  {canFinalize ? (
+                    <>
+                      <div className="mb-3 text-center">
+                        <div className="inline-flex items-center px-4 py-2 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg">
+                          <svg className="w-5 h-5 text-green-600 dark:text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-sm font-medium text-green-800 dark:text-green-300">
+                            Team is ready to be finalized!
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleFinalizeTeam}
+                        disabled={saving}
+                        className="w-full max-w-md px-8 py-4 text-lg font-bold text-white bg-cricket-green rounded-lg hover:bg-green-800 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                      >
+                        {saving ? 'Finalizing Team...' : '✓ Finalize Team'}
+                      </button>
+                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+                        Once finalized, you can make transfers but they will count against your season limit
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="mb-3 text-center">
+                        <div className="inline-flex items-center px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                          <svg className="w-5 h-5 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                            Complete your squad to finalize
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        disabled
+                        className="w-full max-w-md px-8 py-4 text-lg font-bold text-white bg-gray-400 dark:bg-gray-600 rounded-lg cursor-not-allowed opacity-60"
+                      >
+                        ✓ Finalize Team
+                      </button>
+                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+                        {!isTeamComplete && `Add ${team.league_rules.squad_size - team.players.length} more player${team.league_rules.squad_size - team.players.length !== 1 ? 's' : ''}`}
+                        {isTeamComplete && !hasValidRoles && 'Fix role requirements above'}
+                        {isTeamComplete && hasValidRoles && !hasValidTeams && 'Add players from missing teams'}
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+            );
           })()}
         </div>
       </div>

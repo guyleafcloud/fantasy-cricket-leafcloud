@@ -14,11 +14,125 @@ export default function HowToPlay() {
           </p>
         </div>
 
+        {/* Player Multiplier System - MOST IMPORTANT */}
+        <div className="bg-gradient-to-br from-cricket-green/10 to-blue-600/10 dark:from-cricket-green/20 dark:to-blue-600/20 rounded-lg shadow-lg p-8 mb-8 border-2 border-cricket-green">
+          <div className="flex items-center mb-6">
+            <div className="bg-cricket-green text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold mr-4">
+              1
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Player Multiplier System ⚖️
+            </h2>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-4">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+              🎯 The Core Concept
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300 mb-4 text-lg leading-relaxed">
+              Every player has a <strong className="text-cricket-green">handicap multiplier</strong> that adjusts their final fantasy points.
+              This system balances the game by making elite real-life players more expensive in fantasy terms.
+            </p>
+
+            <div className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/30 dark:to-green-900/30 rounded-lg p-5 mb-4">
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-3 text-lg">How It Works:</h4>
+              <div className="space-y-3">
+                <div className="flex items-start">
+                  <span className="text-2xl mr-3">📊</span>
+                  <div>
+                    <p className="text-gray-800 dark:text-gray-200 font-medium">Base Points Calculation</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">First, calculate points from runs, wickets, catches, etc. (explained below)</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-2xl mr-3">✖️</span>
+                  <div>
+                    <p className="text-gray-800 dark:text-gray-200 font-medium">Apply Player Multiplier</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Multiply base points by the player&apos;s handicap</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-2xl mr-3">🎭</span>
+                  <div>
+                    <p className="text-gray-800 dark:text-gray-200 font-medium">Apply Captain/VC Bonus</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Finally, apply Captain (2x) or Vice-Captain (1.5x) multiplier if applicable</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4 mb-4">
+              <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-4 border-2 border-green-300 dark:border-green-700">
+                <h4 className="font-semibold text-green-800 dark:text-green-300 mb-2 flex items-center">
+                  <span className="text-xl mr-2">📉</span>
+                  Low Multiplier = Better Value
+                </h4>
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                  <strong>Elite players</strong> have lower multipliers (0.69 - 1.5)
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 italic">
+                  Example: Top international player with multiplier 0.69x
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  They&apos;re harder to earn points with, making team selection strategic!
+                </p>
+              </div>
+
+              <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg p-4 border-2 border-orange-300 dark:border-orange-700">
+                <h4 className="font-semibold text-orange-800 dark:text-orange-300 mb-2 flex items-center">
+                  <span className="text-xl mr-2">📈</span>
+                  High Multiplier = Higher Potential
+                </h4>
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                  <strong>Emerging players</strong> have higher multipliers (1.5 - 5.0)
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 italic">
+                  Example: Young talent with multiplier 3.5x
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  They can earn massive points if they perform well!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-5 border-l-4 border-yellow-500">
+            <h4 className="font-semibold text-yellow-900 dark:text-yellow-200 mb-2 flex items-center">
+              <span className="text-xl mr-2">💡</span>
+              Strategy Tip
+            </h4>
+            <p className="text-sm text-gray-800 dark:text-gray-300">
+              Balance your team between <strong>elite players</strong> (consistent but lower multipliers) and
+              <strong> emerging talents</strong> (risky but higher multipliers). Finding undervalued players is key to winning!
+            </p>
+          </div>
+
+          <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg p-5">
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-3">📐 Complete Formula:</h4>
+            <div className="font-mono text-sm bg-gray-100 dark:bg-gray-900 p-4 rounded border border-gray-300 dark:border-gray-700">
+              <div className="text-gray-800 dark:text-gray-200 space-y-2">
+                <div><span className="text-blue-600 dark:text-blue-400">Final Points</span> = <span className="text-green-600 dark:text-green-400">Base Points</span> × <span className="text-orange-600 dark:text-orange-400">Player Multiplier</span> × <span className="text-purple-600 dark:text-purple-400">Captain Bonus</span></div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 mt-3 border-t border-gray-300 dark:border-gray-700 pt-2">
+                  Example: 100 base points × 0.69 multiplier × 2.0 (captain) = <strong className="text-cricket-green">138 final points</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Fantasy Points Section */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 border-b-2 border-cricket-green pb-2">
-            Fantasy Points System
-          </h2>
+          <div className="flex items-center mb-6">
+            <div className="bg-cricket-green text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold mr-4">
+              2
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Base Points System
+            </h2>
+          </div>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            These are the base points earned before multipliers are applied:
+          </p>
 
           {/* Batting Section */}
           <div className="mb-8">

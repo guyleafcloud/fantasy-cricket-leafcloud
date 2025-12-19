@@ -398,15 +398,160 @@ docker-compose up -d
 
 ---
 
+## League Lifecycle Management
+
+After season setup, admins manage leagues through a lifecycle workflow:
+
+### League Status Flow
+
+```
+draft → active → locked → completed
+```
+
+### 1. Create League (Status: `draft`)
+
+Users can create leagues with custom rules:
+
+**POST `/api/leagues`**
+
+```json
+{
+  "name": "Office League",
+  "season_id": "season_2026",
+  "squad_size": 15,
+  "transfers_per_season": 5,
+  "min_batsmen": 4,
+  "min_bowlers": 3,
+  "require_wicket_keeper": true,
+  "max_players_per_team": 3,
+  "require_from_each_team": false
+}
+```
+
+In `draft` status:
+- Rules can be edited
+- Roster can be modified
+- No teams can join yet
+
+### 2. Confirm League (Status: `draft` → `active`)
+
+Admin confirms league to lock rules and capture initial multipliers:
+
+**POST `/api/admin/leagues/{league_id}/confirm`**
+
+This action:
+- ✅ Validates roster size meets squad requirements
+- ✅ Freezes all league rules (can't be changed)
+- ✅ Captures initial player multipliers for this league
+- ✅ Opens league for user team registration
+
+**Example Response:**
+
+```json
+{
+  "success": true,
+  "message": "League confirmed and rules frozen",
+  "metadata": {
+    "roster_count": 61,
+    "min_multiplier": 0.69,
+    "max_multiplier": 5.0,
+    "multipliers_captured": 61,
+    "frozen_rules": {
+      "squad_size": 15,
+      "transfers_per_season": 5,
+      "min_batsmen": 4,
+      "min_bowlers": 3
+    }
+  }
+}
+```
+
+**Important:** Multipliers captured at confirmation are the STARTING point. They will drift weekly based on league-specific performance (see FANTASY_POINTS_RULES.md).
+
+### 3. Lock League (Status: `active` → `locked`)
+
+Before season starts, lock league to prevent new registrations:
+
+**POST `/api/admin/leagues/{league_id}/lock`**
+
+This action:
+- ✅ Prevents new team registration
+- ✅ Validates all existing teams are finalized
+- ✅ Prepares league for season start
+
+**Requirements:**
+- All teams must have finalized their squads
+- At least 1 team must have joined
+
+### 4. Complete League (Status: `locked` → `completed`)
+
+After season ends, mark league as completed:
+
+**POST `/api/admin/leagues/{league_id}/complete`**
+
+This action:
+- ✅ Marks league as finished
+- ✅ Stops weekly multiplier updates for this league
+- ✅ Preserves final standings
+
+### Get League Status
+
+Check league readiness and validation errors:
+
+**GET `/api/admin/leagues/{league_id}/status`**
+
+**Response:**
+
+```json
+{
+  "league_id": "uuid",
+  "league_name": "Office League",
+  "status": "active",
+  "confirmed_at": "2026-04-01T10:00:00Z",
+  "teams_total": 8,
+  "teams_finalized": 6,
+  "teams_not_finalized": 2,
+  "roster_size": 61,
+  "squad_size": 15,
+  "multipliers_captured": 61,
+  "can_confirm": false,
+  "can_lock": false,
+  "can_complete": false,
+  "validation_errors": [
+    "2 teams not finalized yet"
+  ]
+}
+```
+
+### League-Specific Multipliers
+
+Each league has its own `multipliers_snapshot` that:
+- **Starts** with current player multipliers at confirmation
+- **Drifts** weekly (15% per week) based on league roster performance
+- **Updates** every Monday 2 AM via automated task
+
+This means the same player can have different multipliers in different leagues, reflecting their relative value within each league's roster context.
+
+**Example:**
+- Player A in League 1 (many stars): multiplier = 1.2 (above average)
+- Player A in League 2 (fewer stars): multiplier = 0.85 (below average)
+
+See `FANTASY_POINTS_RULES.md` for complete multiplier documentation.
+
+---
+
 ## Next Steps
 
 After season setup:
 1. **Create leagues** - Users can create fantasy leagues
-2. **Select teams** - Users pick 15 players within €500 budget
-3. **Start scraping** - Weekly updates capture match data
-4. **Track points** - Players earn points based on performance
+2. **Confirm leagues** - Admin confirms to lock rules and capture multipliers
+3. **Select teams** - Users pick squads within budget
+4. **Lock leagues** - Admin locks before season starts
+5. **Start scraping** - Weekly updates capture match data
+6. **Track points** - Players earn points based on performance
+7. **Complete leagues** - Admin marks as finished after season
 
-See `TEAM_SELECTION_GUIDE.md` for team building workflow.
+See `LEAGUE_MULTIPLIERS.md` for detailed multiplier system documentation.
 
 ---
 

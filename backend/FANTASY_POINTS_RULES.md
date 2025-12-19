@@ -213,6 +213,70 @@ TOTAL:             40 points
 
 ---
 
+---
+
+## 🎭 Player Multipliers (League-Specific)
+
+### Overview
+
+Each player has a **dynamic multiplier** that adjusts their fantasy points based on relative performance. Crucially, **multipliers are league-specific** - the same player can have different multipliers in different leagues!
+
+### How It Works
+
+1. **Initial Multiplier** (League Confirmation)
+   - When a league is confirmed, each roster player's current multiplier is captured
+   - This becomes the starting point for that league
+   - Range: 0.69 (star players) to 5.0 (weaker players)
+   - Median: 1.0 (average players)
+
+2. **Weekly Drift** (Every Monday 2 AM)
+   - Multipliers adjust by 15% toward current season performance
+   - Calculated **independently per league** based on league's roster
+   - Formula: `new = old × 0.85 + target × 0.15`
+
+3. **Final Fantasy Points**
+   - `base_fantasy_points` = Points from rules above (batting + bowling + fielding)
+   - `fantasy_points` = `base_fantasy_points × league_multiplier`
+   - Different leagues see different fantasy_points for the same performance!
+
+### Multiplier Scale (Relative to League Median)
+
+| Performance Level | Multiplier Range | Effect |
+|------------------|------------------|--------|
+| **Below median** (weaker) | 1.0 → 5.0 | Points **multiplied** (easier to get points) |
+| **At median** (average) | 1.0 | No change |
+| **Above median** (stronger) | 1.0 → 0.69 | Points **reduced** (harder to get points) |
+
+### Why League-Specific?
+
+Different leagues have different rosters with different performance distributions. A player who is "average" in League A might be "strong" in League B.
+
+**Example:**
+
+- **League A Roster:** Contains many high scorers → median = 120 pts
+- **League B Roster:** Contains fewer stars → median = 80 pts
+- **Player X Season Points:** 100 pts
+
+In League A:
+- Below median (100 < 120) → multiplier = 1.2
+- Base 50 pts → 50 × 1.2 = **60 fantasy points**
+
+In League B:
+- Above median (100 > 80) → multiplier = 0.85
+- Base 50 pts → 50 × 0.85 = **42.5 fantasy points**
+
+Same performance, different fantasy points! This ensures fair competition within each league's context.
+
+### Implementation
+
+- `PlayerPerformance.base_fantasy_points` = Points before multiplier
+- `PlayerPerformance.multiplier_applied` = League-specific multiplier used
+- `PlayerPerformance.fantasy_points` = Final points (base × multiplier)
+- `League.multipliers_snapshot` = Current multiplier values for each roster player
+- Updates weekly via Celery task: `adjust_multipliers_weekly()`
+
+---
+
 ## ✅ Validation
 
 All new rules tested and working:
@@ -222,5 +286,7 @@ All new rules tested and working:
 - ✅ Economy rate bonuses working
 - ✅ No minimum balls/overs required
 - ✅ All edge cases handled
+- ✅ League-specific multipliers working independently
+- ✅ Weekly drift task processes all active leagues
 
-See: `test_new_points_rules.py` for comprehensive tests
+See: `test_new_points_rules.py` and `test_league_specific_multipliers.py` for comprehensive tests

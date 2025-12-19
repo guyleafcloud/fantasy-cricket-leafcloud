@@ -79,13 +79,18 @@ class MultiplierAdjuster:
             ratio = (player_score - median_score) / (max_score - median_score)
             return self.neutral_multiplier - (ratio * (self.neutral_multiplier - self.min_multiplier))
 
-    def calculate_player_season_points(self, player: Player, db: Session) -> float:
+    def calculate_player_season_points(self, player: Player, db: Session, league_id: Optional[str] = None) -> float:
         """
         Calculate total fantasy points for a player's season using actual performances
 
         IMPORTANT: Uses final fantasy_points (after multiplier) from PlayerPerformance records.
         This is correct because drift should be based on actual fantasy points earned,
         not base points.
+
+        Args:
+            player: Player object
+            db: Database session
+            league_id: Optional league ID to filter performances to specific league
 
         Returns:
             Total fantasy points based on season performance (after multipliers)
@@ -94,11 +99,17 @@ class MultiplierAdjuster:
 
         # Sum all fantasy_points from PlayerPerformance records
         # This gives us the total points AFTER multipliers were applied
-        total_points = db.query(
+        query = db.query(
             db.func.coalesce(db.func.sum(PlayerPerformance.fantasy_points), 0.0)
         ).filter(
             PlayerPerformance.player_id == player.id
-        ).scalar()
+        )
+
+        # Filter by league if specified (for league-specific multipliers)
+        if league_id:
+            query = query.filter(PlayerPerformance.league_id == league_id)
+
+        total_points = query.scalar()
 
         return float(total_points) if total_points else 0.0
 
@@ -202,6 +213,142 @@ class MultiplierAdjuster:
         changes.sort(key=lambda x: abs(x['change']), reverse=True)
 
         return {
+            'total_players': len(players),
+            'players_changed': len(changes),
+            'score_stats': {
+                'min': min_score,
+                'median': median_score,
+                'mean': mean_score,
+                'max': max_score
+            },
+            'top_changes': changes[:10],  # Top 10 changes
+            'drift_rate': self.drift_rate
+        }
+
+    def adjust_league_multipliers(
+        self,
+        db: Session,
+        league_id: str,
+        dry_run: bool = False
+    ) -> Dict:
+        """
+        Adjust multipliers for a specific league based on league-specific performance.
+
+        This calculates multipliers relative to the league's roster, ensuring
+        different leagues have independent multiplier distributions.
+
+        Args:
+            db: Database session
+            league_id: League ID to adjust multipliers for
+            dry_run: If True, calculate but don't save changes
+
+        Returns:
+            Dictionary with adjustment statistics
+        """
+        from database_models import League, LeagueRoster
+        from datetime import datetime
+
+        logger.info(f"🎯 Adjusting league-specific multipliers for league {league_id}")
+        logger.info(f"   Drift rate: {self.drift_rate:.1%}")
+
+        # Get league
+        league = db.query(League).filter_by(id=league_id).first()
+        if not league:
+            return {"error": "League not found"}
+
+        # Get all players in this league's roster
+        roster_entries = db.query(LeagueRoster).filter_by(league_id=league_id).all()
+        player_ids = [entry.player_id for entry in roster_entries]
+
+        if not player_ids:
+            return {"error": "No players in league roster"}
+
+        players = db.query(Player).filter(Player.id.in_(player_ids)).all()
+        logger.info(f"   Found {len(players)} players in league roster")
+
+        # Calculate league-specific fantasy points for each player
+        logger.info("   Calculating league-specific season fantasy points...")
+        player_scores = []
+        player_data = []
+
+        # Get current multipliers from league snapshot (or player table if not set)
+        current_snapshot = league.multipliers_snapshot or {}
+
+        for player in players:
+            # Calculate points using ONLY this league's performances
+            score = self.calculate_player_season_points(player, db, league_id=league_id)
+            player_scores.append(score)
+
+            # Get current league-specific multiplier (or fall back to player's global multiplier)
+            old_multiplier = current_snapshot.get(player.id, player.multiplier)
+
+            player_data.append({
+                'player': player,
+                'score': score,
+                'old_multiplier': old_multiplier
+            })
+
+        # Calculate statistics for THIS LEAGUE's roster
+        min_score = min(player_scores) if player_scores else 0
+        max_score = max(player_scores) if player_scores else 0
+        median_score = statistics.median(player_scores) if player_scores else 0
+        mean_score = statistics.mean(player_scores) if player_scores else 0
+
+        logger.info(f"   League-specific score distribution:")
+        logger.info(f"     Min: {min_score:.2f}, Median: {median_score:.2f}")
+        logger.info(f"     Mean: {mean_score:.2f}, Max: {max_score:.2f}")
+
+        # Adjust multipliers
+        changes = []
+        new_snapshot = {}
+
+        for data in player_data:
+            player = data['player']
+            score = data['score']
+            old_multiplier = data['old_multiplier']
+
+            # Players with 0 points get the median multiplier of 1.0
+            if score == 0:
+                target_multiplier = 1.0
+            else:
+                target_multiplier = self.calculate_multiplier(
+                    score, min_score, median_score, max_score
+                )
+
+            # Apply drift: blend old multiplier with new target
+            new_multiplier = old_multiplier * (1 - self.drift_rate) + target_multiplier * self.drift_rate
+            new_multiplier = round(new_multiplier, 2)
+
+            # Store in new snapshot
+            new_snapshot[player.id] = new_multiplier
+
+            # Track change
+            change = new_multiplier - old_multiplier
+            if abs(change) > 0.01:  # Only track meaningful changes
+                changes.append({
+                    'player_name': player.name,
+                    'old_multiplier': old_multiplier,
+                    'target_multiplier': round(target_multiplier, 2),
+                    'new_multiplier': new_multiplier,
+                    'change': round(change, 2),
+                    'score': score
+                })
+
+        # Update league snapshot (if not dry run)
+        if not dry_run:
+            league.multipliers_snapshot = new_snapshot
+            league.multipliers_frozen_at = datetime.utcnow()
+            db.commit()
+            logger.info(f"   ✅ Updated league multiplier snapshot with {len(new_snapshot)} players")
+        else:
+            logger.info(f"   ℹ️  Dry run: would update {len(changes)} multipliers in league snapshot")
+
+        # Sort changes by magnitude
+        changes.sort(key=lambda x: abs(x['change']), reverse=True)
+
+        return {
+            'league_id': league_id,
+            'league_name': league.name,
             'total_players': len(players),
             'players_changed': len(changes),
             'score_stats': {

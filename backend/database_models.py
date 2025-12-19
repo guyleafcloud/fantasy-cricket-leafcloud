@@ -170,6 +170,7 @@ class Player(Base):
     multiplier = Column(Float, default=1.0, nullable=True)
     starting_multiplier = Column(Float, default=1.0, nullable=True)  # Initial multiplier at season start
     multiplier_updated_at = Column(DateTime, nullable=True)
+    prev_season_fantasy_points = Column(Float, nullable=True)  # Previous season total fantasy points for multiplier calculation
 
     # Season statistics
     matches_played = Column(Integer, nullable=True)
@@ -192,6 +193,7 @@ class Player(Base):
     # Relationships
     club = relationship("Club", back_populates="players")
     fantasy_team_players = relationship("FantasyTeamPlayer", back_populates="player", cascade="all, delete-orphan")
+    league_rosters = relationship("LeagueRoster", back_populates="player", cascade="all, delete-orphan")
 
     # Indexes
     __table_args__ = (
@@ -267,6 +269,23 @@ class League(Base):
     # Status
     is_public = Column(Boolean, default=False)
     max_participants = Column(Integer, default=100)
+    status = Column(String(50), default="draft")  # draft|active|locked|completed
+    confirmed_at = Column(DateTime, nullable=True)  # When admin confirmed & launched
+    locked_at = Column(DateTime, nullable=True)     # When registration closed
+    completed_at = Column(DateTime, nullable=True)  # When season ended
+
+    # Frozen rules (captured at confirmation to prevent mid-season changes)
+    frozen_squad_size = Column(Integer, nullable=True)
+    frozen_transfers_per_season = Column(Integer, nullable=True)
+    frozen_min_batsmen = Column(Integer, nullable=True)
+    frozen_min_bowlers = Column(Integer, nullable=True)
+    frozen_require_wicket_keeper = Column(Boolean, nullable=True)
+    frozen_max_players_per_team = Column(Integer, nullable=True)
+    frozen_require_from_each_team = Column(Boolean, nullable=True)
+
+    # League-specific multipliers (snapshot at confirmation)
+    multipliers_snapshot = Column(JSON, nullable=True)  # {player_id: multiplier}
+    multipliers_frozen_at = Column(DateTime, nullable=True)
 
     # Metadata
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -277,12 +296,38 @@ class League(Base):
     season = relationship("Season", back_populates="leagues")
     club = relationship("Club")
     fantasy_teams = relationship("FantasyTeam", back_populates="league", cascade="all, delete-orphan")
+    roster_players = relationship("LeagueRoster", back_populates="league", cascade="all, delete-orphan")
 
     # Indexes
     __table_args__ = (
         Index('idx_league_season', 'season_id'),
         Index('idx_league_club', 'club_id'),
         Index('idx_league_code', 'league_code'),
+    )
+
+
+class LeagueRoster(Base):
+    """
+    Junction table linking leagues to their available players
+    Each league can have a custom roster of players
+    """
+    __tablename__ = "league_rosters"
+
+    id = Column(String(50), primary_key=True, default=generate_uuid)
+    league_id = Column(String(50), ForeignKey("leagues.id", ondelete="CASCADE"), nullable=False)
+    player_id = Column(String(50), ForeignKey("players.id", ondelete="CASCADE"), nullable=False)
+    included_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    league = relationship("League", back_populates="roster_players")
+    player = relationship("Player", back_populates="league_rosters")
+
+    # Indexes
+    __table_args__ = (
+        Index('idx_league_roster_league', 'league_id'),
+        Index('idx_league_roster_player', 'player_id'),
+        UniqueConstraint('league_id', 'player_id', name='unique_league_player'),
     )
 
 
@@ -303,6 +348,7 @@ class FantasyTeam(Base):
 
     # Status
     is_finalized = Column(Boolean, default=False)  # Locked in for season
+    finalized_at = Column(DateTime, nullable=True)  # When user locked their team
     total_points = Column(Float, default=0.0)
     last_round_points = Column(Float, default=0.0)  # Points from most recent round
     rank = Column(Integer, nullable=True)

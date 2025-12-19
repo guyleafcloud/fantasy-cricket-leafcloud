@@ -30,29 +30,58 @@ class FantasyTeamPointsService:
         player_id: str,
         is_captain: bool,
         is_vice_captain: bool,
+        league_id: str,
         db: Session
     ) -> float:
         """
-        Calculate total fantasy points for a player in a team
+        Calculate total fantasy points for a player in a team using league-specific multipliers
 
         Args:
             player_id: Player ID
             is_captain: Whether player is captain (2x multiplier)
             is_vice_captain: Whether player is vice-captain (1.5x multiplier)
+            league_id: League ID (for league-specific multipliers)
             db: Database session
 
         Returns:
-            Total points for this player (after captain/VC bonus)
+            Total points for this player (after league multiplier and captain/VC bonus)
         """
-        # Get sum of all fantasy_points for this player
-        # fantasy_points already includes the player multiplier
-        total = db.query(
-            func.coalesce(func.sum(PlayerPerformance.fantasy_points), 0.0)
-        ).filter(
-            PlayerPerformance.player_id == player_id
-        ).scalar()
+        # Get league to access multipliers snapshot
+        league = db.query(League).filter(League.id == league_id).first()
+        if not league:
+            logger.warning(f"League {league_id} not found, using global multipliers")
+            # Fall back to using stored fantasy_points (global multiplier)
+            total = db.query(
+                func.coalesce(func.sum(PlayerPerformance.fantasy_points), 0.0)
+            ).filter(
+                PlayerPerformance.player_id == player_id
+            ).scalar()
+            base_points = float(total) if total else 0.0
+        else:
+            # Get league-specific multiplier for this player
+            multipliers_snapshot = league.multipliers_snapshot or {}
+            league_multiplier = multipliers_snapshot.get(player_id)
 
-        base_points = float(total) if total else 0.0
+            if league_multiplier is None:
+                # Player not in league's roster, shouldn't happen but fallback to global
+                logger.warning(f"Player {player_id} not in league {league_id} multiplier snapshot")
+                player = db.query(Player).filter(Player.id == player_id).first()
+                league_multiplier = player.multiplier if player else 1.0
+
+            # Get all performances for this player
+            performances = db.query(PlayerPerformance).filter(
+                PlayerPerformance.player_id == player_id
+            ).all()
+
+            # Recalculate points using league-specific multiplier
+            base_points = 0.0
+            for perf in performances:
+                # Use base_fantasy_points (before multiplier) and apply league's multiplier
+                if perf.base_fantasy_points is not None:
+                    base_points += perf.base_fantasy_points * league_multiplier
+                else:
+                    # Fallback: if base_fantasy_points is missing, use stored fantasy_points
+                    base_points += (perf.fantasy_points or 0.0)
 
         # Apply captain/VC multiplier
         captain_mult = 1.0
@@ -69,7 +98,7 @@ class FantasyTeamPointsService:
         db: Session
     ) -> Dict:
         """
-        Calculate total points for a fantasy team
+        Calculate total points for a fantasy team using league-specific multipliers
 
         Args:
             fantasy_team_id: Fantasy team ID
@@ -78,6 +107,17 @@ class FantasyTeamPointsService:
         Returns:
             Dictionary with total_points and breakdown by player
         """
+        # Get the team to access its league_id
+        team = db.query(FantasyTeam).filter(FantasyTeam.id == fantasy_team_id).first()
+        if not team:
+            logger.error(f"Fantasy team {fantasy_team_id} not found")
+            return {
+                'total_points': 0.0,
+                'player_breakdown': []
+            }
+
+        league_id = team.league_id
+
         # Get all players in the team
         team_players = db.query(FantasyTeamPlayer).filter(
             FantasyTeamPlayer.fantasy_team_id == fantasy_team_id
@@ -101,6 +141,7 @@ class FantasyTeamPointsService:
                 ftp.player_id,
                 ftp.is_captain,
                 ftp.is_vice_captain,
+                league_id,
                 db
             )
 

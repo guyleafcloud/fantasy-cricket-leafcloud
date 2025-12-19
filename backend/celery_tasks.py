@@ -241,12 +241,16 @@ def adjust_multipliers_weekly():
     """
     Adjust player multipliers based on performance with 15% weekly drift
     Runs every Monday at 2 AM (after weekly scrape)
+
+    This adjusts multipliers independently for each active/locked league,
+    ensuring each league has its own relative performance distribution.
     """
-    logger.info("🎯 Adjusting player multipliers (weekly drift)...")
+    logger.info("🎯 Adjusting player multipliers (weekly drift) for all leagues...")
 
     try:
         from multiplier_adjuster import MultiplierAdjuster
         from database_setup import SessionLocal
+        from database_models import League
 
         # Create database session
         db = SessionLocal()
@@ -255,29 +259,77 @@ def adjust_multipliers_weekly():
             # Create adjuster with 15% drift rate
             adjuster = MultiplierAdjuster(drift_rate=0.15)
 
-            # Adjust multipliers for all players
-            result = adjuster.adjust_multipliers(db, dry_run=False)
+            # Get all active and locked leagues (skip draft and completed)
+            leagues = db.query(League).filter(
+                League.status.in_(['active', 'locked'])
+            ).all()
 
-            logger.info(f"✅ Multiplier adjustment complete!")
-            logger.info(f"   Total players: {result['total_players']}")
-            logger.info(f"   Players changed: {result['players_changed']}")
+            if not leagues:
+                logger.warning("⚠️  No active or locked leagues found, skipping multiplier adjustment")
+                return {
+                    "status": "success",
+                    "message": "No active leagues to adjust"
+                }
 
-            # Log top changes
-            if result['top_changes']:
-                logger.info(f"\n📊 Top multiplier changes:")
-                for change in result['top_changes'][:5]:
-                    direction = "↑" if change['change'] > 0 else "↓"
-                    logger.info(
-                        f"      {change['player_name']}: "
-                        f"{change['old_multiplier']:.2f} → {change['new_multiplier']:.2f} "
-                        f"({direction}{abs(change['change']):.2f})"
-                    )
+            logger.info(f"   Found {len(leagues)} league(s) to process")
+
+            league_results = []
+            total_players_adjusted = 0
+
+            # Adjust multipliers for each league independently
+            for league in leagues:
+                logger.info(f"\n🏆 Processing league: {league.name} ({league.id})")
+
+                result = adjuster.adjust_league_multipliers(
+                    db,
+                    league_id=league.id,
+                    dry_run=False
+                )
+
+                if 'error' in result:
+                    logger.error(f"   ❌ Error: {result['error']}")
+                    league_results.append({
+                        'league_id': league.id,
+                        'league_name': league.name,
+                        'status': 'error',
+                        'error': result['error']
+                    })
+                    continue
+
+                logger.info(f"   ✅ Complete!")
+                logger.info(f"      Total players: {result['total_players']}")
+                logger.info(f"      Players changed: {result['players_changed']}")
+
+                # Log top changes
+                if result['top_changes']:
+                    logger.info(f"      📊 Top multiplier changes:")
+                    for change in result['top_changes'][:3]:
+                        direction = "↑" if change['change'] > 0 else "↓"
+                        logger.info(
+                            f"         {change['player_name']}: "
+                            f"{change['old_multiplier']:.2f} → {change['new_multiplier']:.2f} "
+                            f"({direction}{abs(change['change']):.2f})"
+                        )
+
+                league_results.append({
+                    'league_id': league.id,
+                    'league_name': league.name,
+                    'status': 'success',
+                    'players_adjusted': result['players_changed'],
+                    'total_players': result['total_players']
+                })
+
+                total_players_adjusted += result['players_changed']
+
+            logger.info(f"\n✅ Weekly multiplier adjustment complete!")
+            logger.info(f"   Leagues processed: {len(leagues)}")
+            logger.info(f"   Total player adjustments: {total_players_adjusted}")
 
             return {
                 "status": "success",
-                "players_adjusted": result['players_changed'],
-                "total_players": result['total_players'],
-                "drift_rate": result['drift_rate']
+                "leagues_processed": len(leagues),
+                "total_adjustments": total_players_adjusted,
+                "league_results": league_results
             }
 
         finally:

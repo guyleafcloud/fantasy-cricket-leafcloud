@@ -183,10 +183,10 @@ export default function AdminDashboard() {
       number: 4,
       title: 'Launch Game',
       description: 'Open registration and let users join leagues',
-      action: stats.active_season?.registration_open ? 'Registration Open' : 'Enable Registration',
-      link: '/admin/seasons',
+      action: stats.active_season?.registration_open ? 'Registration Open' : 'Confirm Leagues',
+      link: stats.active_season?.registration_open ? '/admin/seasons' : '/admin/leagues',
       status: stats.active_season?.registration_open ? 'complete' : 'pending',
-      stat: stats.active_season?.is_active ? 'Season active' : 'No active season',
+      stat: stats.active_season?.is_active ? 'Season active' : 'Confirm leagues to launch',
       disabled: stats.leagues_count === 0 || stats.players_count === 0,
     },
   ];

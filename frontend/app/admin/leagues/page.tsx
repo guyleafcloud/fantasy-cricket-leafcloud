@@ -33,6 +33,7 @@ interface League {
   participants_count: number;
   max_participants: number;
   created_at: string;
+  status?: string;  // draft|active|locked|completed
 }
 
 export default function LeaguesPage() {
@@ -57,6 +58,13 @@ export default function LeaguesPage() {
     require_from_each_team: true,
     is_public: true,
     max_participants: 100,
+    youth_teams: ['U13', 'U15', 'U17'],  // Which youth teams to include
+  });
+
+  const [youthTeamsState, setYouthTeamsState] = useState({
+    U13: true,
+    U15: true,
+    U17: true,
   });
 
   useEffect(() => {
@@ -125,13 +133,23 @@ export default function LeaguesPage() {
     setError('');
 
     try {
+      // Build youth_teams array from checkbox state
+      const selectedYouthTeams = Object.entries(youthTeamsState)
+        .filter(([_, isIncluded]) => isIncluded)
+        .map(([team, _]) => team);
+
+      const dataToSend = {
+        ...formData,
+        youth_teams: selectedYouthTeams,
+      };
+
       const response = await fetch('/api/admin/leagues', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
       if (response.ok) {
@@ -146,7 +164,9 @@ export default function LeaguesPage() {
           require_from_each_team: true,
           is_public: true,
           max_participants: 100,
+          youth_teams: ['U13', 'U15', 'U17'],
         });
+        setYouthTeamsState({ U13: true, U15: true, U17: true });
         await loadData();
       } else {
         const errorData = await response.json();
@@ -173,6 +193,49 @@ export default function LeaguesPage() {
       setError(err.response?.data?.detail || 'Failed to delete league');
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleConfirmLeague = async (leagueId: string) => {
+    const confirmMessage = `Confirm and launch this league?
+
+This will:
+• Freeze league rules (cannot be changed after confirmation)
+• Calculate and lock multipliers for all roster players
+• Open league for user team creation
+• Set status to ACTIVE
+
+Continue?`;
+
+    if (!confirm(confirmMessage)) return;
+
+    try {
+      const response = await fetch(`/api/admin/leagues/${leagueId}/confirm`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        const metadata = result.metadata || {};
+
+        alert(`✅ League confirmed and launched!
+
+📊 Roster: ${metadata.roster_count || 0} players
+⚖️ Multipliers: ${metadata.min_multiplier || 0} - ${metadata.max_multiplier || 0}
+🎯 Status: ACTIVE
+
+Users can now join and create teams!`);
+
+        await loadData(); // Reload to show updated status
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || 'Failed to confirm league');
+      }
+    } catch (err: any) {
+      setError('Failed to confirm league');
     }
   };
 
@@ -258,6 +321,9 @@ export default function LeaguesPage() {
                     League Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Season
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -283,6 +349,17 @@ export default function LeaguesPage() {
                         <div className="text-sm text-gray-500 dark:text-gray-400">{league.description}</div>
                       )}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        league.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                        league.status === 'active' ? 'bg-green-100 text-green-800' :
+                        league.status === 'locked' ? 'bg-blue-100 text-blue-800' :
+                        league.status === 'completed' ? 'bg-gray-100 text-gray-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {league.status ? league.status.toUpperCase() : 'DRAFT'}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {league.season_name}
                     </td>
@@ -302,6 +379,14 @@ export default function LeaguesPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      {(!league.status || league.status === 'draft') && (
+                        <button
+                          onClick={() => handleConfirmLeague(league.id)}
+                          className="text-green-600 hover:text-green-900 mr-4"
+                        >
+                          ✓ Confirm
+                        </button>
+                      )}
                       <button
                         onClick={() => router.push(`/admin/leagues/${league.id}`)}
                         className="text-cricket-green hover:text-green-900 mr-4"
@@ -319,7 +404,7 @@ export default function LeaguesPage() {
                 ))}
                 {leagues.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    <td colSpan={7} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                       No leagues created yet. Click &quot;Create New League&quot; to get started.
                     </td>
                   </tr>
@@ -471,6 +556,39 @@ export default function LeaguesPage() {
                     onChange={(e) => setFormData({...formData, max_participants: parseInt(e.target.value)})}
                   />
                 </div>
+              </div>
+
+              {/* Youth Team Selection */}
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Youth Teams to Include
+                </label>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  Select which youth teams will be available in this league
+                </p>
+                <div className="space-y-2">
+                  {[
+                    { key: 'U13', label: 'U13', count: 48 },
+                    { key: 'U15', label: 'U15', count: 34 },
+                    { key: 'U17', label: 'U17', count: 38 },
+                  ].map((team) => (
+                    <label key={team.key} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={youthTeamsState[team.key as keyof typeof youthTeamsState]}
+                        onChange={(e) => setYouthTeamsState({
+                          ...youthTeamsState,
+                          [team.key]: e.target.checked
+                        })}
+                        className="rounded border-gray-300 text-cricket-green focus:ring-cricket-green"
+                      />
+                      <span className="text-sm">{team.label} ({team.count} players)</span>
+                    </label>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  Senior teams (ACC 1-6, ZAMI 1) are always included
+                </p>
               </div>
 
               <div className="mt-6 flex justify-end space-x-3">

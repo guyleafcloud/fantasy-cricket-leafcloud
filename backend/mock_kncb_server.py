@@ -23,6 +23,7 @@ Environment Variables:
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from datetime import datetime, timedelta
+from typing import Dict, List, Optional
 import random
 import logging
 import os
@@ -41,6 +42,13 @@ CORS(app)
 
 MOCK_DATA_DIR = os.environ.get('MOCK_DATA_DIR', None)
 PRELOADED_MODE = MOCK_DATA_DIR is not None and os.path.exists(MOCK_DATA_DIR)
+
+# KNCB entity ID (standard for all KNCB matches)
+# This is used in URL validation: /match/{ENTITY_ID}-{match_id}/scorecard/
+ENTITY_ID = "134453"
+
+# Store entity ID in app config for route access
+app.config['ENTITY_ID'] = ENTITY_ID
 
 # In-memory cache for preloaded data
 preloaded_index = None
@@ -173,17 +181,29 @@ GRADES = [
     {"grade_id": 5, "grade_name": "Derde Klasse", "season_id": 19},
 ]
 
-# Player name generator
-FIRST_NAMES = [
-    "Jason", "Michael", "David", "Tom", "Max", "Ryan", "Ben", "Chris",
-    "Alex", "Arjun", "Vikram", "Rohan", "Amit", "Rahul", "Sanjay",
-    "Lars", "Pieter", "Jan", "Willem", "Bas", "Thijs", "Daan"
+# Player name generator - Realistic Dutch and Indian cricket names
+DUTCH_FIRST_NAMES = [
+    "Pieter", "Jan", "Willem", "Lars", "Bas", "Thijs", "Daan", "Tim",
+    "Sander", "Ruben", "Max", "Bram", "Jesse", "Jasper", "Luuk", "Tom",
+    "Jeroen", "Martijn", "Stijn", "Floris", "Maarten", "Niels"
 ]
 
-LAST_NAMES = [
-    "Smith", "Johnson", "Williams", "Brown", "Davis", "Miller",
-    "Patel", "Kumar", "Singh", "Shah", "Sharma", "Gupta",
-    "de Jong", "van Dijk", "Jansen", "Bakker", "Visser", "de Vries"
+DUTCH_LAST_NAMES = [
+    "de Jong", "van Dijk", "Jansen", "Bakker", "Visser", "de Vries",
+    "van den Berg", "Mulder", "Smit", "van Leeuwen", "van der Meer",
+    "Hendriks", "de Boer", "Bos", "van Dam", "Dijkstra", "van der Wal"
+]
+
+INDIAN_FIRST_NAMES = [
+    "Arjun", "Vikram", "Rohan", "Amit", "Rahul", "Sanjay", "Ajay",
+    "Aditya", "Kiran", "Nikhil", "Vivek", "Suresh", "Raj", "Ankit",
+    "Ravi", "Ashok", "Deepak", "Manoj", "Sandeep", "Pradeep"
+]
+
+INDIAN_LAST_NAMES = [
+    "Patel", "Kumar", "Singh", "Shah", "Sharma", "Gupta", "Reddy",
+    "Nair", "Iyer", "Chopra", "Mehta", "Rao", "Shetty", "Desai",
+    "Verma", "Joshi", "Bhat", "Kulkarni", "Menon", "Agarwal"
 ]
 
 # In-memory storage for simulated matches
@@ -192,8 +212,17 @@ match_counter = 100000  # Start match IDs at 100000
 
 
 def generate_player_name():
-    """Generate a realistic player name"""
-    return f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}"
+    """Generate realistic Dutch or Indian cricket player name (60% Dutch, 40% Indian - reflects ACC demographics)"""
+    if random.random() < 0.6:
+        # Dutch name
+        first = random.choice(DUTCH_FIRST_NAMES)
+        last = random.choice(DUTCH_LAST_NAMES)
+        return f"{first} {last}"
+    else:
+        # Indian name
+        first = random.choice(INDIAN_FIRST_NAMES)
+        last = random.choice(INDIAN_LAST_NAMES)
+        return f"{first} {last}"
 
 
 def simulate_batting_performance():
@@ -513,23 +542,47 @@ def get_scorecard_html(match_path):
     Return scorecard HTML for a match
 
     This mimics the KNCB matchcentre.kncb.nl format:
-    /match/{entity_id}-{match_id}/scorecard/
+    /match/{entity_id}-{match_id}/scorecard/?period={period_id}
+
+    IMPORTANT: Handles both 2025 and 2026 season URLs
+    - 2025: Uses preloaded data (mapped from 2025 to 2026)
+    - 2026: Will handle real-time when season starts (April 2026)
 
     In PRELOADED MODE: Serves pre-fetched 2025 HTML as 2026 data
-    In RANDOM MODE: Generates basic HTML with simulated data
+    In RANDOM MODE: Generates React-style HTML with vertical layout
     """
-    # Extract match_id from path (format: "134453-12345" or just "12345")
-    if '-' in match_path:
-        parts = match_path.split('-')
-        match_id_str = parts[-1]  # Last part is match ID
-    else:
-        match_id_str = match_path
+    # Extract entity_id and match_id from path
+    # Expected format: "134453-12345" or just "12345" (backwards compatible)
+    entity_id = None
+    match_id_str = None
 
+    if '-' in match_path:
+        # Standard format: entity_id-match_id
+        parts = match_path.rsplit('-', 1)  # Split from right to handle multi-hyphen cases
+        entity_id = parts[0]
+        match_id_str = parts[1]
+
+        # Validate entity ID matches expected value (134453 for KNCB)
+        if entity_id != str(app.config.get('ENTITY_ID', '134453')):
+            logger.warning(f"⚠️  URL entity ID '{entity_id}' doesn't match expected '134453'")
+            logger.warning(f"   This may indicate a format issue or different entity")
+    else:
+        # Backwards compatible: just match_id
+        match_id_str = match_path
+        logger.info(f"📝 URL format note: Using legacy format (match_id only)")
+        logger.info(f"   Production URLs should be: /match/134453-{match_id_str}/scorecard/")
+
+    # Parse match_id
     try:
         match_id = int(match_id_str)
     except ValueError:
         logger.error(f"❌ Invalid match ID in path: {match_path}")
         return Response("Invalid match ID", status=404)
+
+    # Check for period parameter (optional, used in 2025 URLs)
+    period_id = request.args.get('period')
+    if period_id:
+        logger.info(f"📅 Period ID provided: {period_id} (2025 season mapping)")
 
     logger.info(f"📄 GET /match/{match_path}/scorecard/ - Match ID: {match_id}")
 
@@ -566,63 +619,142 @@ def get_scorecard_html(match_path):
 
 
 def generate_scorecard_html(scorecard: Dict) -> str:
-    """Generate basic HTML representation of scorecard (for RANDOM mode)"""
-    html = f"""<!DOCTYPE html>
-<html>
+    """
+    Generate React-style HTML with vertical text layout (matches real KNCB structure)
+
+    This mimics how the real KNCB Match Centre displays data:
+    - React SPA structure with <div id="root">
+    - Vertical layout (each stat on a separate line, not tables)
+    - Section markers: BATTING, BOWLING, FIELDING
+    - Metadata text: Result, Venue, Toss info
+    - Column headers: R, B, 4, 6, SR for batting
+
+    The scraper parses this by:
+    1. Extracting all text with page.inner_text('body')
+    2. Finding section markers (BATTING, BOWLING)
+    3. Parsing 7 lines per player (name, dismissal, runs, balls, 4s, 6s, SR)
+    """
+
+    # Build vertical text content (what scraper sees after React renders)
+    content_lines = []
+
+    # Header information
+    content_lines.append(f"{scorecard['home_club']} vs {scorecard['away_club']}")
+    content_lines.append(f"Grade: {scorecard['grade_name']}")
+    content_lines.append(f"Match ID: {scorecard['match_id']}")
+    content_lines.append(f"Date: {scorecard['match_date']}")
+    content_lines.append(f"Result: {scorecard['result']}")
+    content_lines.append(f"Venue: Sportpark Amsterdam")  # Realistic metadata
+    content_lines.append(f"Toss won by: {scorecard['home_club']}")
+    content_lines.append("")  # Blank line
+
+    # Process each innings
+    for idx, innings in enumerate(scorecard['innings'], 1):
+        content_lines.append(f"Innings {idx}")
+        content_lines.append(f"{innings['batting_team']}")
+        content_lines.append(f"TOTAL: {innings['total']}/{innings['wickets']}")
+        content_lines.append(f"EXTRAS: {innings['extras']}")
+        content_lines.append("")
+
+        # BATTING section (vertical layout)
+        content_lines.append("BATTING")
+        content_lines.append("R")      # Column headers (each on separate line)
+        content_lines.append("B")
+        content_lines.append("4")
+        content_lines.append("6")
+        content_lines.append("SR")
+        content_lines.append("")
+
+        # Each player: 7 lines (name, dismissal, runs, balls, 4s, 6s, SR)
+        for bat in innings['batting']:
+            content_lines.append(bat['player_name'])
+            content_lines.append(bat['dismissal_type'])
+            content_lines.append(str(bat['runs']))
+            content_lines.append(str(bat['balls_faced']))
+            content_lines.append(str(bat['fours']))
+            content_lines.append(str(bat['sixes']))
+
+            # Calculate strike rate
+            if bat['balls_faced'] > 0:
+                sr = (bat['runs'] / bat['balls_faced']) * 100
+                content_lines.append(f"{sr:.2f}")
+            else:
+                content_lines.append("0.00")
+
+        content_lines.append("")  # Blank line after batting
+
+        # BOWLING section (vertical layout)
+        content_lines.append("BOWLING")
+        content_lines.append("O")      # Column headers
+        content_lines.append("M")
+        content_lines.append("R")
+        content_lines.append("W")
+        content_lines.append("NB")
+        content_lines.append("WD")
+        content_lines.append("")
+
+        # Each bowler: 7 lines (name, overs, maidens, runs, wickets, NB, WD)
+        for bowl in innings['bowling']:
+            content_lines.append(bowl['player_name'])
+            content_lines.append(f"{bowl['overs']:.1f}")
+            content_lines.append(str(bowl['maidens']))
+            content_lines.append(str(bowl['runs']))
+            content_lines.append(str(bowl['wickets']))
+            content_lines.append("0")  # No balls
+            content_lines.append("0")  # Wides
+
+        content_lines.append("")  # Blank line after bowling
+
+    # Add fielding section (if players took catches/stumpings)
+    if scorecard.get('fielding'):
+        content_lines.append("FIELDING")
+        content_lines.append("")
+        for fielder in scorecard['fielding']:
+            if fielder['catches'] > 0:
+                content_lines.append(f"{fielder['player_name']} - {fielder['catches']} catch(es)")
+            if fielder['stumpings'] > 0:
+                content_lines.append(f"{fielder['player_name']} - {fielder['stumpings']} stumping(s)")
+            if fielder['runouts'] > 0:
+                content_lines.append(f"{fielder['player_name']} - {fielder['runouts']} runout(s)")
+
+    content_lines.append("")
+    content_lines.append("Players")  # Section end marker
+
+    # Join all lines with newlines
+    text_content = "\n".join(content_lines)
+
+    # Wrap in React-style HTML structure (mimics real KNCB)
+    html = f"""<!doctype html>
+<html lang="en">
 <head>
-    <title>Match {scorecard['match_id']} - {scorecard['home_club']} vs {scorecard['away_club']}</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"/>
+    <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" rel="stylesheet"/>
+    <title>Mock KNCB Match Centre - Scorecard</title>
+    <style>
+        body {{
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }}
+        #root {{
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            white-space: pre-line;
+        }}
+    </style>
 </head>
 <body>
-    <h1>{scorecard['home_club']} vs {scorecard['away_club']}</h1>
-    <p>Grade: {scorecard['grade_name']}</p>
-    <p>Match ID: {scorecard['match_id']}</p>
-    <p>Result: {scorecard['result']}</p>
-
-    <h2>Innings</h2>
-"""
-
-    for idx, innings in enumerate(scorecard['innings'], 1):
-        html += f"""
-    <h3>Innings {idx} - {innings['batting_team']}</h3>
-    <p>Total: {innings['total']}/{innings['wickets']} (Extras: {innings['extras']})</p>
-
-    <h4>Batting</h4>
-    <table border="1">
-        <tr><th>Batsman</th><th>Runs</th><th>Balls</th><th>4s</th><th>6s</th><th>Dismissal</th></tr>
-"""
-        for bat in innings['batting']:
-            html += f"""
-        <tr>
-            <td>{bat['player_name']}</td>
-            <td>{bat['runs']}</td>
-            <td>{bat['balls_faced']}</td>
-            <td>{bat['fours']}</td>
-            <td>{bat['sixes']}</td>
-            <td>{bat['dismissal_type']}</td>
-        </tr>
-"""
-        html += """
-    </table>
-
-    <h4>Bowling</h4>
-    <table border="1">
-        <tr><th>Bowler</th><th>Overs</th><th>Maidens</th><th>Runs</th><th>Wickets</th></tr>
-"""
-        for bowl in innings['bowling']:
-            html += f"""
-        <tr>
-            <td>{bowl['player_name']}</td>
-            <td>{bowl['overs']}</td>
-            <td>{bowl['maidens']}</td>
-            <td>{bowl['runs']}</td>
-            <td>{bowl['wickets']}</td>
-        </tr>
-"""
-        html += """
-    </table>
-"""
-
-    html += """
+    <noscript>Hi there, this website runs entirely off JavaScript. Please enable JavaScript to view this page.</noscript>
+    <div id="root">{text_content}</div>
+    <script>
+        // Mock React rendering (instant for testing, but structure matches real KNCB)
+        console.log('Mock KNCB Match Centre - Scorecard rendered');
+    </script>
 </body>
 </html>
 """
@@ -667,6 +799,11 @@ if __name__ == '__main__':
     if PRELOADED_MODE:
         logger.info("🧪 MODE: PRELOADED (Serving pre-fetched 2025 scorecards as 2026 data)")
         logger.info(f"   Data directory: {MOCK_DATA_DIR}")
+        logger.info("")
+        logger.info("📌 2026 SEASON READY:")
+        logger.info("   - Mock server handles 2026 season format (entity_id-match_id)")
+        logger.info("   - When 2026 season starts (April 2026), scraper will fetch live data")
+        logger.info("   - Preloaded mode is for testing until live season begins")
 
         # Load index
         index = load_preloaded_index()
@@ -690,8 +827,17 @@ if __name__ == '__main__':
             logger.error("")
             exit(1)
     else:
-        logger.info("🎲 MODE: RANDOM (Generating random match data on-the-fly)")
-        logger.info("   To use preloaded mode, set MOCK_DATA_DIR environment variable")
+        logger.info("🎲 MODE: RANDOM (Generating realistic match data with vertical layout)")
+        logger.info("   - Matches real KNCB React-style structure")
+        logger.info("   - Realistic Dutch/Indian player names")
+        logger.info("   - Vertical text layout (not HTML tables)")
+        logger.info("")
+        logger.info("📌 2026 SEASON COMPATIBLE:")
+        logger.info("   - URL format: /match/134453-{match_id}/scorecard/")
+        logger.info("   - Entity ID validation enabled")
+        logger.info("   - Ready for live 2026 season (April 2026)")
+        logger.info("")
+        logger.info("   To use preloaded mode, set MOCK_DATA_DIR environment variable:")
 
     logger.info("")
     logger.info("📍 Server will be available at http://localhost:5001")

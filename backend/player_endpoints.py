@@ -113,14 +113,25 @@ async def create_players_bulk(
     db: Session = Depends(get_db)
 ):
     """
-    Bulk create players from CSV file (Admin only)
+    Bulk create/update players from CSV file (Admin only)
 
-    CSV format:
-    name,team_name,player_type,multiplier
+    CSV is the source of truth for team assignments.
+    - Duplicate names: Updates existing player's team assignment
+    - New names: Creates new player
 
-    Example:
-    John Doe,ACC 1,batsman,1.5
-    Jane Smith,ACC 2,bowler,2.0
+    Required CSV columns:
+    - name: Player full name (e.g., "MickBoendermaker")
+    - team_name: Team assignment (e.g., "ACC 1", "ACC 2")
+
+    Optional CSV columns:
+    - player_type: batsman, bowler, or all-rounder (defaults to null)
+    - multiplier: 0.5-5.0 (defaults to 1.0, kept if player exists)
+    - is_wicket_keeper: true/false (defaults to false)
+
+    Example CSV:
+    name,team_name,player_type,multiplier,is_wicket_keeper
+    MickBoendermaker,ACC 1,batsman,1.5,false
+    GurlabhSingh,ACC 5,all-rounder,1.46,true
     """
 
     if not file.filename.endswith('.csv'):
@@ -143,77 +154,146 @@ async def create_players_bulk(
     csv_file = io.StringIO(contents.decode('utf-8'))
     csv_reader = csv.DictReader(csv_file)
 
-    created_players = []
-    errors = []
-
     # Get all teams for this club for lookup
     teams = {team.name: team.id for team in db.query(Team).filter_by(club_id=club_id).all()}
+
+    # Get all existing players for this club (for duplicate checking)
+    existing_players = {
+        player.name.lower(): player
+        for player in db.query(Player).filter_by(club_id=club_id).all()
+    }
+
+    created_count = 0
+    updated_count = 0
+    skipped_count = 0
+    errors = []
+    results = []
 
     for row_num, row in enumerate(csv_reader, start=2):  # Start at 2 to account for header
         try:
             # Validate required fields
             if 'name' not in row or not row['name'].strip():
                 errors.append(f"Row {row_num}: Missing player name")
+                skipped_count += 1
                 continue
 
-            # Get team_id if team_name provided
-            team_id = None
-            if 'team_name' in row and row['team_name'].strip():
-                team_name = row['team_name'].strip()
-                if team_name in teams:
-                    team_id = teams[team_name]
-                else:
-                    errors.append(f"Row {row_num}: Team '{team_name}' not found")
-                    continue
+            player_name = row['name'].strip()
+            player_name_lower = player_name.lower()
 
-            # Parse player type
+            # Validate team_name (required)
+            if 'team_name' not in row or not row['team_name'].strip():
+                errors.append(f"Row {row_num}: Missing team_name for {player_name}")
+                skipped_count += 1
+                continue
+
+            team_name = row['team_name'].strip()
+            if team_name not in teams:
+                errors.append(f"Row {row_num}: Team '{team_name}' not found for {player_name}")
+                skipped_count += 1
+                continue
+
+            team_id = teams[team_name]
+
+            # Parse optional fields
             player_type = row.get('player_type', '').strip() or None
             if player_type:
                 valid_types = ["batsman", "bowler", "all-rounder"]
                 if player_type not in valid_types:
-                    errors.append(f"Row {row_num}: Invalid player type '{player_type}'")
+                    errors.append(f"Row {row_num}: Invalid player type '{player_type}' for {player_name}")
+                    skipped_count += 1
                     continue
 
             # Parse multiplier
-            try:
-                multiplier = float(row.get('multiplier', 1.0))
-                if multiplier < 0.5 or multiplier > 5.0:
-                    errors.append(f"Row {row_num}: Multiplier must be between 0.5 and 5.0")
+            multiplier = None
+            if 'multiplier' in row and row['multiplier'].strip():
+                try:
+                    multiplier = float(row['multiplier'])
+                    if multiplier < 0.5 or multiplier > 5.0:
+                        errors.append(f"Row {row_num}: Multiplier must be between 0.5 and 5.0 for {player_name}")
+                        skipped_count += 1
+                        continue
+                except ValueError:
+                    errors.append(f"Row {row_num}: Invalid multiplier value for {player_name}")
+                    skipped_count += 1
                     continue
-            except ValueError:
-                errors.append(f"Row {row_num}: Invalid multiplier value")
-                continue
 
-            # Create player
-            player = Player(
-                id=str(uuid.uuid4()),
-                name=row['name'].strip(),
-                club_id=club_id,
-                team_id=team_id,
-                player_type=player_type,
-                multiplier=multiplier,
-                created_by=admin["user_id"]
-            )
+            # Parse is_wicket_keeper
+            is_wicket_keeper = False
+            if 'is_wicket_keeper' in row and row['is_wicket_keeper'].strip():
+                wk_value = row['is_wicket_keeper'].strip().lower()
+                is_wicket_keeper = wk_value in ['true', '1', 'yes']
 
-            db.add(player)
-            created_players.append({
-                "name": player.name,
-                "team_name": row.get('team_name', 'N/A'),
-                "player_type": player.player_type,
-                "multiplier": player.multiplier
-            })
+            # Check for duplicate - UPDATE if exists, CREATE if new
+            if player_name_lower in existing_players:
+                # DUPLICATE FOUND - Update existing player
+                existing_player = existing_players[player_name_lower]
+
+                # CSV is leading for team assignment - always update
+                existing_player.team_id = team_id
+
+                # Update player_type if provided in CSV
+                if player_type is not None:
+                    existing_player.player_type = player_type
+
+                # Only update multiplier if explicitly provided in CSV
+                if multiplier is not None:
+                    existing_player.multiplier = multiplier
+
+                # Update is_wicket_keeper if provided
+                if 'is_wicket_keeper' in row:
+                    existing_player.is_wicket_keeper = is_wicket_keeper
+
+                updated_count += 1
+                results.append({
+                    "action": "updated",
+                    "name": player_name,
+                    "team_name": team_name,
+                    "player_type": existing_player.player_type,
+                    "multiplier": existing_player.multiplier,
+                    "is_wicket_keeper": existing_player.is_wicket_keeper
+                })
+
+            else:
+                # NEW PLAYER - Create
+                player = Player(
+                    id=str(uuid.uuid4()),
+                    name=player_name,
+                    club_id=club_id,
+                    team_id=team_id,
+                    player_type=player_type,
+                    multiplier=multiplier if multiplier is not None else 1.0,
+                    is_wicket_keeper=is_wicket_keeper,
+                    created_by=admin["user_id"]
+                )
+
+                db.add(player)
+                existing_players[player_name_lower] = player  # Add to cache to catch duplicates within CSV
+
+                created_count += 1
+                results.append({
+                    "action": "created",
+                    "name": player_name,
+                    "team_name": team_name,
+                    "player_type": player.player_type,
+                    "multiplier": player.multiplier,
+                    "is_wicket_keeper": player.is_wicket_keeper
+                })
 
         except Exception as e:
             errors.append(f"Row {row_num}: {str(e)}")
+            skipped_count += 1
 
-    # Commit all players
-    if created_players:
+    # Commit all changes
+    if created_count > 0 or updated_count > 0:
         db.commit()
 
     return {
-        "message": f"Bulk upload completed",
-        "created_count": len(created_players),
+        "message": f"Bulk upload completed: {created_count} created, {updated_count} updated, {skipped_count} skipped",
+        "created_count": created_count,
+        "updated_count": updated_count,
+        "skipped_count": skipped_count,
         "error_count": len(errors),
-        "created_players": created_players,
+        "results": results if len(results) <= 50 else results[:50],  # Limit to first 50 for display
+        "total_processed": created_count + updated_count,
         "errors": errors if errors else None
     }

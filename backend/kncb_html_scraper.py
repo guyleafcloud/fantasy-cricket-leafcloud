@@ -196,9 +196,45 @@ class KNCBMatchCentreScraper:
         finally:
             await browser.close()
 
+    def _clean_player_name(self, name: str) -> str:
+        """
+        Remove symbols from player names
+
+        Handles:
+        - † (wicketkeeper marker)
+        - * (captain marker)
+        - (c), (wk), etc. (parenthetical markers)
+        - Other non-alphanumeric except hyphens, apostrophes, and spaces
+
+        Args:
+            name: Raw player name with potential symbols
+
+        Returns:
+            Cleaned player name
+        """
+        if not name:
+            return name
+
+        import re
+
+        # Remove common cricket markers
+        name = name.replace('†', '').replace('*', '')
+
+        # Remove parenthetical markers like (c), (wk), (vc)
+        name = re.sub(r'\([^)]*\)', '', name)
+
+        # Keep only: letters, numbers, spaces, hyphens, apostrophes
+        # This preserves names like: "O'Brien", "van den Berg", "Singh-Patel"
+        name = re.sub(r'[^\w\s\-\']', '', name)
+
+        return name.strip()
+
     async def scrape_match_scorecard(self, match_id: int) -> Optional[Dict]:
         """
         Scrape full scorecard for a match
+
+        Primary method: HTML text parsing (reliable, no API auth needed)
+        Fallback: API with Referer header (likely blocked but worth trying)
 
         Returns:
             Dict with innings, batting, bowling stats for all players
@@ -207,21 +243,33 @@ class KNCBMatchCentreScraper:
         page = await browser.new_page()
 
         try:
-            # Try API endpoint first (works for scorecards)
-            url = f"{self.kncb_api_url}/match/{match_id}/?apiid={self.api_id}"
             logger.info(f"📥 Fetching scorecard for match {match_id}...")
 
-            response = await page.goto(url, wait_until='domcontentloaded', timeout=30000)
+            # PRIMARY: Try HTML text scraping (most reliable)
+            scorecard = await self._scrape_scorecard_html(page, match_id)
 
-            if response.status == 200:
+            if scorecard:
+                logger.info(f"✅ Got scorecard via HTML parsing")
+                return scorecard
+
+            # FALLBACK: Try API with Referer header (likely blocked but try anyway)
+            logger.info(f"⚠️  HTML parsing failed, trying API with Referer header...")
+            await page.set_extra_http_headers({
+                'Referer': 'https://matchcentre.kncb.nl/'
+            })
+
+            url = f"{self.kncb_api_url}/match/{match_id}/?apiid={self.api_id}"
+            response = await page.goto(url, wait_until='domcontentloaded', timeout=10000)
+
+            if response and response.status == 200:
                 json_text = await page.evaluate('document.body.textContent')
                 scorecard = json.loads(json_text)
-
-                logger.info(f"✅ Got scorecard for match {match_id}")
+                logger.info(f"✅ Got scorecard via API (surprising!)")
                 return scorecard
             else:
-                logger.warning(f"⚠️  Scorecard API returned {response.status}, trying HTML...")
-                return await self._scrape_scorecard_html(page, match_id)
+                status = response.status if response else 'No response'
+                logger.warning(f"❌ API returned {status} - using HTML method only")
+                return None
 
         except Exception as e:
             logger.error(f"❌ Error scraping scorecard: {e}")
@@ -230,63 +278,300 @@ class KNCBMatchCentreScraper:
             await browser.close()
 
     async def _scrape_scorecard_html(self, page: Page, match_id: int) -> Optional[Dict]:
-        """Fallback: Scrape scorecard from HTML"""
+        """
+        Primary scraping method: Parse scorecard text content
+
+        KNCB Match Centre is a React SPA with:
+        - No HTML tables (data rendered as text)
+        - Hashed CSS classes (can't use selectors)
+        - Vertical text layout (each stat on separate line)
+
+        This parser extracts text and parses the vertical layout.
+        """
         try:
-            # Navigate to match page
-            url = f"{self.matchcentre_url}/match/{match_id}"
+            # Navigate to scorecard page (note: full URL format with entity_id)
+            url = f"{self.matchcentre_url}/match/{self.entity_id}-{match_id}/scorecard/"
+            logger.info(f"   Loading scorecard: {url}")
+
             await page.goto(url, wait_until='domcontentloaded', timeout=30000)
+            await asyncio.sleep(3)  # Let React render
 
-            # Extract data using JavaScript
-            scorecard = await page.evaluate("""() => {
-                const data = {innings: []};
+            # Get full text content
+            page_text = await page.inner_text('body')
+            lines = [line.strip() for line in page_text.split('\n')]
 
-                // Find innings sections
-                const inningsSections = document.querySelectorAll('.innings-section, [class*="innings"]');
+            # Parse batting and bowling sections
+            batting_players = []
+            bowling_players = []
 
-                inningsSections.forEach(innings => {
-                    const inningsData = {
-                        batting: [],
-                        bowling: []
-                    };
+            for i, line in enumerate(lines):
+                if line == 'BATTING':
+                    players, _ = self._parse_batting_section(lines, i)
+                    batting_players.extend(players)
+                    logger.info(f"   Found {len(players)} batting entries")
 
-                    // Extract batting data
-                    const battingRows = innings.querySelectorAll('.batting-row, [class*="batting"] tr');
-                    battingRows.forEach(row => {
-                        const cells = row.querySelectorAll('td');
-                        if (cells.length >= 3) {
-                            inningsData.batting.push({
-                                player_name: cells[0]?.textContent.trim(),
-                                dismissal: cells[1]?.textContent.trim(),
-                                runs: parseInt(cells[2]?.textContent.trim()) || 0
-                            });
-                        }
-                    });
+                elif line == 'BOWLING':
+                    bowlers, _ = self._parse_bowling_section(lines, i)
+                    bowling_players.extend(bowlers)
+                    logger.info(f"   Found {len(bowlers)} bowling entries")
 
-                    // Extract bowling data
-                    const bowlingRows = innings.querySelectorAll('.bowling-row, [class*="bowling"] tr');
-                    bowlingRows.forEach(row => {
-                        const cells = row.querySelectorAll('td');
-                        if (cells.length >= 2) {
-                            inningsData.bowling.push({
-                                player_name: cells[0]?.textContent.trim(),
-                                figures: cells[1]?.textContent.trim()
-                            });
-                        }
-                    });
+            # Build innings structure (assume single innings for now)
+            if batting_players or bowling_players:
+                innings = [{
+                    'batting': batting_players,
+                    'bowling': bowling_players
+                }]
+                return {'innings': innings}
 
-                    if (inningsData.batting.length > 0 || inningsData.bowling.length > 0) {
-                        data.innings.push(inningsData);
-                    }
-                });
-
-                return data;
-            }""")
-
-            return scorecard if scorecard.get('innings') else None
+            logger.warning(f"   No batting or bowling data found")
+            return None
 
         except Exception as e:
-            logger.error(f"❌ HTML scraping failed: {e}")
+            logger.error(f"❌ HTML text parsing failed: {e}")
+            import traceback
+            traceback.print_exc()
             return None
+
+    def _parse_batting_section(self, lines: List[str], start_idx: int) -> tuple:
+        """
+        Parse batting section from vertical text layout
+
+        Format (each player is 7 lines):
+        M BOENDERMAKER       # Player name
+        b A Sehgal           # Dismissal
+        11                   # Runs
+        24                   # Balls
+        1                    # Fours
+        0                    # Sixes
+        45.83                # Strike rate
+        """
+        players = []
+        i = start_idx + 1  # Skip "BATTING" header
+
+        # Skip column headers
+        while i < len(lines) and lines[i] in ['R', 'B', '4', '6', 'SR', '']:
+            i += 1
+
+        # Parse players (7 lines each)
+        while i < len(lines) - 6:
+            name_candidate = lines[i]
+
+            # Stop at next section
+            if name_candidate in ['BOWLING', 'FIELDING', 'Players', ''] or 'Players' in name_candidate:
+                break
+
+            # Skip headers and pure numbers
+            if name_candidate in ['R', 'B', '4', '6', 'SR', 'BATTING', 'BOWLING']:
+                i += 1
+                continue
+
+            if not name_candidate or name_candidate.replace('.', '').replace('-', '').isdigit():
+                i += 1
+                continue
+
+            # This looks like a player name
+            try:
+                player_name = self._clean_player_name(name_candidate)
+                dismissal = lines[i + 1]
+                runs = int(lines[i + 2]) if lines[i + 2].isdigit() else 0
+                balls = int(lines[i + 3]) if lines[i + 3].isdigit() else 0
+                fours = int(lines[i + 4]) if lines[i + 4].isdigit() else 0
+                sixes = int(lines[i + 5]) if lines[i + 5].isdigit() else 0
+                sr = float(lines[i + 6]) if lines[i + 6].replace('.', '').isdigit() else 0.0
+
+                # Check for dismissal - if out, set is_out flag
+                is_out = not any(x in dismissal.lower() for x in ['not out', 'retired'])
+
+                player = {
+                    'player_name': player_name,
+                    'dismissal': dismissal,
+                    'runs': runs,
+                    'balls_faced': balls,
+                    'fours': fours,
+                    'sixes': sixes,
+                    'strike_rate': sr,
+                    'is_out': is_out
+                }
+                players.append(player)
+                i += 7  # Move to next player
+
+            except (ValueError, IndexError):
+                i += 1
+
+        return players, i
+
+    def _parse_bowling_section(self, lines: List[str], start_idx: int) -> tuple:
+        """
+        Parse bowling section from vertical text layout
+
+        Format (each bowler is 7 lines):
+        A Sehgal             # Bowler name
+        8                    # Overs
+        1                    # Maidens
+        32                   # Runs
+        3                    # Wickets
+        0                    # No balls
+        2                    # Wides
+        """
+        bowlers = []
+        i = start_idx + 1  # Skip "BOWLING" header
+
+        # Skip column headers
+        while i < len(lines) and lines[i] in ['O', 'M', 'R', 'W', 'NB', 'WD', 'ECON', '']:
+            i += 1
+
+        # Parse bowlers (7 lines each, but some may have ECON as 8th line)
+        while i < len(lines) - 6:
+            name_candidate = lines[i]
+
+            # Stop at next section
+            if name_candidate in ['FIELDING', 'Players', ''] or 'Players' in name_candidate:
+                break
+
+            # Skip headers and pure numbers
+            if name_candidate in ['O', 'M', 'R', 'W', 'NB', 'WD', 'BOWLING', 'ECON']:
+                i += 1
+                continue
+
+            if not name_candidate or name_candidate.replace('.', '').replace('-', '').isdigit():
+                i += 1
+                continue
+
+            # This looks like a bowler name
+            try:
+                bowler_name = self._clean_player_name(name_candidate)
+                overs_str = lines[i + 1]
+                maidens = int(lines[i + 2]) if lines[i + 2].isdigit() else 0
+                runs = int(lines[i + 3]) if lines[i + 3].isdigit() else 0
+                wickets = int(lines[i + 4]) if lines[i + 4].isdigit() else 0
+                no_balls = int(lines[i + 5]) if lines[i + 5].isdigit() else 0
+                wides = int(lines[i + 6]) if lines[i + 6].isdigit() else 0
+
+                # Parse overs (can be "8" or "8.0")
+                overs = float(overs_str) if overs_str.replace('.', '').isdigit() else 0.0
+
+                bowler = {
+                    'player_name': bowler_name,
+                    'overs': overs,
+                    'maidens': maidens,
+                    'runs': runs,
+                    'wickets': wickets,
+                    'no_balls': no_balls,
+                    'wides': wides
+                }
+                bowlers.append(bowler)
+                i += 7  # Move to next bowler (skip ECON if present)
+
+            except (ValueError, IndexError):
+                i += 1
+
+        return bowlers, i
+
+    def _is_valid_player_name(self, name: str) -> bool:
+        """
+        Filter out non-player entries like dismissals, metadata, etc.
+
+        Returns False for:
+        - Dismissal info: "no", "ro", "rt", "DNB", "b [name]", "c [name] b [name]"
+        - Match metadata: "TOTAL:", "EXTRAS:", "Fall of wickets:", "Result:", "Toss won by:"
+        - Team names: "ACC", "ACC 2", "VRA 1", "Kampong", etc.
+        - Venues: "Venue: ..."
+        - Divisions: "U13", "U15", "U17", "Eerste Klasse", etc.
+        - Dates: "06 Jul 2025 07:00 GMT"
+        - Single letters: "W", "O", "M", "NB"
+        - Empty/whitespace only
+        """
+        import re
+
+        if not name or not name.strip():
+            return False
+
+        name_stripped = name.strip()
+
+        # Single letters or very short non-names
+        if len(name_stripped) <= 2 and name_stripped.upper() in ['W', 'O', 'M', 'NB', 'LB', 'B', 'C']:
+            return False
+
+        # Common dismissal/status codes
+        dismissal_codes = ['no', 'ro', 'rt', 'rtno', 'DNB', 'nb', 'lb', 'w', 'c', 'hw']
+        if name_stripped.lower() in dismissal_codes:
+            return False
+
+        # Team names patterns (club names and team numbers)
+        team_name_patterns = [
+            r'^ACC$',
+            r'^ACC \d+$',           # ACC 1, ACC 2, etc.
+            r'^VRA$',
+            r'^VRA \d+$',           # VRA 1, VRA 2, etc.
+            r'^HBS$',
+            r'^HBS \d+$',
+            r'^Kampong$',
+            r'^Kampong \d+$',
+            r'^Quick$',
+            r'^Quick \d+$',
+            r'^VOC$',
+            r'^VOC \d+$',
+            r'^Bloemendaal$',
+            r'^Bloemendaal \d+$',
+            r'^VCC$',
+            r'^VCC \d+$',
+            r'^Qui Vive$',
+            r'^Qui Vive \d+$',
+            r'^Excelsior$',
+            r'^Hercules$',
+            r'^Rood en Wit',
+            r'^ZHCC$',
+            r'^Zwolle$',
+            r'^Dosti$',
+            r'^VVV$',
+            r'^Punjab CCR$',
+        ]
+
+        for pattern in team_name_patterns:
+            if re.match(pattern, name_stripped, re.IGNORECASE):
+                return False
+
+        # Division/age group indicators
+        if name_stripped in ['U13', 'U15', 'U17', 'U19', 'U21']:
+            return False
+
+        # Dismissal patterns: "b [name]", "c [name] b [name]", "lbw b [name]", etc.
+        dismissal_patterns = [
+            r'^b [A-Z]',           # bowled by
+            r'^c [A-Z]',           # caught
+            r'^c & b',             # caught and bowled
+            r'^c \? b',            # caught (fielder unknown)
+            r'^lbw',               # lbw
+            r'^st [A-Z]',          # stumped
+            r'^hw b',              # hit wicket
+            r'^ro \(',             # run out with names
+        ]
+
+        for pattern in dismissal_patterns:
+            if re.match(pattern, name_stripped):
+                return False
+
+        # Match metadata patterns
+        metadata_patterns = [
+            r'^TOTAL:',
+            r'^EXTRAS:',
+            r'^Fall of wickets:',
+            r'^Result:',            # "Result: ACC won by 5 wickets"
+            r'^Toss won by:',       # "Toss won by: ACC"
+            r'^Venue:',             # "Venue: Sportpark 't Loopveld"
+            r'^\d{2} \w{3} \d{4}',  # Dates like "06 Jul 2025"
+            r'^Eerste Klasse$',     # Division names
+            r'^Tweede Klasse$',
+            r'^Derde Klasse$',
+            r'^Overgangsklasse$',
+            r'^Hoofdklasse$',
+        ]
+
+        for pattern in metadata_patterns:
+            if re.match(pattern, name_stripped, re.IGNORECASE):
+                return False
+
+        return True
 
     def extract_player_stats(self, scorecard: Dict, club_name: str, tier: str) -> List[Dict]:
         """
@@ -304,7 +589,7 @@ class KNCBMatchCentreScraper:
             # Extract batting performances
             for batter in innings.get('batting', []):
                 player_name = batter.get('player_name') or batter.get('person_name')
-                if not player_name:
+                if not player_name or not self._is_valid_player_name(player_name):
                     continue
 
                 runs = batter.get('runs', 0)
@@ -321,7 +606,8 @@ class KNCBMatchCentreScraper:
                         'runs': runs,
                         'balls_faced': balls,
                         'fours': fours,
-                        'sixes': sixes
+                        'sixes': sixes,
+                        'is_out': batter.get('is_out', False)  # Preserve from parser (duck penalty fix)
                     },
                     'bowling': {},
                     'fielding': {}
@@ -332,7 +618,7 @@ class KNCBMatchCentreScraper:
             # Extract bowling performances
             for bowler in innings.get('bowling', []):
                 player_name = bowler.get('player_name') or bowler.get('person_name')
-                if not player_name:
+                if not player_name or not self._is_valid_player_name(player_name):
                     continue
 
                 # Find existing player or create new
@@ -360,7 +646,7 @@ class KNCBMatchCentreScraper:
             # Extract fielding (catches, stumpings, runouts)
             for fielder in innings.get('fielding', []):
                 player_name = fielder.get('player_name') or fielder.get('person_name')
-                if not player_name:
+                if not player_name or not self._is_valid_player_name(player_name):
                     continue
 
                 player_perf = next((p for p in players if p['player_name'] == player_name), None)

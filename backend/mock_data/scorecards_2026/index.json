@@ -1,0 +1,2368 @@
+{
+  "total_matches": 136,
+  "generated_at": "2025-11-21T16:09:22.348019",
+  "season_year": 2026,
+  "source_data": "2025 ACC matches mapped to 2026",
+  "matches_by_team": {
+    "ACC 1": [
+      {
+        "match_id": 7254567,
+        "date": "2026-04-01",
+        "week": 1
+      },
+      {
+        "match_id": 7254572,
+        "date": "2026-04-07",
+        "week": 1
+      },
+      {
+        "match_id": 7254577,
+        "date": "2026-04-12",
+        "week": 2
+      },
+      {
+        "match_id": 7254582,
+        "date": "2026-04-18",
+        "week": 3
+      },
+      {
+        "match_id": 7254587,
+        "date": "2026-04-29",
+        "week": 5
+      },
+      {
+        "match_id": 7254592,
+        "date": "2026-05-09",
+        "week": 6
+      },
+      {
+        "match_id": 7254597,
+        "date": "2026-05-18",
+        "week": 7
+      },
+      {
+        "match_id": 7254602,
+        "date": "2026-05-20",
+        "week": 8
+      },
+      {
+        "match_id": 7254607,
+        "date": "2026-06-01",
+        "week": 9
+      },
+      {
+        "match_id": 7258314,
+        "date": "2026-06-05",
+        "week": 10
+      },
+      {
+        "match_id": 7258315,
+        "date": "2026-06-12",
+        "week": 11
+      },
+      {
+        "match_id": 7258320,
+        "date": "2026-06-24",
+        "week": 12
+      },
+      {
+        "match_id": 7258325,
+        "date": "2026-07-06",
+        "week": 12
+      },
+      {
+        "match_id": 7258330,
+        "date": "2026-07-18",
+        "week": 12
+      },
+      {
+        "match_id": 7258335,
+        "date": "2026-07-29",
+        "week": 12
+      },
+      {
+        "match_id": 7258340,
+        "date": "2026-08-01",
+        "week": 12
+      },
+      {
+        "match_id": 7258345,
+        "date": "2026-08-10",
+        "week": 12
+      },
+      {
+        "match_id": 7258350,
+        "date": "2026-08-28",
+        "week": 12
+      }
+    ],
+    "ACC 2": [
+      {
+        "match_id": 7323305,
+        "date": "2026-04-29",
+        "week": 5
+      },
+      {
+        "match_id": 7323309,
+        "date": "2026-05-11",
+        "week": 6
+      },
+      {
+        "match_id": 7323327,
+        "date": "2026-05-31",
+        "week": 9
+      },
+      {
+        "match_id": 7323330,
+        "date": "2026-06-12",
+        "week": 11
+      },
+      {
+        "match_id": 7323334,
+        "date": "2026-06-24",
+        "week": 12
+      },
+      {
+        "match_id": 7323338,
+        "date": "2026-07-06",
+        "week": 12
+      },
+      {
+        "match_id": 7323347,
+        "date": "2026-07-29",
+        "week": 12
+      },
+      {
+        "match_id": 7323351,
+        "date": "2026-08-11",
+        "week": 12
+      },
+      {
+        "match_id": 7323354,
+        "date": "2026-08-19",
+        "week": 12
+      },
+      {
+        "match_id": 7323359,
+        "date": "2026-09-06",
+        "week": 12
+      },
+      {
+        "match_id": 7323344,
+        "date": "2026-09-13",
+        "week": 12
+      },
+      {
+        "match_id": 7323322,
+        "date": "2026-09-17",
+        "week": 12
+      },
+      {
+        "match_id": 7323303,
+        "date": "2026-09-23",
+        "week": 12
+      },
+      {
+        "match_id": 7323293,
+        "date": "2026-09-30",
+        "week": 12
+      }
+    ],
+    "ACC 3": [
+      {
+        "match_id": 7324739,
+        "date": "2026-04-11",
+        "week": 2
+      },
+      {
+        "match_id": 7324742,
+        "date": "2026-04-22",
+        "week": 4
+      },
+      {
+        "match_id": 7324747,
+        "date": "2026-05-03",
+        "week": 5
+      },
+      {
+        "match_id": 7324749,
+        "date": "2026-05-14",
+        "week": 7
+      },
+      {
+        "match_id": 7324755,
+        "date": "2026-05-24",
+        "week": 8
+      },
+      {
+        "match_id": 7324760,
+        "date": "2026-06-06",
+        "week": 10
+      },
+      {
+        "match_id": 7324763,
+        "date": "2026-06-16",
+        "week": 11
+      },
+      {
+        "match_id": 7324766,
+        "date": "2026-06-28",
+        "week": 12
+      },
+      {
+        "match_id": 7324770,
+        "date": "2026-07-10",
+        "week": 12
+      },
+      {
+        "match_id": 7324777,
+        "date": "2026-08-02",
+        "week": 12
+      },
+      {
+        "match_id": 7324784,
+        "date": "2026-08-11",
+        "week": 12
+      },
+      {
+        "match_id": 7324787,
+        "date": "2026-08-28",
+        "week": 12
+      },
+      {
+        "match_id": 7324791,
+        "date": "2026-09-06",
+        "week": 12
+      },
+      {
+        "match_id": 7324776,
+        "date": "2026-09-26",
+        "week": 12
+      }
+    ],
+    "ACC 4": [
+      {
+        "match_id": 7324800,
+        "date": "2026-04-22",
+        "week": 4
+      },
+      {
+        "match_id": 7324801,
+        "date": "2026-05-03",
+        "week": 5
+      },
+      {
+        "match_id": 7324808,
+        "date": "2026-05-14",
+        "week": 7
+      },
+      {
+        "match_id": 7324815,
+        "date": "2026-06-04",
+        "week": 10
+      },
+      {
+        "match_id": 7324817,
+        "date": "2026-06-13",
+        "week": 11
+      },
+      {
+        "match_id": 7324823,
+        "date": "2026-06-28",
+        "week": 12
+      },
+      {
+        "match_id": 7324828,
+        "date": "2026-07-10",
+        "week": 12
+      },
+      {
+        "match_id": 7324836,
+        "date": "2026-08-02",
+        "week": 12
+      },
+      {
+        "match_id": 7324837,
+        "date": "2026-08-08",
+        "week": 12
+      },
+      {
+        "match_id": 7324829,
+        "date": "2026-08-17",
+        "week": 12
+      },
+      {
+        "match_id": 7324795,
+        "date": "2026-08-20",
+        "week": 12
+      },
+      {
+        "match_id": 7324844,
+        "date": "2026-08-29",
+        "week": 12
+      },
+      {
+        "match_id": 7324848,
+        "date": "2026-09-06",
+        "week": 12
+      },
+      {
+        "match_id": 7324809,
+        "date": "2026-09-10",
+        "week": 12
+      }
+    ],
+    "ACC 5": [
+      {
+        "match_id": 7326156,
+        "date": "2026-04-07",
+        "week": 1
+      },
+      {
+        "match_id": 7326162,
+        "date": "2026-04-22",
+        "week": 4
+      },
+      {
+        "match_id": 7326166,
+        "date": "2026-05-03",
+        "week": 5
+      },
+      {
+        "match_id": 7326170,
+        "date": "2026-05-14",
+        "week": 7
+      },
+      {
+        "match_id": 7326173,
+        "date": "2026-05-24",
+        "week": 8
+      },
+      {
+        "match_id": 7326177,
+        "date": "2026-06-05",
+        "week": 10
+      },
+      {
+        "match_id": 7326183,
+        "date": "2026-06-16",
+        "week": 11
+      },
+      {
+        "match_id": 7326186,
+        "date": "2026-06-28",
+        "week": 12
+      },
+      {
+        "match_id": 7326195,
+        "date": "2026-07-21",
+        "week": 12
+      },
+      {
+        "match_id": 7326199,
+        "date": "2026-08-02",
+        "week": 12
+      },
+      {
+        "match_id": 7326203,
+        "date": "2026-08-11",
+        "week": 12
+      },
+      {
+        "match_id": 7326207,
+        "date": "2026-08-28",
+        "week": 12
+      },
+      {
+        "match_id": 7326192,
+        "date": "2026-10-01",
+        "week": 12
+      }
+    ],
+    "ACC 6": [
+      {
+        "match_id": 7326066,
+        "date": "2026-04-10",
+        "week": 2
+      },
+      {
+        "match_id": 7326073,
+        "date": "2026-04-22",
+        "week": 4
+      },
+      {
+        "match_id": 7326075,
+        "date": "2026-05-03",
+        "week": 5
+      },
+      {
+        "match_id": 7326082,
+        "date": "2026-05-14",
+        "week": 7
+      },
+      {
+        "match_id": 7326086,
+        "date": "2026-05-24",
+        "week": 8
+      },
+      {
+        "match_id": 7326093,
+        "date": "2026-06-04",
+        "week": 10
+      },
+      {
+        "match_id": 7326097,
+        "date": "2026-06-15",
+        "week": 11
+      },
+      {
+        "match_id": 7326102,
+        "date": "2026-06-28",
+        "week": 12
+      },
+      {
+        "match_id": 7326120,
+        "date": "2026-08-02",
+        "week": 12
+      },
+      {
+        "match_id": 7326121,
+        "date": "2026-08-11",
+        "week": 12
+      },
+      {
+        "match_id": 7326130,
+        "date": "2026-08-29",
+        "week": 12
+      },
+      {
+        "match_id": 7326132,
+        "date": "2026-09-06",
+        "week": 12
+      },
+      {
+        "match_id": 7326139,
+        "date": "2026-09-13",
+        "week": 12
+      },
+      {
+        "match_id": 7326143,
+        "date": "2026-09-20",
+        "week": 12
+      },
+      {
+        "match_id": 7326148,
+        "date": "2026-09-26",
+        "week": 12
+      }
+    ],
+    "ACC ZAMI": [
+      {
+        "match_id": 7332092,
+        "date": "2026-04-08",
+        "week": 2
+      },
+      {
+        "match_id": 7332265,
+        "date": "2026-04-19",
+        "week": 3
+      },
+      {
+        "match_id": 7332269,
+        "date": "2026-04-30",
+        "week": 5
+      },
+      {
+        "match_id": 7332277,
+        "date": "2026-06-05",
+        "week": 10
+      },
+      {
+        "match_id": 7332287,
+        "date": "2026-06-12",
+        "week": 11
+      },
+      {
+        "match_id": 7332115,
+        "date": "2026-06-12",
+        "week": 11
+      },
+      {
+        "match_id": 7332119,
+        "date": "2026-06-24",
+        "week": 12
+      },
+      {
+        "match_id": 7332299,
+        "date": "2026-07-15",
+        "week": 12
+      },
+      {
+        "match_id": 7332129,
+        "date": "2026-07-18",
+        "week": 12
+      },
+      {
+        "match_id": 7332305,
+        "date": "2026-07-29",
+        "week": 12
+      },
+      {
+        "match_id": 7332101,
+        "date": "2026-08-17",
+        "week": 12
+      },
+      {
+        "match_id": 7332315,
+        "date": "2026-08-26",
+        "week": 12
+      },
+      {
+        "match_id": 7332316,
+        "date": "2026-09-03",
+        "week": 12
+      },
+      {
+        "match_id": 7332095,
+        "date": "2026-09-10",
+        "week": 12
+      },
+      {
+        "match_id": 7332122,
+        "date": "2026-09-11",
+        "week": 12
+      },
+      {
+        "match_id": 7332309,
+        "date": "2026-09-18",
+        "week": 12
+      },
+      {
+        "match_id": 7332302,
+        "date": "2026-09-22",
+        "week": 12
+      },
+      {
+        "match_id": 7332274,
+        "date": "2026-09-29",
+        "week": 12
+      }
+    ],
+    "ACC U17": [
+      {
+        "match_id": 7329152,
+        "date": "2026-05-02",
+        "week": 5
+      },
+      {
+        "match_id": 7329153,
+        "date": "2026-05-13",
+        "week": 7
+      },
+      {
+        "match_id": 7329157,
+        "date": "2026-05-23",
+        "week": 8
+      },
+      {
+        "match_id": 7329168,
+        "date": "2026-06-14",
+        "week": 11
+      },
+      {
+        "match_id": 7329170,
+        "date": "2026-06-27",
+        "week": 12
+      },
+      {
+        "match_id": 7329172,
+        "date": "2026-07-10",
+        "week": 12
+      },
+      {
+        "match_id": 7329159,
+        "date": "2026-07-16",
+        "week": 12
+      },
+      {
+        "match_id": 7329176,
+        "date": "2026-07-20",
+        "week": 12
+      },
+      {
+        "match_id": 7329179,
+        "date": "2026-07-27",
+        "week": 12
+      },
+      {
+        "match_id": 7393900,
+        "date": "2026-09-25",
+        "week": 12
+      }
+    ],
+    "ACC U15": [
+      {
+        "match_id": 7331235,
+        "date": "2026-04-20",
+        "week": 3
+      },
+      {
+        "match_id": 7331237,
+        "date": "2026-05-02",
+        "week": 5
+      },
+      {
+        "match_id": 7331240,
+        "date": "2026-05-13",
+        "week": 7
+      },
+      {
+        "match_id": 7331246,
+        "date": "2026-06-02",
+        "week": 9
+      },
+      {
+        "match_id": 7331249,
+        "date": "2026-06-14",
+        "week": 11
+      },
+      {
+        "match_id": 7331253,
+        "date": "2026-06-26",
+        "week": 12
+      },
+      {
+        "match_id": 7331256,
+        "date": "2026-07-09",
+        "week": 12
+      },
+      {
+        "match_id": 7331262,
+        "date": "2026-07-31",
+        "week": 12
+      },
+      {
+        "match_id": 7393853,
+        "date": "2026-09-25",
+        "week": 12
+      },
+      {
+        "match_id": 7397066,
+        "date": "2026-10-03",
+        "week": 12
+      }
+    ],
+    "ACC U13": [
+      {
+        "match_id": 7336247,
+        "date": "2026-04-21",
+        "week": 3
+      },
+      {
+        "match_id": 7336254,
+        "date": "2026-05-02",
+        "week": 5
+      },
+      {
+        "match_id": 7336258,
+        "date": "2026-05-17",
+        "week": 7
+      },
+      {
+        "match_id": 7336263,
+        "date": "2026-05-22",
+        "week": 8
+      },
+      {
+        "match_id": 7336272,
+        "date": "2026-06-14",
+        "week": 11
+      },
+      {
+        "match_id": 7336280,
+        "date": "2026-06-26",
+        "week": 12
+      },
+      {
+        "match_id": 7336281,
+        "date": "2026-07-09",
+        "week": 12
+      },
+      {
+        "match_id": 7336290,
+        "date": "2026-07-20",
+        "week": 12
+      },
+      {
+        "match_id": 7393858,
+        "date": "2026-09-25",
+        "week": 12
+      },
+      {
+        "match_id": 7395421,
+        "date": "2026-09-30",
+        "week": 12
+      }
+    ]
+  },
+  "matches_by_week": {
+    "1": [
+      {
+        "match_id": 7254567,
+        "team": "ACC 1",
+        "date": "2026-04-01"
+      },
+      {
+        "match_id": 7254572,
+        "team": "ACC 1",
+        "date": "2026-04-07"
+      },
+      {
+        "match_id": 7326156,
+        "team": "ACC 5",
+        "date": "2026-04-07"
+      }
+    ],
+    "2": [
+      {
+        "match_id": 7254577,
+        "team": "ACC 1",
+        "date": "2026-04-12"
+      },
+      {
+        "match_id": 7324739,
+        "team": "ACC 3",
+        "date": "2026-04-11"
+      },
+      {
+        "match_id": 7326066,
+        "team": "ACC 6",
+        "date": "2026-04-10"
+      },
+      {
+        "match_id": 7332092,
+        "team": "ACC ZAMI",
+        "date": "2026-04-08"
+      }
+    ],
+    "3": [
+      {
+        "match_id": 7254582,
+        "team": "ACC 1",
+        "date": "2026-04-18"
+      },
+      {
+        "match_id": 7332265,
+        "team": "ACC ZAMI",
+        "date": "2026-04-19"
+      },
+      {
+        "match_id": 7331235,
+        "team": "ACC U15",
+        "date": "2026-04-20"
+      },
+      {
+        "match_id": 7336247,
+        "team": "ACC U13",
+        "date": "2026-04-21"
+      }
+    ],
+    "5": [
+      {
+        "match_id": 7254587,
+        "team": "ACC 1",
+        "date": "2026-04-29"
+      },
+      {
+        "match_id": 7323305,
+        "team": "ACC 2",
+        "date": "2026-04-29"
+      },
+      {
+        "match_id": 7324747,
+        "team": "ACC 3",
+        "date": "2026-05-03"
+      },
+      {
+        "match_id": 7324801,
+        "team": "ACC 4",
+        "date": "2026-05-03"
+      },
+      {
+        "match_id": 7326166,
+        "team": "ACC 5",
+        "date": "2026-05-03"
+      },
+      {
+        "match_id": 7326075,
+        "team": "ACC 6",
+        "date": "2026-05-03"
+      },
+      {
+        "match_id": 7332269,
+        "team": "ACC ZAMI",
+        "date": "2026-04-30"
+      },
+      {
+        "match_id": 7329152,
+        "team": "ACC U17",
+        "date": "2026-05-02"
+      },
+      {
+        "match_id": 7331237,
+        "team": "ACC U15",
+        "date": "2026-05-02"
+      },
+      {
+        "match_id": 7336254,
+        "team": "ACC U13",
+        "date": "2026-05-02"
+      }
+    ],
+    "6": [
+      {
+        "match_id": 7254592,
+        "team": "ACC 1",
+        "date": "2026-05-09"
+      },
+      {
+        "match_id": 7323309,
+        "team": "ACC 2",
+        "date": "2026-05-11"
+      }
+    ],
+    "7": [
+      {
+        "match_id": 7254597,
+        "team": "ACC 1",
+        "date": "2026-05-18"
+      },
+      {
+        "match_id": 7324749,
+        "team": "ACC 3",
+        "date": "2026-05-14"
+      },
+      {
+        "match_id": 7324808,
+        "team": "ACC 4",
+        "date": "2026-05-14"
+      },
+      {
+        "match_id": 7326170,
+        "team": "ACC 5",
+        "date": "2026-05-14"
+      },
+      {
+        "match_id": 7326082,
+        "team": "ACC 6",
+        "date": "2026-05-14"
+      },
+      {
+        "match_id": 7329153,
+        "team": "ACC U17",
+        "date": "2026-05-13"
+      },
+      {
+        "match_id": 7331240,
+        "team": "ACC U15",
+        "date": "2026-05-13"
+      },
+      {
+        "match_id": 7336258,
+        "team": "ACC U13",
+        "date": "2026-05-17"
+      }
+    ],
+    "8": [
+      {
+        "match_id": 7254602,
+        "team": "ACC 1",
+        "date": "2026-05-20"
+      },
+      {
+        "match_id": 7324755,
+        "team": "ACC 3",
+        "date": "2026-05-24"
+      },
+      {
+        "match_id": 7326173,
+        "team": "ACC 5",
+        "date": "2026-05-24"
+      },
+      {
+        "match_id": 7326086,
+        "team": "ACC 6",
+        "date": "2026-05-24"
+      },
+      {
+        "match_id": 7329157,
+        "team": "ACC U17",
+        "date": "2026-05-23"
+      },
+      {
+        "match_id": 7336263,
+        "team": "ACC U13",
+        "date": "2026-05-22"
+      }
+    ],
+    "9": [
+      {
+        "match_id": 7254607,
+        "team": "ACC 1",
+        "date": "2026-06-01"
+      },
+      {
+        "match_id": 7323327,
+        "team": "ACC 2",
+        "date": "2026-05-31"
+      },
+      {
+        "match_id": 7331246,
+        "team": "ACC U15",
+        "date": "2026-06-02"
+      }
+    ],
+    "10": [
+      {
+        "match_id": 7258314,
+        "team": "ACC 1",
+        "date": "2026-06-05"
+      },
+      {
+        "match_id": 7324760,
+        "team": "ACC 3",
+        "date": "2026-06-06"
+      },
+      {
+        "match_id": 7324815,
+        "team": "ACC 4",
+        "date": "2026-06-04"
+      },
+      {
+        "match_id": 7326177,
+        "team": "ACC 5",
+        "date": "2026-06-05"
+      },
+      {
+        "match_id": 7326093,
+        "team": "ACC 6",
+        "date": "2026-06-04"
+      },
+      {
+        "match_id": 7332277,
+        "team": "ACC ZAMI",
+        "date": "2026-06-05"
+      }
+    ],
+    "11": [
+      {
+        "match_id": 7258315,
+        "team": "ACC 1",
+        "date": "2026-06-12"
+      },
+      {
+        "match_id": 7323330,
+        "team": "ACC 2",
+        "date": "2026-06-12"
+      },
+      {
+        "match_id": 7324763,
+        "team": "ACC 3",
+        "date": "2026-06-16"
+      },
+      {
+        "match_id": 7324817,
+        "team": "ACC 4",
+        "date": "2026-06-13"
+      },
+      {
+        "match_id": 7326183,
+        "team": "ACC 5",
+        "date": "2026-06-16"
+      },
+      {
+        "match_id": 7326097,
+        "team": "ACC 6",
+        "date": "2026-06-15"
+      },
+      {
+        "match_id": 7332287,
+        "team": "ACC ZAMI",
+        "date": "2026-06-12"
+      },
+      {
+        "match_id": 7332115,
+        "team": "ACC ZAMI",
+        "date": "2026-06-12"
+      },
+      {
+        "match_id": 7329168,
+        "team": "ACC U17",
+        "date": "2026-06-14"
+      },
+      {
+        "match_id": 7331249,
+        "team": "ACC U15",
+        "date": "2026-06-14"
+      },
+      {
+        "match_id": 7336272,
+        "team": "ACC U13",
+        "date": "2026-06-14"
+      }
+    ],
+    "12": [
+      {
+        "match_id": 7258320,
+        "team": "ACC 1",
+        "date": "2026-06-24"
+      },
+      {
+        "match_id": 7258325,
+        "team": "ACC 1",
+        "date": "2026-07-06"
+      },
+      {
+        "match_id": 7258330,
+        "team": "ACC 1",
+        "date": "2026-07-18"
+      },
+      {
+        "match_id": 7258335,
+        "team": "ACC 1",
+        "date": "2026-07-29"
+      },
+      {
+        "match_id": 7258340,
+        "team": "ACC 1",
+        "date": "2026-08-01"
+      },
+      {
+        "match_id": 7258345,
+        "team": "ACC 1",
+        "date": "2026-08-10"
+      },
+      {
+        "match_id": 7258350,
+        "team": "ACC 1",
+        "date": "2026-08-28"
+      },
+      {
+        "match_id": 7323334,
+        "team": "ACC 2",
+        "date": "2026-06-24"
+      },
+      {
+        "match_id": 7323338,
+        "team": "ACC 2",
+        "date": "2026-07-06"
+      },
+      {
+        "match_id": 7323347,
+        "team": "ACC 2",
+        "date": "2026-07-29"
+      },
+      {
+        "match_id": 7323351,
+        "team": "ACC 2",
+        "date": "2026-08-11"
+      },
+      {
+        "match_id": 7323354,
+        "team": "ACC 2",
+        "date": "2026-08-19"
+      },
+      {
+        "match_id": 7323359,
+        "team": "ACC 2",
+        "date": "2026-09-06"
+      },
+      {
+        "match_id": 7323344,
+        "team": "ACC 2",
+        "date": "2026-09-13"
+      },
+      {
+        "match_id": 7323322,
+        "team": "ACC 2",
+        "date": "2026-09-17"
+      },
+      {
+        "match_id": 7323303,
+        "team": "ACC 2",
+        "date": "2026-09-23"
+      },
+      {
+        "match_id": 7323293,
+        "team": "ACC 2",
+        "date": "2026-09-30"
+      },
+      {
+        "match_id": 7324766,
+        "team": "ACC 3",
+        "date": "2026-06-28"
+      },
+      {
+        "match_id": 7324770,
+        "team": "ACC 3",
+        "date": "2026-07-10"
+      },
+      {
+        "match_id": 7324777,
+        "team": "ACC 3",
+        "date": "2026-08-02"
+      },
+      {
+        "match_id": 7324784,
+        "team": "ACC 3",
+        "date": "2026-08-11"
+      },
+      {
+        "match_id": 7324787,
+        "team": "ACC 3",
+        "date": "2026-08-28"
+      },
+      {
+        "match_id": 7324791,
+        "team": "ACC 3",
+        "date": "2026-09-06"
+      },
+      {
+        "match_id": 7324776,
+        "team": "ACC 3",
+        "date": "2026-09-26"
+      },
+      {
+        "match_id": 7324823,
+        "team": "ACC 4",
+        "date": "2026-06-28"
+      },
+      {
+        "match_id": 7324828,
+        "team": "ACC 4",
+        "date": "2026-07-10"
+      },
+      {
+        "match_id": 7324836,
+        "team": "ACC 4",
+        "date": "2026-08-02"
+      },
+      {
+        "match_id": 7324837,
+        "team": "ACC 4",
+        "date": "2026-08-08"
+      },
+      {
+        "match_id": 7324829,
+        "team": "ACC 4",
+        "date": "2026-08-17"
+      },
+      {
+        "match_id": 7324795,
+        "team": "ACC 4",
+        "date": "2026-08-20"
+      },
+      {
+        "match_id": 7324844,
+        "team": "ACC 4",
+        "date": "2026-08-29"
+      },
+      {
+        "match_id": 7324848,
+        "team": "ACC 4",
+        "date": "2026-09-06"
+      },
+      {
+        "match_id": 7324809,
+        "team": "ACC 4",
+        "date": "2026-09-10"
+      },
+      {
+        "match_id": 7326186,
+        "team": "ACC 5",
+        "date": "2026-06-28"
+      },
+      {
+        "match_id": 7326195,
+        "team": "ACC 5",
+        "date": "2026-07-21"
+      },
+      {
+        "match_id": 7326199,
+        "team": "ACC 5",
+        "date": "2026-08-02"
+      },
+      {
+        "match_id": 7326203,
+        "team": "ACC 5",
+        "date": "2026-08-11"
+      },
+      {
+        "match_id": 7326207,
+        "team": "ACC 5",
+        "date": "2026-08-28"
+      },
+      {
+        "match_id": 7326192,
+        "team": "ACC 5",
+        "date": "2026-10-01"
+      },
+      {
+        "match_id": 7326102,
+        "team": "ACC 6",
+        "date": "2026-06-28"
+      },
+      {
+        "match_id": 7326120,
+        "team": "ACC 6",
+        "date": "2026-08-02"
+      },
+      {
+        "match_id": 7326121,
+        "team": "ACC 6",
+        "date": "2026-08-11"
+      },
+      {
+        "match_id": 7326130,
+        "team": "ACC 6",
+        "date": "2026-08-29"
+      },
+      {
+        "match_id": 7326132,
+        "team": "ACC 6",
+        "date": "2026-09-06"
+      },
+      {
+        "match_id": 7326139,
+        "team": "ACC 6",
+        "date": "2026-09-13"
+      },
+      {
+        "match_id": 7326143,
+        "team": "ACC 6",
+        "date": "2026-09-20"
+      },
+      {
+        "match_id": 7326148,
+        "team": "ACC 6",
+        "date": "2026-09-26"
+      },
+      {
+        "match_id": 7332119,
+        "team": "ACC ZAMI",
+        "date": "2026-06-24"
+      },
+      {
+        "match_id": 7332299,
+        "team": "ACC ZAMI",
+        "date": "2026-07-15"
+      },
+      {
+        "match_id": 7332129,
+        "team": "ACC ZAMI",
+        "date": "2026-07-18"
+      },
+      {
+        "match_id": 7332305,
+        "team": "ACC ZAMI",
+        "date": "2026-07-29"
+      },
+      {
+        "match_id": 7332101,
+        "team": "ACC ZAMI",
+        "date": "2026-08-17"
+      },
+      {
+        "match_id": 7332315,
+        "team": "ACC ZAMI",
+        "date": "2026-08-26"
+      },
+      {
+        "match_id": 7332316,
+        "team": "ACC ZAMI",
+        "date": "2026-09-03"
+      },
+      {
+        "match_id": 7332095,
+        "team": "ACC ZAMI",
+        "date": "2026-09-10"
+      },
+      {
+        "match_id": 7332122,
+        "team": "ACC ZAMI",
+        "date": "2026-09-11"
+      },
+      {
+        "match_id": 7332309,
+        "team": "ACC ZAMI",
+        "date": "2026-09-18"
+      },
+      {
+        "match_id": 7332302,
+        "team": "ACC ZAMI",
+        "date": "2026-09-22"
+      },
+      {
+        "match_id": 7332274,
+        "team": "ACC ZAMI",
+        "date": "2026-09-29"
+      },
+      {
+        "match_id": 7329170,
+        "team": "ACC U17",
+        "date": "2026-06-27"
+      },
+      {
+        "match_id": 7329172,
+        "team": "ACC U17",
+        "date": "2026-07-10"
+      },
+      {
+        "match_id": 7329159,
+        "team": "ACC U17",
+        "date": "2026-07-16"
+      },
+      {
+        "match_id": 7329176,
+        "team": "ACC U17",
+        "date": "2026-07-20"
+      },
+      {
+        "match_id": 7329179,
+        "team": "ACC U17",
+        "date": "2026-07-27"
+      },
+      {
+        "match_id": 7393900,
+        "team": "ACC U17",
+        "date": "2026-09-25"
+      },
+      {
+        "match_id": 7331253,
+        "team": "ACC U15",
+        "date": "2026-06-26"
+      },
+      {
+        "match_id": 7331256,
+        "team": "ACC U15",
+        "date": "2026-07-09"
+      },
+      {
+        "match_id": 7331262,
+        "team": "ACC U15",
+        "date": "2026-07-31"
+      },
+      {
+        "match_id": 7393853,
+        "team": "ACC U15",
+        "date": "2026-09-25"
+      },
+      {
+        "match_id": 7397066,
+        "team": "ACC U15",
+        "date": "2026-10-03"
+      },
+      {
+        "match_id": 7336280,
+        "team": "ACC U13",
+        "date": "2026-06-26"
+      },
+      {
+        "match_id": 7336281,
+        "team": "ACC U13",
+        "date": "2026-07-09"
+      },
+      {
+        "match_id": 7336290,
+        "team": "ACC U13",
+        "date": "2026-07-20"
+      },
+      {
+        "match_id": 7393858,
+        "team": "ACC U13",
+        "date": "2026-09-25"
+      },
+      {
+        "match_id": 7395421,
+        "team": "ACC U13",
+        "date": "2026-09-30"
+      }
+    ],
+    "4": [
+      {
+        "match_id": 7324742,
+        "team": "ACC 3",
+        "date": "2026-04-22"
+      },
+      {
+        "match_id": 7324800,
+        "team": "ACC 4",
+        "date": "2026-04-22"
+      },
+      {
+        "match_id": 7326162,
+        "team": "ACC 5",
+        "date": "2026-04-22"
+      },
+      {
+        "match_id": 7326073,
+        "team": "ACC 6",
+        "date": "2026-04-22"
+      }
+    ]
+  },
+  "matches": [
+    {
+      "match_id": 7254567,
+      "team": "ACC 1",
+      "date": "2026-04-01",
+      "week": 1,
+      "file": "by_match_id/7254567.json"
+    },
+    {
+      "match_id": 7254572,
+      "team": "ACC 1",
+      "date": "2026-04-07",
+      "week": 1,
+      "file": "by_match_id/7254572.json"
+    },
+    {
+      "match_id": 7254577,
+      "team": "ACC 1",
+      "date": "2026-04-12",
+      "week": 2,
+      "file": "by_match_id/7254577.json"
+    },
+    {
+      "match_id": 7254582,
+      "team": "ACC 1",
+      "date": "2026-04-18",
+      "week": 3,
+      "file": "by_match_id/7254582.json"
+    },
+    {
+      "match_id": 7254587,
+      "team": "ACC 1",
+      "date": "2026-04-29",
+      "week": 5,
+      "file": "by_match_id/7254587.json"
+    },
+    {
+      "match_id": 7254592,
+      "team": "ACC 1",
+      "date": "2026-05-09",
+      "week": 6,
+      "file": "by_match_id/7254592.json"
+    },
+    {
+      "match_id": 7254597,
+      "team": "ACC 1",
+      "date": "2026-05-18",
+      "week": 7,
+      "file": "by_match_id/7254597.json"
+    },
+    {
+      "match_id": 7254602,
+      "team": "ACC 1",
+      "date": "2026-05-20",
+      "week": 8,
+      "file": "by_match_id/7254602.json"
+    },
+    {
+      "match_id": 7254607,
+      "team": "ACC 1",
+      "date": "2026-06-01",
+      "week": 9,
+      "file": "by_match_id/7254607.json"
+    },
+    {
+      "match_id": 7258314,
+      "team": "ACC 1",
+      "date": "2026-06-05",
+      "week": 10,
+      "file": "by_match_id/7258314.json"
+    },
+    {
+      "match_id": 7258315,
+      "team": "ACC 1",
+      "date": "2026-06-12",
+      "week": 11,
+      "file": "by_match_id/7258315.json"
+    },
+    {
+      "match_id": 7258320,
+      "team": "ACC 1",
+      "date": "2026-06-24",
+      "week": 12,
+      "file": "by_match_id/7258320.json"
+    },
+    {
+      "match_id": 7258325,
+      "team": "ACC 1",
+      "date": "2026-07-06",
+      "week": 12,
+      "file": "by_match_id/7258325.json"
+    },
+    {
+      "match_id": 7258330,
+      "team": "ACC 1",
+      "date": "2026-07-18",
+      "week": 12,
+      "file": "by_match_id/7258330.json"
+    },
+    {
+      "match_id": 7258335,
+      "team": "ACC 1",
+      "date": "2026-07-29",
+      "week": 12,
+      "file": "by_match_id/7258335.json"
+    },
+    {
+      "match_id": 7258340,
+      "team": "ACC 1",
+      "date": "2026-08-01",
+      "week": 12,
+      "file": "by_match_id/7258340.json"
+    },
+    {
+      "match_id": 7258345,
+      "team": "ACC 1",
+      "date": "2026-08-10",
+      "week": 12,
+      "file": "by_match_id/7258345.json"
+    },
+    {
+      "match_id": 7258350,
+      "team": "ACC 1",
+      "date": "2026-08-28",
+      "week": 12,
+      "file": "by_match_id/7258350.json"
+    },
+    {
+      "match_id": 7323305,
+      "team": "ACC 2",
+      "date": "2026-04-29",
+      "week": 5,
+      "file": "by_match_id/7323305.json"
+    },
+    {
+      "match_id": 7323309,
+      "team": "ACC 2",
+      "date": "2026-05-11",
+      "week": 6,
+      "file": "by_match_id/7323309.json"
+    },
+    {
+      "match_id": 7323327,
+      "team": "ACC 2",
+      "date": "2026-05-31",
+      "week": 9,
+      "file": "by_match_id/7323327.json"
+    },
+    {
+      "match_id": 7323330,
+      "team": "ACC 2",
+      "date": "2026-06-12",
+      "week": 11,
+      "file": "by_match_id/7323330.json"
+    },
+    {
+      "match_id": 7323334,
+      "team": "ACC 2",
+      "date": "2026-06-24",
+      "week": 12,
+      "file": "by_match_id/7323334.json"
+    },
+    {
+      "match_id": 7323338,
+      "team": "ACC 2",
+      "date": "2026-07-06",
+      "week": 12,
+      "file": "by_match_id/7323338.json"
+    },
+    {
+      "match_id": 7323347,
+      "team": "ACC 2",
+      "date": "2026-07-29",
+      "week": 12,
+      "file": "by_match_id/7323347.json"
+    },
+    {
+      "match_id": 7323351,
+      "team": "ACC 2",
+      "date": "2026-08-11",
+      "week": 12,
+      "file": "by_match_id/7323351.json"
+    },
+    {
+      "match_id": 7323354,
+      "team": "ACC 2",
+      "date": "2026-08-19",
+      "week": 12,
+      "file": "by_match_id/7323354.json"
+    },
+    {
+      "match_id": 7323359,
+      "team": "ACC 2",
+      "date": "2026-09-06",
+      "week": 12,
+      "file": "by_match_id/7323359.json"
+    },
+    {
+      "match_id": 7323344,
+      "team": "ACC 2",
+      "date": "2026-09-13",
+      "week": 12,
+      "file": "by_match_id/7323344.json"
+    },
+    {
+      "match_id": 7323322,
+      "team": "ACC 2",
+      "date": "2026-09-17",
+      "week": 12,
+      "file": "by_match_id/7323322.json"
+    },
+    {
+      "match_id": 7323303,
+      "team": "ACC 2",
+      "date": "2026-09-23",
+      "week": 12,
+      "file": "by_match_id/7323303.json"
+    },
+    {
+      "match_id": 7323293,
+      "team": "ACC 2",
+      "date": "2026-09-30",
+      "week": 12,
+      "file": "by_match_id/7323293.json"
+    },
+    {
+      "match_id": 7324739,
+      "team": "ACC 3",
+      "date": "2026-04-11",
+      "week": 2,
+      "file": "by_match_id/7324739.json"
+    },
+    {
+      "match_id": 7324742,
+      "team": "ACC 3",
+      "date": "2026-04-22",
+      "week": 4,
+      "file": "by_match_id/7324742.json"
+    },
+    {
+      "match_id": 7324747,
+      "team": "ACC 3",
+      "date": "2026-05-03",
+      "week": 5,
+      "file": "by_match_id/7324747.json"
+    },
+    {
+      "match_id": 7324749,
+      "team": "ACC 3",
+      "date": "2026-05-14",
+      "week": 7,
+      "file": "by_match_id/7324749.json"
+    },
+    {
+      "match_id": 7324755,
+      "team": "ACC 3",
+      "date": "2026-05-24",
+      "week": 8,
+      "file": "by_match_id/7324755.json"
+    },
+    {
+      "match_id": 7324760,
+      "team": "ACC 3",
+      "date": "2026-06-06",
+      "week": 10,
+      "file": "by_match_id/7324760.json"
+    },
+    {
+      "match_id": 7324763,
+      "team": "ACC 3",
+      "date": "2026-06-16",
+      "week": 11,
+      "file": "by_match_id/7324763.json"
+    },
+    {
+      "match_id": 7324766,
+      "team": "ACC 3",
+      "date": "2026-06-28",
+      "week": 12,
+      "file": "by_match_id/7324766.json"
+    },
+    {
+      "match_id": 7324770,
+      "team": "ACC 3",
+      "date": "2026-07-10",
+      "week": 12,
+      "file": "by_match_id/7324770.json"
+    },
+    {
+      "match_id": 7324777,
+      "team": "ACC 3",
+      "date": "2026-08-02",
+      "week": 12,
+      "file": "by_match_id/7324777.json"
+    },
+    {
+      "match_id": 7324784,
+      "team": "ACC 3",
+      "date": "2026-08-11",
+      "week": 12,
+      "file": "by_match_id/7324784.json"
+    },
+    {
+      "match_id": 7324787,
+      "team": "ACC 3",
+      "date": "2026-08-28",
+      "week": 12,
+      "file": "by_match_id/7324787.json"
+    },
+    {
+      "match_id": 7324791,
+      "team": "ACC 3",
+      "date": "2026-09-06",
+      "week": 12,
+      "file": "by_match_id/7324791.json"
+    },
+    {
+      "match_id": 7324776,
+      "team": "ACC 3",
+      "date": "2026-09-26",
+      "week": 12,
+      "file": "by_match_id/7324776.json"
+    },
+    {
+      "match_id": 7324800,
+      "team": "ACC 4",
+      "date": "2026-04-22",
+      "week": 4,
+      "file": "by_match_id/7324800.json"
+    },
+    {
+      "match_id": 7324801,
+      "team": "ACC 4",
+      "date": "2026-05-03",
+      "week": 5,
+      "file": "by_match_id/7324801.json"
+    },
+    {
+      "match_id": 7324808,
+      "team": "ACC 4",
+      "date": "2026-05-14",
+      "week": 7,
+      "file": "by_match_id/7324808.json"
+    },
+    {
+      "match_id": 7324815,
+      "team": "ACC 4",
+      "date": "2026-06-04",
+      "week": 10,
+      "file": "by_match_id/7324815.json"
+    },
+    {
+      "match_id": 7324817,
+      "team": "ACC 4",
+      "date": "2026-06-13",
+      "week": 11,
+      "file": "by_match_id/7324817.json"
+    },
+    {
+      "match_id": 7324823,
+      "team": "ACC 4",
+      "date": "2026-06-28",
+      "week": 12,
+      "file": "by_match_id/7324823.json"
+    },
+    {
+      "match_id": 7324828,
+      "team": "ACC 4",
+      "date": "2026-07-10",
+      "week": 12,
+      "file": "by_match_id/7324828.json"
+    },
+    {
+      "match_id": 7324836,
+      "team": "ACC 4",
+      "date": "2026-08-02",
+      "week": 12,
+      "file": "by_match_id/7324836.json"
+    },
+    {
+      "match_id": 7324837,
+      "team": "ACC 4",
+      "date": "2026-08-08",
+      "week": 12,
+      "file": "by_match_id/7324837.json"
+    },
+    {
+      "match_id": 7324829,
+      "team": "ACC 4",
+      "date": "2026-08-17",
+      "week": 12,
+      "file": "by_match_id/7324829.json"
+    },
+    {
+      "match_id": 7324795,
+      "team": "ACC 4",
+      "date": "2026-08-20",
+      "week": 12,
+      "file": "by_match_id/7324795.json"
+    },
+    {
+      "match_id": 7324844,
+      "team": "ACC 4",
+      "date": "2026-08-29",
+      "week": 12,
+      "file": "by_match_id/7324844.json"
+    },
+    {
+      "match_id": 7324848,
+      "team": "ACC 4",
+      "date": "2026-09-06",
+      "week": 12,
+      "file": "by_match_id/7324848.json"
+    },
+    {
+      "match_id": 7324809,
+      "team": "ACC 4",
+      "date": "2026-09-10",
+      "week": 12,
+      "file": "by_match_id/7324809.json"
+    },
+    {
+      "match_id": 7326156,
+      "team": "ACC 5",
+      "date": "2026-04-07",
+      "week": 1,
+      "file": "by_match_id/7326156.json"
+    },
+    {
+      "match_id": 7326162,
+      "team": "ACC 5",
+      "date": "2026-04-22",
+      "week": 4,
+      "file": "by_match_id/7326162.json"
+    },
+    {
+      "match_id": 7326166,
+      "team": "ACC 5",
+      "date": "2026-05-03",
+      "week": 5,
+      "file": "by_match_id/7326166.json"
+    },
+    {
+      "match_id": 7326170,
+      "team": "ACC 5",
+      "date": "2026-05-14",
+      "week": 7,
+      "file": "by_match_id/7326170.json"
+    },
+    {
+      "match_id": 7326173,
+      "team": "ACC 5",
+      "date": "2026-05-24",
+      "week": 8,
+      "file": "by_match_id/7326173.json"
+    },
+    {
+      "match_id": 7326177,
+      "team": "ACC 5",
+      "date": "2026-06-05",
+      "week": 10,
+      "file": "by_match_id/7326177.json"
+    },
+    {
+      "match_id": 7326183,
+      "team": "ACC 5",
+      "date": "2026-06-16",
+      "week": 11,
+      "file": "by_match_id/7326183.json"
+    },
+    {
+      "match_id": 7326186,
+      "team": "ACC 5",
+      "date": "2026-06-28",
+      "week": 12,
+      "file": "by_match_id/7326186.json"
+    },
+    {
+      "match_id": 7326195,
+      "team": "ACC 5",
+      "date": "2026-07-21",
+      "week": 12,
+      "file": "by_match_id/7326195.json"
+    },
+    {
+      "match_id": 7326199,
+      "team": "ACC 5",
+      "date": "2026-08-02",
+      "week": 12,
+      "file": "by_match_id/7326199.json"
+    },
+    {
+      "match_id": 7326203,
+      "team": "ACC 5",
+      "date": "2026-08-11",
+      "week": 12,
+      "file": "by_match_id/7326203.json"
+    },
+    {
+      "match_id": 7326207,
+      "team": "ACC 5",
+      "date": "2026-08-28",
+      "week": 12,
+      "file": "by_match_id/7326207.json"
+    },
+    {
+      "match_id": 7326192,
+      "team": "ACC 5",
+      "date": "2026-10-01",
+      "week": 12,
+      "file": "by_match_id/7326192.json"
+    },
+    {
+      "match_id": 7326066,
+      "team": "ACC 6",
+      "date": "2026-04-10",
+      "week": 2,
+      "file": "by_match_id/7326066.json"
+    },
+    {
+      "match_id": 7326073,
+      "team": "ACC 6",
+      "date": "2026-04-22",
+      "week": 4,
+      "file": "by_match_id/7326073.json"
+    },
+    {
+      "match_id": 7326075,
+      "team": "ACC 6",
+      "date": "2026-05-03",
+      "week": 5,
+      "file": "by_match_id/7326075.json"
+    },
+    {
+      "match_id": 7326082,
+      "team": "ACC 6",
+      "date": "2026-05-14",
+      "week": 7,
+      "file": "by_match_id/7326082.json"
+    },
+    {
+      "match_id": 7326086,
+      "team": "ACC 6",
+      "date": "2026-05-24",
+      "week": 8,
+      "file": "by_match_id/7326086.json"
+    },
+    {
+      "match_id": 7326093,
+      "team": "ACC 6",
+      "date": "2026-06-04",
+      "week": 10,
+      "file": "by_match_id/7326093.json"
+    },
+    {
+      "match_id": 7326097,
+      "team": "ACC 6",
+      "date": "2026-06-15",
+      "week": 11,
+      "file": "by_match_id/7326097.json"
+    },
+    {
+      "match_id": 7326102,
+      "team": "ACC 6",
+      "date": "2026-06-28",
+      "week": 12,
+      "file": "by_match_id/7326102.json"
+    },
+    {
+      "match_id": 7326120,
+      "team": "ACC 6",
+      "date": "2026-08-02",
+      "week": 12,
+      "file": "by_match_id/7326120.json"
+    },
+    {
+      "match_id": 7326121,
+      "team": "ACC 6",
+      "date": "2026-08-11",
+      "week": 12,
+      "file": "by_match_id/7326121.json"
+    },
+    {
+      "match_id": 7326130,
+      "team": "ACC 6",
+      "date": "2026-08-29",
+      "week": 12,
+      "file": "by_match_id/7326130.json"
+    },
+    {
+      "match_id": 7326132,
+      "team": "ACC 6",
+      "date": "2026-09-06",
+      "week": 12,
+      "file": "by_match_id/7326132.json"
+    },
+    {
+      "match_id": 7326139,
+      "team": "ACC 6",
+      "date": "2026-09-13",
+      "week": 12,
+      "file": "by_match_id/7326139.json"
+    },
+    {
+      "match_id": 7326143,
+      "team": "ACC 6",
+      "date": "2026-09-20",
+      "week": 12,
+      "file": "by_match_id/7326143.json"
+    },
+    {
+      "match_id": 7326148,
+      "team": "ACC 6",
+      "date": "2026-09-26",
+      "week": 12,
+      "file": "by_match_id/7326148.json"
+    },
+    {
+      "match_id": 7332092,
+      "team": "ACC ZAMI",
+      "date": "2026-04-08",
+      "week": 2,
+      "file": "by_match_id/7332092.json"
+    },
+    {
+      "match_id": 7332265,
+      "team": "ACC ZAMI",
+      "date": "2026-04-19",
+      "week": 3,
+      "file": "by_match_id/7332265.json"
+    },
+    {
+      "match_id": 7332269,
+      "team": "ACC ZAMI",
+      "date": "2026-04-30",
+      "week": 5,
+      "file": "by_match_id/7332269.json"
+    },
+    {
+      "match_id": 7332277,
+      "team": "ACC ZAMI",
+      "date": "2026-06-05",
+      "week": 10,
+      "file": "by_match_id/7332277.json"
+    },
+    {
+      "match_id": 7332287,
+      "team": "ACC ZAMI",
+      "date": "2026-06-12",
+      "week": 11,
+      "file": "by_match_id/7332287.json"
+    },
+    {
+      "match_id": 7332115,
+      "team": "ACC ZAMI",
+      "date": "2026-06-12",
+      "week": 11,
+      "file": "by_match_id/7332115.json"
+    },
+    {
+      "match_id": 7332119,
+      "team": "ACC ZAMI",
+      "date": "2026-06-24",
+      "week": 12,
+      "file": "by_match_id/7332119.json"
+    },
+    {
+      "match_id": 7332299,
+      "team": "ACC ZAMI",
+      "date": "2026-07-15",
+      "week": 12,
+      "file": "by_match_id/7332299.json"
+    },
+    {
+      "match_id": 7332129,
+      "team": "ACC ZAMI",
+      "date": "2026-07-18",
+      "week": 12,
+      "file": "by_match_id/7332129.json"
+    },
+    {
+      "match_id": 7332305,
+      "team": "ACC ZAMI",
+      "date": "2026-07-29",
+      "week": 12,
+      "file": "by_match_id/7332305.json"
+    },
+    {
+      "match_id": 7332101,
+      "team": "ACC ZAMI",
+      "date": "2026-08-17",
+      "week": 12,
+      "file": "by_match_id/7332101.json"
+    },
+    {
+      "match_id": 7332315,
+      "team": "ACC ZAMI",
+      "date": "2026-08-26",
+      "week": 12,
+      "file": "by_match_id/7332315.json"
+    },
+    {
+      "match_id": 7332316,
+      "team": "ACC ZAMI",
+      "date": "2026-09-03",
+      "week": 12,
+      "file": "by_match_id/7332316.json"
+    },
+    {
+      "match_id": 7332095,
+      "team": "ACC ZAMI",
+      "date": "2026-09-10",
+      "week": 12,
+      "file": "by_match_id/7332095.json"
+    },
+    {
+      "match_id": 7332122,
+      "team": "ACC ZAMI",
+      "date": "2026-09-11",
+      "week": 12,
+      "file": "by_match_id/7332122.json"
+    },
+    {
+      "match_id": 7332309,
+      "team": "ACC ZAMI",
+      "date": "2026-09-18",
+      "week": 12,
+      "file": "by_match_id/7332309.json"
+    },
+    {
+      "match_id": 7332302,
+      "team": "ACC ZAMI",
+      "date": "2026-09-22",
+      "week": 12,
+      "file": "by_match_id/7332302.json"
+    },
+    {
+      "match_id": 7332274,
+      "team": "ACC ZAMI",
+      "date": "2026-09-29",
+      "week": 12,
+      "file": "by_match_id/7332274.json"
+    },
+    {
+      "match_id": 7329152,
+      "team": "ACC U17",
+      "date": "2026-05-02",
+      "week": 5,
+      "file": "by_match_id/7329152.json"
+    },
+    {
+      "match_id": 7329153,
+      "team": "ACC U17",
+      "date": "2026-05-13",
+      "week": 7,
+      "file": "by_match_id/7329153.json"
+    },
+    {
+      "match_id": 7329157,
+      "team": "ACC U17",
+      "date": "2026-05-23",
+      "week": 8,
+      "file": "by_match_id/7329157.json"
+    },
+    {
+      "match_id": 7329168,
+      "team": "ACC U17",
+      "date": "2026-06-14",
+      "week": 11,
+      "file": "by_match_id/7329168.json"
+    },
+    {
+      "match_id": 7329170,
+      "team": "ACC U17",
+      "date": "2026-06-27",
+      "week": 12,
+      "file": "by_match_id/7329170.json"
+    },
+    {
+      "match_id": 7329172,
+      "team": "ACC U17",
+      "date": "2026-07-10",
+      "week": 12,
+      "file": "by_match_id/7329172.json"
+    },
+    {
+      "match_id": 7329159,
+      "team": "ACC U17",
+      "date": "2026-07-16",
+      "week": 12,
+      "file": "by_match_id/7329159.json"
+    },
+    {
+      "match_id": 7329176,
+      "team": "ACC U17",
+      "date": "2026-07-20",
+      "week": 12,
+      "file": "by_match_id/7329176.json"
+    },
+    {
+      "match_id": 7329179,
+      "team": "ACC U17",
+      "date": "2026-07-27",
+      "week": 12,
+      "file": "by_match_id/7329179.json"
+    },
+    {
+      "match_id": 7393900,
+      "team": "ACC U17",
+      "date": "2026-09-25",
+      "week": 12,
+      "file": "by_match_id/7393900.json"
+    },
+    {
+      "match_id": 7331235,
+      "team": "ACC U15",
+      "date": "2026-04-20",
+      "week": 3,
+      "file": "by_match_id/7331235.json"
+    },
+    {
+      "match_id": 7331237,
+      "team": "ACC U15",
+      "date": "2026-05-02",
+      "week": 5,
+      "file": "by_match_id/7331237.json"
+    },
+    {
+      "match_id": 7331240,
+      "team": "ACC U15",
+      "date": "2026-05-13",
+      "week": 7,
+      "file": "by_match_id/7331240.json"
+    },
+    {
+      "match_id": 7331246,
+      "team": "ACC U15",
+      "date": "2026-06-02",
+      "week": 9,
+      "file": "by_match_id/7331246.json"
+    },
+    {
+      "match_id": 7331249,
+      "team": "ACC U15",
+      "date": "2026-06-14",
+      "week": 11,
+      "file": "by_match_id/7331249.json"
+    },
+    {
+      "match_id": 7331253,
+      "team": "ACC U15",
+      "date": "2026-06-26",
+      "week": 12,
+      "file": "by_match_id/7331253.json"
+    },
+    {
+      "match_id": 7331256,
+      "team": "ACC U15",
+      "date": "2026-07-09",
+      "week": 12,
+      "file": "by_match_id/7331256.json"
+    },
+    {
+      "match_id": 7331262,
+      "team": "ACC U15",
+      "date": "2026-07-31",
+      "week": 12,
+      "file": "by_match_id/7331262.json"
+    },
+    {
+      "match_id": 7393853,
+      "team": "ACC U15",
+      "date": "2026-09-25",
+      "week": 12,
+      "file": "by_match_id/7393853.json"
+    },
+    {
+      "match_id": 7397066,
+      "team": "ACC U15",
+      "date": "2026-10-03",
+      "week": 12,
+      "file": "by_match_id/7397066.json"
+    },
+    {
+      "match_id": 7336247,
+      "team": "ACC U13",
+      "date": "2026-04-21",
+      "week": 3,
+      "file": "by_match_id/7336247.json"
+    },
+    {
+      "match_id": 7336254,
+      "team": "ACC U13",
+      "date": "2026-05-02",
+      "week": 5,
+      "file": "by_match_id/7336254.json"
+    },
+    {
+      "match_id": 7336258,
+      "team": "ACC U13",
+      "date": "2026-05-17",
+      "week": 7,
+      "file": "by_match_id/7336258.json"
+    },
+    {
+      "match_id": 7336263,
+      "team": "ACC U13",
+      "date": "2026-05-22",
+      "week": 8,
+      "file": "by_match_id/7336263.json"
+    },
+    {
+      "match_id": 7336272,
+      "team": "ACC U13",
+      "date": "2026-06-14",
+      "week": 11,
+      "file": "by_match_id/7336272.json"
+    },
+    {
+      "match_id": 7336280,
+      "team": "ACC U13",
+      "date": "2026-06-26",
+      "week": 12,
+      "file": "by_match_id/7336280.json"
+    },
+    {
+      "match_id": 7336281,
+      "team": "ACC U13",
+      "date": "2026-07-09",
+      "week": 12,
+      "file": "by_match_id/7336281.json"
+    },
+    {
+      "match_id": 7336290,
+      "team": "ACC U13",
+      "date": "2026-07-20",
+      "week": 12,
+      "file": "by_match_id/7336290.json"
+    },
+    {
+      "match_id": 7393858,
+      "team": "ACC U13",
+      "date": "2026-09-25",
+      "week": 12,
+      "file": "by_match_id/7393858.json"
+    },
+    {
+      "match_id": 7395421,
+      "team": "ACC U13",
+      "date": "2026-09-30",
+      "week": 12,
+      "file": "by_match_id/7395421.json"
+    }
+  ]
+}

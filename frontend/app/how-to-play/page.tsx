@@ -30,8 +30,9 @@ export default function HowToPlay() {
               🎯 The Core Concept
             </h3>
             <p className="text-gray-700 dark:text-gray-300 mb-4 text-lg leading-relaxed">
-              Every player has a <strong className="text-cricket-green">handicap multiplier</strong> that adjusts their final fantasy points.
-              This system balances the game by making elite real-life players more expensive in fantasy terms.
+              Every player has a <strong className="text-cricket-green">handicap multiplier</strong> based on their real-life skill level.
+              Elite players have <strong className="text-red-600 dark:text-red-400">lower multipliers</strong> (e.g., 0.69x), while developing players have <strong className="text-green-600 dark:text-green-400">higher multipliers</strong> (e.g., 1.2x).
+              This balances the game so that all players can contribute meaningfully to your fantasy team!
             </p>
 
             <div className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/30 dark:to-green-900/30 rounded-lg p-5 mb-4">
@@ -73,13 +74,134 @@ export default function HowToPlay() {
               </div>
             </div>
           </div>
+
+          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/30 dark:to-orange-900/30 rounded-lg p-5 mt-4">
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-3">⚡ Why Lower Multipliers for Elite Players?</h4>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+              This creates a <strong>balanced fantasy game</strong> where picking only elite players isn&apos;t automatically the winning strategy.
+              Both star performers and developing players can contribute significantly to your team&apos;s success!
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded border border-red-300">
+                <div className="font-bold text-red-800 dark:text-red-400 mb-1">🌟 Elite Player (0.69x)</div>
+                <div className="text-gray-700 dark:text-gray-300">50 runs = 55 base pts × 0.69 = <strong>38 pts</strong></div>
+              </div>
+              <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded border border-green-300">
+                <div className="font-bold text-green-800 dark:text-green-400 mb-1">🌱 Developing Player (1.2x)</div>
+                <div className="text-gray-700 dark:text-gray-300">50 runs = 55 base pts × 1.2 = <strong>66 pts</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Team Building Section */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
+          <div className="flex items-center mb-6">
+            <div className="bg-cricket-green text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold mr-4">
+              2
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Building Your Team
+            </h2>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">🏆 Squad Requirements</h3>
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <span className="text-2xl mr-3">👥</span>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">Squad Size: 11 Players</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Select exactly 11 players for your fantasy team</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-2xl mr-3">⚖️</span>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">Team Composition Rules</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Your league may have specific requirements (e.g., minimum batsmen, bowlers, wicketkeeper)</p>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-2xl mr-3">🏏</span>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">Real-Life Team Diversity</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Some leagues require at least one player from each real-life team</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">👑 Captain & Vice-Captain (MANDATORY)</h3>
+              <div className="space-y-3">
+                <div className="flex items-start">
+                  <span className="text-2xl mr-3">🎯</span>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">Captain (2x Points)</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Your captain&apos;s final points are doubled. Choose wisely!</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <span className="text-2xl mr-3">🥈</span>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">Vice-Captain (1.5x Points)</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Your vice-captain&apos;s final points are multiplied by 1.5</p>
+                  </div>
+                </div>
+                <div className="bg-yellow-100 dark:bg-yellow-900/30 p-3 rounded mt-3">
+                  <p className="text-sm text-gray-800 dark:text-gray-300">
+                    💡 <strong>Pro Tip:</strong> Captain/VC bonuses are applied AFTER the player multiplier, so they work with any player regardless of their handicap!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">🧤 Wicketkeeper (OPTIONAL)</h3>
+              <div className="space-y-3">
+                <p className="text-gray-700 dark:text-gray-300">
+                  You can designate one player in your squad as your wicketkeeper. This player receives <strong>double points (30 pts instead of 15 pts)</strong> for catches.
+                </p>
+                <div className="bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-700">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <strong>Note:</strong> Wicketkeeper designation is optional and separate from captain/vice-captain. You manually select which player gets the WK bonus when building your team.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">🔄 Transfers</h3>
+              <div className="space-y-3">
+                <p className="text-gray-700 dark:text-gray-300">
+                  Each league has a set number of transfers per season (typically 4). Use them strategically to adapt your team throughout the season!
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-start">
+                    <span className="text-xl mr-2">✅</span>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Transfers allow you to swap out underperforming players</p>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-xl mr-2">⏰</span>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Once you&apos;ve used all your transfers, your squad is locked for the season</p>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-xl mr-2">🎁</span>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Admins may grant bonus transfers for special circumstances</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Fantasy Points Section */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
           <div className="flex items-center mb-6">
             <div className="bg-cricket-green text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold mr-4">
-              2
+              3
             </div>
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
               Base Points System
@@ -266,7 +388,7 @@ export default function HowToPlay() {
 
             {/* Wicketkeeper Bonus */}
             <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-2 border-yellow-400">
-              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">🧤 Wicketkeeper Bonus</h4>
+              <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">🧤 Wicketkeeper Bonus (Optional)</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between items-center">
                   <span>Designated Wicketkeeper catches</span>
@@ -274,7 +396,7 @@ export default function HowToPlay() {
                 </div>
               </div>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 italic">
-                Select one wicketkeeper in your fantasy team to double their catch points!
+                If you designate a wicketkeeper when building your team, that player receives double points for catches. Stumpings always give 15 points regardless of wicketkeeper status.
               </p>
             </div>
           </div>
@@ -286,7 +408,7 @@ export default function HowToPlay() {
           <h2 className="text-3xl font-bold mb-6">📊 Complete Example Calculation</h2>
 
           <div className="bg-white/95 dark:bg-gray-800/10 backdrop-blur rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">All-Rounder Performance (Player Multiplier: 1.2x, Captain)</h3>
+            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Developing All-Rounder Performance (Player Multiplier: 1.2x, Captain)</h3>
 
             <div className="space-y-3 mb-4 text-gray-900 dark:text-white">
               <div className="font-semibold text-lg border-b border-gray-300 dark:border-white/30 pb-2 mb-3">
@@ -363,6 +485,68 @@ export default function HowToPlay() {
                 <span>FINAL FANTASY POINTS:</span>
                 <span className="text-cricket-green dark:text-green-400">393.6 points</span>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Scoring Timeline Section */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 border-b-2 border-cricket-green pb-2">
+            ⏰ When Do Points Count?
+          </h2>
+
+          <div className="space-y-6">
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+                <span className="text-2xl mr-2">📅</span>
+                Season-Long Accumulation
+              </h3>
+              <div className="space-y-3 text-gray-700 dark:text-gray-300">
+                <p>
+                  Fantasy points accumulate throughout the entire cricket season. Your team&apos;s total score is the sum of all points earned by your players across all matches.
+                </p>
+                <div className="bg-white dark:bg-gray-800 p-4 rounded border border-gray-200 dark:border-gray-700">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-start">
+                      <span className="text-lg mr-2">1️⃣</span>
+                      <p><strong>Match Completed:</strong> Points are calculated after each real-life match</p>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="text-lg mr-2">2️⃣</span>
+                      <p><strong>Points Updated:</strong> Your fantasy team&apos;s total is updated automatically</p>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="text-lg mr-2">3️⃣</span>
+                      <p><strong>Rankings Updated:</strong> Leaderboards are refreshed with new standings</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+                <span className="text-2xl mr-2">🏆</span>
+                Multiple Matches Per Player
+              </h3>
+              <p className="text-gray-700 dark:text-gray-300 mb-3">
+                A player can compete in multiple matches during a week (e.g., ACC 1, U17, and ZAMI). <strong>All performances count!</strong>
+              </p>
+              <div className="bg-yellow-100 dark:bg-yellow-900/30 p-4 rounded">
+                <p className="text-sm text-gray-800 dark:text-gray-300">
+                  💡 <strong>Example:</strong> If your player scores 50 runs in ACC 1 on Saturday and takes 3 wickets in U17 on Sunday, both performances are added to your fantasy team&apos;s total!
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+                <span className="text-2xl mr-2">🎯</span>
+                Winning the League
+              </h3>
+              <p className="text-gray-700 dark:text-gray-300">
+                The fantasy team with the <strong>highest total points at the end of the season</strong> wins the league! Monitor the leaderboard regularly to track your progress.
+              </p>
             </div>
           </div>
         </div>

@@ -1,0 +1,317 @@
+[
+  {
+    "player_name": "I ALIM",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 6,
+      "balls_faced": 15,
+      "fours": 1,
+      "sixes": 0
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 2
+  },
+  {
+    "player_name": "H ALI",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 1,
+      "balls_faced": 2,
+      "fours": 0,
+      "sixes": 0
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 0
+  },
+  {
+    "player_name": "G GABA",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 37,
+      "balls_faced": 48,
+      "fours": 6,
+      "sixes": 1
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 29
+  },
+  {
+    "player_name": "K MUGHAL",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 13,
+      "balls_faced": 22,
+      "fours": 1,
+      "sixes": 1
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 7
+  },
+  {
+    "player_name": "H SINGH",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 13,
+      "balls_faced": 29,
+      "fours": 1,
+      "sixes": 0
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 5
+  },
+  {
+    "player_name": "A ALIM*",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 6,
+      "balls_faced": 16,
+      "fours": 0,
+      "sixes": 0
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 2
+  },
+  {
+    "player_name": "A GOLLA\u2020",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 0,
+      "balls_faced": 1,
+      "fours": 0,
+      "sixes": 0
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 0
+  },
+  {
+    "player_name": "b Cd Lange",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 3,
+      "balls_faced": 0,
+      "fours": 0,
+      "sixes": 0
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 3
+  },
+  {
+    "player_name": "A KANSAL",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 16,
+      "balls_faced": 11,
+      "fours": 3,
+      "sixes": 0
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 23
+  },
+  {
+    "player_name": "L GURNANI",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 0,
+      "balls_faced": 4,
+      "fours": 0,
+      "sixes": 0
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 0
+  },
+  {
+    "player_name": "TOTAL: 114 (26 Overs)",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 0,
+      "balls_faced": 0,
+      "fours": 0,
+      "sixes": 0
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 0
+  },
+  {
+    "player_name": "NB",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 0,
+      "balls_faced": 5,
+      "fours": 2,
+      "sixes": 12
+    },
+    "bowling": {},
+    "fielding": {},
+    "fantasy_points": 0
+  },
+  {
+    "player_name": "S DIWAN",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 0,
+      "balls_faced": 27,
+      "fours": 4,
+      "sixes": 0
+    },
+    "bowling": {
+      "wickets": 4,
+      "runs_conceded": 27,
+      "overs": 6.0,
+      "maidens": 0
+    },
+    "fielding": {},
+    "fantasy_points": 93
+  },
+  {
+    "player_name": "CD LANGE",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 2,
+      "balls_faced": 40,
+      "fours": 4,
+      "sixes": 1
+    },
+    "bowling": {
+      "wickets": 4,
+      "runs_conceded": 40,
+      "overs": 8.0,
+      "maidens": 2
+    },
+    "fielding": {},
+    "fantasy_points": 114
+  },
+  {
+    "player_name": "E SCHIFERLI",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 0,
+      "balls_faced": 25,
+      "fours": 0,
+      "sixes": 0
+    },
+    "bowling": {
+      "wickets": 0,
+      "runs_conceded": 25,
+      "overs": 5.0,
+      "maidens": 0
+    },
+    "fielding": {},
+    "fantasy_points": 0
+  },
+  {
+    "player_name": "R DAQIQ",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 0,
+      "balls_faced": 6,
+      "fours": 0,
+      "sixes": 0
+    },
+    "bowling": {
+      "wickets": 0,
+      "runs_conceded": 6,
+      "overs": 2.0,
+      "maidens": 0
+    },
+    "fielding": {},
+    "fantasy_points": 0
+  },
+  {
+    "player_name": "Quick 2",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 0,
+      "balls_faced": 0,
+      "fours": 0,
+      "sixes": 0
+    },
+    "bowling": {
+      "wickets": 0,
+      "runs_conceded": 0,
+      "overs": 0.0,
+      "maidens": 0
+    },
+    "fielding": {},
+    "fantasy_points": 0
+  },
+  {
+    "player_name": "MUHAMMADKHAN",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {
+      "runs": 0,
+      "balls_faced": 0,
+      "fours": 0,
+      "sixes": 0
+    },
+    "bowling": {
+      "wickets": 0,
+      "runs_conceded": 0,
+      "overs": 0.0,
+      "maidens": 0
+    },
+    "fielding": {},
+    "fantasy_points": 0
+  },
+  {
+    "player_name": "MI KHAN",
+    "player_id": null,
+    "club": "ACC",
+    "tier": "tier2",
+    "batting": {},
+    "bowling": {
+      "wickets": 0,
+      "runs_conceded": 12,
+      "overs": 5.0,
+      "maidens": 2
+    },
+    "fielding": {},
+    "fantasy_points": 30
+  }
+]

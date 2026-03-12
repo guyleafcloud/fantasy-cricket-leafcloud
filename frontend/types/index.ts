@@ -73,3 +73,90 @@ export interface ApiResponse<T> {
   message?: string;
   [key: string]: any;
 }
+
+// ============================================================================
+// DETAILED TEAM STATS TYPES (for enhanced leaderboard modal)
+// ============================================================================
+
+export interface PlayerBattingStats {
+  runs: number;
+  average: number;
+  strike_rate: number;
+  balls_faced: number;
+  fours: number;
+  sixes: number;
+  fifties: number;
+  hundreds: number;
+  ducks: number;
+  highest_score: number;
+}
+
+export interface PlayerBowlingStats {
+  wickets: number;
+  overs: number;
+  maidens: number;
+  runs_conceded: number;
+  average: number | null;
+  economy: number | null;
+  five_wicket_hauls: number;
+}
+
+export interface PlayerFieldingStats {
+  catches: number;
+  run_outs: number;
+  stumpings: number;
+}
+
+export interface MatchPerformance {
+  match_id: string;
+  points: number;
+  runs: number;
+  wickets: number;
+}
+
+export interface RecentForm {
+  matches: MatchPerformance[];
+  last_n_average: number;
+  trend: 'improving' | 'declining' | 'stable';
+}
+
+export interface MultiplierInfo {
+  starting_multiplier: number;
+  current_multiplier: number;
+  drift: number;
+  status: 'strengthening' | 'weakening' | 'stable';
+}
+
+export interface PointsBreakdown {
+  batting_points: number;
+  bowling_points: number;
+  fielding_points: number;
+}
+
+export interface DetailedPlayerStats {
+  player_id: string;
+  player_name: string;
+  club_name: string;
+  player_role: string;
+  is_captain: boolean;
+  is_vice_captain: boolean;
+  is_wicket_keeper: boolean;
+  total_points: number;
+  matches_played: number;
+  batting: PlayerBattingStats;
+  bowling: PlayerBowlingStats;
+  fielding: PlayerFieldingStats;
+  multiplier_info: MultiplierInfo;
+  recent_form: RecentForm;
+  points_breakdown: PointsBreakdown;
+}
+
+export interface DetailedTeamStats {
+  team_id: string;
+  team_name: string;
+  owner_name: string;
+  total_points: number;
+  weekly_points: number;
+  squad_size: number;
+  players: DetailedPlayerStats[];
+}

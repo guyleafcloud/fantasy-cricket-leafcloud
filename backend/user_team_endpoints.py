@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Tuple
 from database import get_db
-from database_models import League, Season, FantasyTeam, FantasyTeamPlayer, Player, Team
+from database_models import League, Season, FantasyTeam, FantasyTeamPlayer, Player, Team, LeagueRoster
 from user_auth_endpoints import verify_token
 from collections import Counter
 import logging
@@ -454,8 +454,13 @@ async def get_available_players(
     if not league:
         raise HTTPException(status_code=404, detail="League not found")
 
-    # Get all players from the league's club
-    players = db.query(Player).filter_by(club_id=league.club_id).all()
+    # Get all players in this league's roster (via league_rosters junction table)
+    players = db.query(Player).join(
+        LeagueRoster,
+        Player.id == LeagueRoster.player_id
+    ).filter(
+        LeagueRoster.league_id == league.id
+    ).all()
 
     # Get players already in this team
     team_player_ids = {ftp.player_id for ftp in team.players}

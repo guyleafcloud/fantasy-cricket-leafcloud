@@ -9,7 +9,8 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
 from database import get_db
-from database_models import League, Season, FantasyTeam, Transfer, Club
+from database_models import League, Season, FantasyTeam, Transfer, Club, Player, LeagueRoster
+from uuid import uuid4
 from admin_endpoints import verify_admin
 from team_validation import validate_team_composition, get_team_composition_summary
 import secrets
@@ -32,6 +33,7 @@ class LeagueCreate(BaseModel):
     require_from_each_team: bool = True
     is_public: bool = True
     max_participants: int = 100
+    youth_teams: list[str] = ["U13", "U15", "U17"]  # Which youth teams to include in roster
 
 
 class LeagueUpdate(BaseModel):
@@ -116,13 +118,41 @@ async def create_league(
     db.commit()
     db.refresh(league)
 
+    # Populate league roster with players
+    # Senior teams are always included
+    senior_teams = ["ACC 1", "ACC 2", "ACC 3", "ACC 4", "ACC 5", "ACC 6", "ZAMI 1"]
+    included_teams = senior_teams + league_data.youth_teams
+
+    # Get all players from included teams
+    players = db.query(Player).filter(
+        Player.club_id == league_data.club_id,
+        Player.rl_team.in_(included_teams)
+    ).all()
+
+    # Create LeagueRoster entries
+    roster_count = 0
+    for player in players:
+        roster_entry = LeagueRoster(
+            id=str(uuid4()),
+            league_id=league.id,
+            player_id=player.id
+        )
+        db.add(roster_entry)
+        roster_count += 1
+
+    db.commit()
+
+    logger.info(f"Created league {league.name} with {roster_count} players in roster")
+
     return {
         "message": "League created successfully",
         "league": {
             "id": league.id,
             "name": league.name,
             "league_code": league.league_code,
-            "season_id": league.season_id
+            "season_id": league.season_id,
+            "roster_count": roster_count,
+            "included_youth_teams": league_data.youth_teams
         }
     }
 
@@ -440,3 +470,128 @@ async def validate_fantasy_team(
             "require_from_each_team": league.require_from_each_team
         }
     }
+
+
+# =============================================================================
+# LEAGUE LIFECYCLE ENDPOINTS (Confirmation & Status)
+# =============================================================================
+
+@router.post("/leagues/{league_id}/confirm")
+async def confirm_league(
+    league_id: str,
+    admin: dict = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Confirm league and transition from 'draft' to 'active' status.
+
+    This:
+    - Validates league configuration
+    - Freezes all league rules (prevents mid-season changes)
+    - Calculates and captures multipliers for all roster players
+    - Opens league for user team creation
+
+    **Once confirmed, league rules cannot be changed!**
+    """
+    from league_lifecycle_service import LeagueLifecycleService
+
+    service = LeagueLifecycleService(db)
+    success, message, metadata = service.confirm_league(league_id)
+
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+
+    # Get updated status
+    status_info = service.get_league_status(league_id)
+
+    return {
+        "message": message,
+        "league_id": league_id,
+        "status": "active",
+        "metadata": metadata,
+        "league_status": status_info
+    }
+
+
+@router.post("/leagues/{league_id}/lock")
+async def lock_league(
+    league_id: str,
+    admin: dict = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Lock league and transition from 'active' to 'locked' status.
+
+    This:
+    - Prevents new team registrations
+    - Validates all existing teams are finalized
+    - Prepares league for season start
+    """
+    from league_lifecycle_service import LeagueLifecycleService
+
+    service = LeagueLifecycleService(db)
+    success, message = service.lock_league(league_id)
+
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+
+    # Get updated status
+    status_info = service.get_league_status(league_id)
+
+    return {
+        "message": message,
+        "league_id": league_id,
+        "status": "locked",
+        "league_status": status_info
+    }
+
+
+@router.post("/leagues/{league_id}/complete")
+async def complete_league(
+    league_id: str,
+    admin: dict = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Mark league as completed (end of season).
+    """
+    from league_lifecycle_service import LeagueLifecycleService
+
+    service = LeagueLifecycleService(db)
+    success, message = service.complete_league(league_id)
+
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+
+    return {
+        "message": message,
+        "league_id": league_id,
+        "status": "completed"
+    }
+
+
+@router.get("/leagues/{league_id}/status")
+async def get_league_status_endpoint(
+    league_id: str,
+    admin: dict = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Get detailed status and readiness information for a league.
+
+    Returns:
+    - Current status (draft/active/locked/completed)
+    - Team counts and finalization status
+    - Roster information
+    - Validation errors (if any)
+    - Readiness flags (can_confirm, can_lock, can_complete)
+    """
+    from league_lifecycle_service import LeagueLifecycleService
+
+    service = LeagueLifecycleService(db)
+    status_info = service.get_league_status(league_id)
+
+    if not status_info:
+        raise HTTPException(status_code=404, detail="League not found")
+
+    return status_info

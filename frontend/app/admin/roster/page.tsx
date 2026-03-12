@@ -25,6 +25,11 @@ export default function RosterPage() {
     player_type: '',
     multiplier: 1.0
   });
+  const [includeYouth, setIncludeYouth] = useState({
+    U13: true,
+    U15: true,
+    U17: true
+  });
 
   const CLUB_ID = '625f1c55-6d5b-40a9-be1d-8f7abe6fa00e'; // ACC club ID
 
@@ -162,6 +167,64 @@ export default function RosterPage() {
     }
   };
 
+  const handleConfirmRoster = async () => {
+    // Get list of selected youth teams
+    const selectedYouthTeams = Object.entries(includeYouth)
+      .filter(([_, isIncluded]) => isIncluded)
+      .map(([team, _]) => team);
+
+    const youthSummary = selectedYouthTeams.length > 0
+      ? ` (including ${selectedYouthTeams.join(', ')})`
+      : ' (no youth teams)';
+
+    const confirmMessage = `Confirm roster with ${getActivePlayerCount()} active players${youthSummary}?\n\n⚡ Player multipliers will be automatically calculated based on previous season performance.\n\n⏱️ This may take a moment if data needs to be fetched from KNCB.`;
+
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/roster/confirm', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          youth_teams: selectedYouthTeams,
+          calculate_multipliers: true
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+
+        let message = `✅ Roster confirmed!\n\n`;
+        message += `👥 Players: ${result.active_players} active, ${result.inactive_players} inactive\n\n`;
+
+        if (result.multipliers_calculated && result.multiplier_stats) {
+          const stats = result.multiplier_stats;
+          message += `⚖️ Multipliers Calculated:\n`;
+          message += `   • Players with data: ${stats.players_with_data}\n`;
+          message += `   • Players without data: ${stats.players_without_data} (defaulted to 1.0)\n`;
+          message += `   • Median score: ${stats.median_score} points\n`;
+          message += `   • Multiplier range: ${stats.min_multiplier} - ${stats.max_multiplier}\n`;
+          message += `   • Players at median: ${stats.players_at_median}`;
+        } else if (result.multiplier_error) {
+          message += `⚠️ Multiplier calculation failed: ${result.multiplier_error}`;
+        }
+
+        alert(message);
+        router.push('/admin');
+      } else {
+        const error = await response.json();
+        alert(error.detail || 'Failed to confirm roster');
+      }
+    } catch (err) {
+      alert('Failed to confirm roster. Please try again.');
+    }
+  };
+
   // Get color class based on multiplier value
   // Lower multipliers = better players (light to dark green)
   // Higher multipliers = worse players (yellow to red)
@@ -191,6 +254,28 @@ export default function RosterPage() {
   const uniqueTeamNames = Array.from(
     new Set(players.map(p => p.team_name).filter(Boolean))
   ).sort();
+
+  // Helper functions for youth team calculations
+  const getYouthPlayerCount = (team: string) => {
+    return players.filter(p => p.team_name === team).length;
+  };
+
+  const getSeniorPlayerCount = () => {
+    const seniorTeams = ['ACC 1', 'ACC 2', 'ACC 3', 'ACC 4', 'ACC 5', 'ACC 6', 'ZAMI 1'];
+    return players.filter(p => p.team_name && seniorTeams.includes(p.team_name)).length;
+  };
+
+  const getYouthCount = () => {
+    let count = 0;
+    if (includeYouth.U13) count += getYouthPlayerCount('U13');
+    if (includeYouth.U15) count += getYouthPlayerCount('U15');
+    if (includeYouth.U17) count += getYouthPlayerCount('U17');
+    return count;
+  };
+
+  const getActivePlayerCount = () => {
+    return getSeniorPlayerCount() + getYouthCount();
+  };
 
   const filteredPlayers = players.filter(player => {
     if (searchTerm && !player.name.toLowerCase().includes(searchTerm.toLowerCase())) {
@@ -230,11 +315,7 @@ export default function RosterPage() {
             </div>
             <div className="flex space-x-4">
               <button
-                onClick={() => {
-                  if (confirm(`Confirm ACC roster with ${players.length} players and return to dashboard?`)) {
-                    router.push('/admin');
-                  }
-                }}
+                onClick={handleConfirmRoster}
                 className="px-6 py-2 bg-cricket-green text-white rounded-md text-sm font-medium hover:bg-green-800 shadow-md"
               >
                 ✓ Confirm Roster
@@ -310,6 +391,68 @@ export default function RosterPage() {
             >
               Add Player
             </button>
+          </div>
+        </div>
+
+        {/* Youth Team Participation */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+          <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Youth Team Participation</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Select which youth teams will participate in the upcoming season
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            {/* U13 Toggle */}
+            <label className="flex items-center space-x-3 cursor-pointer p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+              <input
+                type="checkbox"
+                checked={includeYouth.U13}
+                onChange={(e) => setIncludeYouth({...includeYouth, U13: e.target.checked})}
+                className="w-5 h-5 text-cricket-green rounded focus:ring-cricket-green"
+              />
+              <div className="flex-1">
+                <div className="font-medium text-gray-900 dark:text-white">U13</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">{getYouthPlayerCount('U13')} players</div>
+              </div>
+            </label>
+
+            {/* U15 Toggle */}
+            <label className="flex items-center space-x-3 cursor-pointer p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+              <input
+                type="checkbox"
+                checked={includeYouth.U15}
+                onChange={(e) => setIncludeYouth({...includeYouth, U15: e.target.checked})}
+                className="w-5 h-5 text-cricket-green rounded focus:ring-cricket-green"
+              />
+              <div className="flex-1">
+                <div className="font-medium text-gray-900 dark:text-white">U15</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">{getYouthPlayerCount('U15')} players</div>
+              </div>
+            </label>
+
+            {/* U17 Toggle */}
+            <label className="flex items-center space-x-3 cursor-pointer p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+              <input
+                type="checkbox"
+                checked={includeYouth.U17}
+                onChange={(e) => setIncludeYouth({...includeYouth, U17: e.target.checked})}
+                className="w-5 h-5 text-cricket-green rounded focus:ring-cricket-green"
+              />
+              <div className="flex-1">
+                <div className="font-medium text-gray-900 dark:text-white">U17</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">{getYouthPlayerCount('U17')} players</div>
+              </div>
+            </label>
+          </div>
+
+          {/* Summary */}
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <p className="text-sm text-gray-900 dark:text-white">
+              <strong>Active Roster:</strong> {getActivePlayerCount()} players
+              <span className="text-gray-600 dark:text-gray-400">
+                {' '}({getSeniorPlayerCount()} senior + {getYouthCount()} youth)
+              </span>
+            </p>
           </div>
         </div>
 

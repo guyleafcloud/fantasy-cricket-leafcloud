@@ -449,6 +449,7 @@ async def get_club_players(
                 "id": p.id,
                 "name": p.name,
                 "rl_team": p.rl_team,
+                "team_name": p.rl_team,  # Frontend expects team_name
                 "role": p.role,
                 "tier": p.tier,
                 "base_price": p.base_price,
@@ -858,6 +859,125 @@ async def load_roster_for_club(
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to load roster: {str(e)}")
+
+@router.post("/roster/confirm")
+async def confirm_roster(
+    request: dict,
+    admin: dict = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Confirm roster, set player active status, and calculate multipliers based on previous season performance
+
+    Body:
+        youth_teams: List of youth team names to include (e.g., ["U15", "U17"])
+        calculate_multipliers: Whether to calculate multipliers (default: True)
+
+    Returns:
+        Summary of activated/deactivated players and multiplier calculation results
+    """
+    import logging
+    from multiplier_calculator import calculate_roster_multipliers
+
+    logger = logging.getLogger(__name__)
+
+    try:
+        youth_teams = request.get('youth_teams', [])
+        calc_multipliers = request.get('calculate_multipliers', True)
+
+        # Define all possible youth teams
+        ALL_YOUTH_TEAMS = ["U13", "U15", "U17"]
+
+        # Deactivate excluded youth teams
+        excluded_youth = [team for team in ALL_YOUTH_TEAMS if team not in youth_teams]
+
+        if excluded_youth:
+            # Deactivate players from excluded youth teams
+            deactivated = db.query(Player).filter(
+                Player.rl_team.in_(excluded_youth)
+            ).update(
+                {"is_active": False},
+                synchronize_session=False
+            )
+
+        # Activate included youth teams (in case they were previously deactivated)
+        if youth_teams:
+            activated_youth = db.query(Player).filter(
+                Player.rl_team.in_(youth_teams)
+            ).update(
+                {"is_active": True},
+                synchronize_session=False
+            )
+
+        # Ensure all senior teams are active
+        senior_teams = ["ACC 1", "ACC 2", "ACC 3", "ACC 4", "ACC 5", "ACC 6", "ZAMI 1"]
+        db.query(Player).filter(
+            Player.rl_team.in_(senior_teams)
+        ).update(
+            {"is_active": True},
+            synchronize_session=False
+        )
+
+        db.commit()
+
+        # Get active player counts
+        active_count = db.query(Player).filter(Player.is_active == True).count()
+        inactive_count = db.query(Player).filter(Player.is_active == False).count()
+
+        result = {
+            "success": True,
+            "active_players": active_count,
+            "inactive_players": inactive_count,
+            "included_youth_teams": youth_teams,
+            "excluded_youth_teams": excluded_youth
+        }
+
+        # Calculate multipliers for active roster
+        if calc_multipliers:
+            logger.info("Calculating multipliers for active roster...")
+
+            # Get all active player IDs
+            active_players = db.query(Player).filter(Player.is_active == True).all()
+            active_player_ids = [p.id for p in active_players]
+
+            if active_player_ids:
+                try:
+                    # Calculate multipliers
+                    multipliers, metadata = calculate_roster_multipliers(
+                        db, active_player_ids, scrape_missing=True
+                    )
+
+                    # Apply multipliers to database
+                    from datetime import datetime
+                    for player_id, multiplier in multipliers.items():
+                        db.query(Player).filter(Player.id == player_id).update({
+                            "multiplier": multiplier,
+                            "starting_multiplier": multiplier,  # Store initial multiplier
+                            "multiplier_updated_at": datetime.utcnow()
+                        })
+
+                    db.commit()
+
+                    # Add multiplier info to result
+                    result["multipliers_calculated"] = True
+                    result["multiplier_stats"] = metadata
+
+                    logger.info(f"Multipliers calculated successfully: {metadata}")
+
+                except Exception as mult_error:
+                    logger.error(f"Error calculating multipliers: {mult_error}")
+                    result["multipliers_calculated"] = False
+                    result["multiplier_error"] = str(mult_error)
+            else:
+                result["multipliers_calculated"] = False
+                result["multiplier_error"] = "No active players found"
+
+        return result
+
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Failed to confirm roster: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to confirm roster: {str(e)}")
 
 # =============================================================================
 # SYSTEM MANAGEMENT

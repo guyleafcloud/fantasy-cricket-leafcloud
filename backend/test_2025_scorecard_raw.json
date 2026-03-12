@@ -1,0 +1,253 @@
+{
+  "innings": [
+    {
+      "batting": [
+        {
+          "player_name": "I ALIM",
+          "dismissal": "c & b S Diwan",
+          "runs": 6,
+          "balls_faced": 15,
+          "fours": 1,
+          "sixes": 0,
+          "strike_rate": 40.0,
+          "is_out": true
+        },
+        {
+          "player_name": "H ALI",
+          "dismissal": "c A Gill b S Diwan",
+          "runs": 1,
+          "balls_faced": 2,
+          "fours": 0,
+          "sixes": 0,
+          "strike_rate": 50.0,
+          "is_out": true
+        },
+        {
+          "player_name": "G GABA",
+          "dismissal": "ro (S Diwan)",
+          "runs": 37,
+          "balls_faced": 48,
+          "fours": 6,
+          "sixes": 1,
+          "strike_rate": 77.08,
+          "is_out": true
+        },
+        {
+          "player_name": "K MUGHAL",
+          "dismissal": "c H Mol b S Diwan",
+          "runs": 13,
+          "balls_faced": 22,
+          "fours": 1,
+          "sixes": 1,
+          "strike_rate": 59.09,
+          "is_out": true
+        },
+        {
+          "player_name": "H SINGH",
+          "dismissal": "ro (R Rijke)",
+          "runs": 13,
+          "balls_faced": 29,
+          "fours": 1,
+          "sixes": 0,
+          "strike_rate": 44.83,
+          "is_out": true
+        },
+        {
+          "player_name": "A ALIM*",
+          "dismissal": "no",
+          "runs": 6,
+          "balls_faced": 16,
+          "fours": 0,
+          "sixes": 0,
+          "strike_rate": 37.5,
+          "is_out": true
+        },
+        {
+          "player_name": "A GOLLA\u2020",
+          "dismissal": "c & b Cd Lange",
+          "runs": 0,
+          "balls_faced": 1,
+          "fours": 0,
+          "sixes": 0,
+          "strike_rate": 0.0,
+          "is_out": true
+        },
+        {
+          "player_name": "b Cd Lange",
+          "dismissal": "0",
+          "runs": 3,
+          "balls_faced": 0,
+          "fours": 0,
+          "sixes": 0,
+          "strike_rate": 0.0,
+          "is_out": true
+        },
+        {
+          "player_name": "A KANSAL",
+          "dismissal": "lbw b Cd Lange",
+          "runs": 16,
+          "balls_faced": 11,
+          "fours": 3,
+          "sixes": 0,
+          "strike_rate": 145.45,
+          "is_out": true
+        },
+        {
+          "player_name": "L GURNANI",
+          "dismissal": "lbw b S Diwan",
+          "runs": 0,
+          "balls_faced": 4,
+          "fours": 0,
+          "sixes": 0,
+          "strike_rate": 0.0,
+          "is_out": true
+        },
+        {
+          "player_name": "TOTAL: 114 (26 Overs)",
+          "dismissal": "Fall of wickets: 2 (H Ali) 11 (I Alim) 32 (K Mughal) 65 (H Singh) 78 (G Gaba) 78 (A Golla) 78 (A Singh) 89 (B Hakimi) 112 (A Kansal) 114 (L Gurnani)",
+          "runs": 0,
+          "balls_faced": 0,
+          "fours": 0,
+          "sixes": 0,
+          "strike_rate": 0.0,
+          "is_out": true
+        },
+        {
+          "player_name": "NB",
+          "dismissal": "WD",
+          "runs": 0,
+          "balls_faced": 5,
+          "fours": 2,
+          "sixes": 12,
+          "strike_rate": 0.0,
+          "is_out": true
+        },
+        {
+          "player_name": "S DIWAN",
+          "dismissal": "6",
+          "runs": 0,
+          "balls_faced": 27,
+          "fours": 4,
+          "sixes": 0,
+          "strike_rate": 4.0,
+          "is_out": true
+        },
+        {
+          "player_name": "CD LANGE",
+          "dismissal": "8",
+          "runs": 2,
+          "balls_faced": 40,
+          "fours": 4,
+          "sixes": 1,
+          "strike_rate": 0.0,
+          "is_out": true
+        },
+        {
+          "player_name": "E SCHIFERLI",
+          "dismissal": "5",
+          "runs": 0,
+          "balls_faced": 25,
+          "fours": 0,
+          "sixes": 0,
+          "strike_rate": 5.0,
+          "is_out": true
+        },
+        {
+          "player_name": "R DAQIQ",
+          "dismissal": "2",
+          "runs": 0,
+          "balls_faced": 6,
+          "fours": 0,
+          "sixes": 0,
+          "strike_rate": 1.0,
+          "is_out": true
+        },
+        {
+          "player_name": "Quick 2",
+          "dismissal": "Players",
+          "runs": 0,
+          "balls_faced": 0,
+          "fours": 0,
+          "sixes": 0,
+          "strike_rate": 0.0,
+          "is_out": true
+        },
+        {
+          "player_name": "MUHAMMADKHAN",
+          "dismissal": "CAROLINE ALANGE",
+          "runs": 0,
+          "balls_faced": 0,
+          "fours": 0,
+          "sixes": 0,
+          "strike_rate": 0.0,
+          "is_out": true
+        }
+      ],
+      "bowling": [
+        {
+          "player_name": "MI KHAN",
+          "overs": 5.0,
+          "maidens": 2,
+          "runs": 12,
+          "wickets": 0,
+          "no_balls": 0,
+          "wides": 0
+        },
+        {
+          "player_name": "S DIWAN",
+          "overs": 6.0,
+          "maidens": 0,
+          "runs": 27,
+          "wickets": 4,
+          "no_balls": 0,
+          "wides": 4
+        },
+        {
+          "player_name": "CD LANGE",
+          "overs": 8.0,
+          "maidens": 2,
+          "runs": 40,
+          "wickets": 4,
+          "no_balls": 1,
+          "wides": 0
+        },
+        {
+          "player_name": "E SCHIFERLI",
+          "overs": 5.0,
+          "maidens": 0,
+          "runs": 25,
+          "wickets": 0,
+          "no_balls": 0,
+          "wides": 5
+        },
+        {
+          "player_name": "R DAQIQ",
+          "overs": 2.0,
+          "maidens": 0,
+          "runs": 6,
+          "wickets": 0,
+          "no_balls": 0,
+          "wides": 1
+        },
+        {
+          "player_name": "Quick 2",
+          "overs": 0.0,
+          "maidens": 0,
+          "runs": 0,
+          "wickets": 0,
+          "no_balls": 0,
+          "wides": 0
+        },
+        {
+          "player_name": "MUHAMMADKHAN",
+          "overs": 0.0,
+          "maidens": 0,
+          "runs": 0,
+          "wickets": 0,
+          "no_balls": 0,
+          "wides": 0
+        }
+      ]
+    }
+  ]
+}

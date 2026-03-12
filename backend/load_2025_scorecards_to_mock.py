@@ -322,10 +322,16 @@ def main():
     print(f"   Estimated time: {len(ALL_2025_MATCHES) * 2 // 60} minutes")
     print(f"   Rate limit: {DELAY_BETWEEN_REQUESTS}s between requests")
 
-    confirm = input("\nProceed? (yes/no): ")
-    if confirm.lower() != 'yes':
-        print("❌ Cancelled")
-        return
+    # Auto-confirm for non-interactive mode
+    import sys
+    if not sys.stdin.isatty():
+        print("\n✅ Auto-confirmed (non-interactive mode)")
+        confirm = 'yes'
+    else:
+        confirm = input("\nProceed? (yes/no): ")
+        if confirm.lower() != 'yes':
+            print("❌ Cancelled")
+            return
 
     # Process all matches
     print_header("📥 Fetching Scorecards")

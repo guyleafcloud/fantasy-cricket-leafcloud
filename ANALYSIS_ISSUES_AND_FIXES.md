@@ -1,5 +1,261 @@
 # Fantasy Cricket System - Issue Analysis and Fixes
 
+---
+
+## Issue 5: Player Names Not Showing in Team Modal ✅ FIXED
+
+**Date:** 2025-12-18
+**Context:** After fixing Issue #4, player names still not visible in team detail modal
+
+### Root Cause Analysis
+
+1. **Symptom**
+   - Team modal showing club names (ACC 1, U15, ZAMI 1) but no player names
+   - Frontend component expects `player.player_name` but receiving `undefined`
+
+2. **Root Cause: Incomplete Deployment**
+   - The player name fix (line 569 in main.py) was made earlier but never deployed
+   - When Issue #4 was fixed, only `database_models.py` was copied to production
+   - Docker rebuild used cached layers, keeping the old `main.py` with incorrect field name
+   - Production had: `'name': player_dict['player_name']` (WRONG)
+   - Local had: `'player_name': player_dict['player_name']` (CORRECT)
+
+3. **Why It Happened**
+   - Docker layer caching reused old `main.py` from previous build
+   - Only copied `database_models.py`, not `main.py`
+   - Assumed previous fix was deployed (it wasn't)
+
+### Solution Applied
+
+```bash
+# 1. Copy correct main.py to production
+scp backend/main.py ubuntu@fantcric.fun:~/fantasy-cricket-leafcloud/backend/
+
+# 2. Rebuild API container WITHOUT CACHE (critical!)
+ssh ubuntu@fantcric.fun "cd ~/fantasy-cricket-leafcloud && docker-compose build --no-cache fantasy_cricket_api"
+
+# 3. Remove old container and start new one
+ssh ubuntu@fantcric.fun "docker rm -f fantasy_cricket_api && cd ~/fantasy-cricket-leafcloud && docker-compose up -d fantasy_cricket_api"
+
+# 4. Verify networking (lesson from Issue #3)
+docker network connect fantasy-cricket-leafcloud_cricket_network fantasy_cricket_api
+
+# 5. Verify health and fix
+docker exec fantasy_cricket_nginx wget -q -O- http://fantasy_cricket_api:8000/health
+docker exec fantasy_cricket_api sed -n '569,573p' /app/main.py
+```
+
+### Verification
+
+- ✅ Line 569 now has `'player_name': player_dict['player_name']`
+- ✅ API healthy and connected to nginx network
+- ✅ No errors in logs
+- ✅ Player names should now appear in team modal
+
+### Files Modified
+
+- ✅ Production `/app/main.py` - Line 569 fixed to return `player_name` instead of `name`
+
+### Prevention
+
+**ALWAYS rebuild without cache when deploying code changes:**
+
+```bash
+# ❌ WRONG - may use cached layers with old code
+docker-compose build fantasy_cricket_api
+
+# ✅ CORRECT - forces rebuild of all layers
+docker-compose build --no-cache fantasy_cricket_api
+```
+
+**Verify deployments actually took effect:**
+
+```bash
+# Check specific line was updated
+ssh ubuntu@fantcric.fun "docker exec fantasy_cricket_api sed -n 'XXX,YYYp' /app/main.py"
+```
+
+### Lessons Learned
+
+1. **Docker Caching Can Hide Issues** - Layer caching may keep old code even after copying new files
+2. **Always Use --no-cache for Code Changes** - Especially critical when copying files that go into COPY . . layer
+3. **Verify Every Deployment** - Check that code changes actually made it into the running container
+4. **Track What's Been Deployed** - Document exactly which fixes are actually in production vs. just committed
+5. **Test Immediately After Deploy** - Would have caught this right away
+
+---
+
+## Issue 4: Database Schema Mismatch - clubs.full_name Does Not Exist ✅ FIXED
+
+**Date:** 2025-12-18
+**Context:** After Phase 2 leaderboard upgrades, viewing user teams started failing with 500 errors
+
+### Root Cause Analysis
+
+1. **Symptom**
+   - Error: `psycopg2.errors.UndefinedColumn: column clubs.full_name does not exist`
+   - Endpoint failing: `GET /api/user/teams`
+   - User unable to view their fantasy teams
+
+2. **Root Cause: SQLAlchemy Model Out of Sync**
+   - Production `database_models.py` Club class had fields that don't exist in database:
+     - ❌ `full_name` (line 99)
+     - ❌ `country`
+     - ❌ `cricket_board`
+     - ❌ `website_url`
+     - ❌ `updated_at`
+   - Production database `clubs` table only has: `id, name, tier, location, founded_year, created_at, season_id`
+   - When SQLAlchemy queries Club objects, it tries to SELECT all model fields
+   - Database rejects query because columns don't exist
+
+3. **How It Was Triggered**
+   - Endpoint: `/api/user/teams` (line 340 in user_team_endpoints.py)
+   - Code accesses: `team.league.club.name` (line 358)
+   - SQLAlchemy lazy-loads the Club relationship
+   - Generates SELECT including all Club model columns (including non-existent ones)
+   - Query fails with UndefinedColumn error
+
+4. **Why It Happened**
+   - Production `database_models.py` was outdated
+   - Local development version was correctly synced with database schema
+   - Previous deployment didn't include updated database_models.py
+
+### Solution Applied
+
+```bash
+# 1. Copy correct database_models.py from local to production
+scp backend/database_models.py ubuntu@fantcric.fun:~/fantasy-cricket-leafcloud/backend/
+
+# 2. Rebuild and restart API container
+ssh ubuntu@fantcric.fun "docker rm -f <container_id> && cd ~/fantasy-cricket-leafcloud && docker-compose up -d fantasy_cricket_api"
+
+# 3. Ensure API is on correct network (lesson from Issue #3)
+docker network connect fantasy-cricket-leafcloud_cricket_network fantasy_cricket_api
+
+# 4. Verify health
+docker exec fantasy_cricket_nginx wget -q -O- http://fantasy_cricket_api:8000/health
+```
+
+### Verification
+
+- ✅ Club model now matches database schema exactly
+- ✅ No `full_name`, `country`, `cricket_board`, `website_url`, or `updated_at` fields in model
+- ✅ API started successfully with no errors
+- ✅ Health check returns 200 OK
+- ✅ No errors in logs after restart
+
+### Files Modified
+
+- ✅ Production `/app/database_models.py` - Club class (lines 88-110) updated
+
+### Prevention
+
+**ALWAYS check production database schema before modifying models:**
+
+```bash
+# Check table structure
+ssh ubuntu@fantcric.fun "docker exec fantasy_cricket_db psql -U cricket_admin -d fantasy_cricket -c '\d clubs'"
+
+# Compare with local model
+grep -A 20 "class Club" backend/database_models.py
+```
+
+**Follow the checklist from DATABASE_SCHEMA.md:**
+- [ ] Checked production schema with `\d table_name`
+- [ ] Verified field names match exactly
+- [ ] Confirmed all FK constraints exist
+- [ ] No relationships without FK
+- [ ] Reviewed `DATABASE_SCHEMA.md`
+- [ ] Read `DEVELOPMENT_GUIDE.md` procedures
+
+### Lessons Learned
+
+1. **Schema Documentation is Critical** - `DATABASE_SCHEMA.md` exists specifically to prevent this
+2. **Always Verify Production Schema** - Never assume production matches local development
+3. **Deploy Database Models When Changed** - Include `database_models.py` in all relevant deployments
+4. **Test After Deployment** - Test critical endpoints immediately after deploying
+5. **Follow the Mature Plan Process** - Analyze readmes and reference files BEFORE making changes
+
+---
+
+## Issue 3: 502 Bad Gateway - Login Failure After Deployment ✅ FIXED
+
+**Date:** 2025-12-18
+**Context:** After deploying player name fix to production, login started failing with 502 errors
+
+### Root Cause Analysis
+
+1. **Improper Container Restart Command**
+   - Used: `docker rm -f fantasy_cricket_api && docker-compose up -d --no-deps fantasy_cricket_api`
+   - This created the API container in the **wrong Docker network**
+   - nginx was on: `fantasy-cricket-leafcloud_cricket_network`
+   - API was on: `fantasy-cricket_cricket_network`
+   - Containers couldn't communicate across different networks
+
+2. **Symptom Timeline**
+   - 10:21 - First login attempt failed (502)
+   - 10:35 - Multiple failed login attempts
+   - 10:38 - Network fix applied
+   - 10:38+ - All systems operational
+
+3. **Evidence from Logs**
+   ```
+   nginx error.log:
+   2025/12/18 10:35:43 [error] connect() failed (113: Host is unreachable)
+   while connecting to upstream, request: "POST /api/auth/login HTTP/1.1",
+   upstream: "http://172.20.0.6:8000/api/auth/login"
+   ```
+
+### Solution Applied
+
+```bash
+# Connected API container to nginx network
+docker network connect fantasy-cricket-leafcloud_cricket_network fantasy_cricket_api
+
+# Verified connectivity
+docker exec fantasy_cricket_nginx wget -q -O- http://fantasy_cricket_api:8000/health
+# ✅ Returned: {"status":"healthy"...}
+```
+
+### Verification
+
+- ✅ API container now on BOTH networks (leaf-cloud network + original network)
+- ✅ Nginx can reach API on shared network
+- ✅ Health check works from nginx container
+- ✅ Login functionality restored
+- ✅ No errors in logs after 10:38
+
+### Prevention
+
+**NEVER use `docker rm -f` + `docker-compose up` in production!**
+
+```bash
+# ❌ WRONG - breaks networking
+docker rm -f fantasy_cricket_api && docker-compose up -d --no-deps fantasy_cricket_api
+
+# ✅ CORRECT - preserves networks
+cd /home/ubuntu/fantasy-cricket && docker-compose up -d --build fantasy_cricket_api
+
+# ✅ ALSO CORRECT - proper workflow
+docker-compose stop fantasy_cricket_api
+docker-compose build fantasy_cricket_api
+docker-compose up -d fantasy_cricket_api
+```
+
+### Documentation Updated
+
+- Added to `TROUBLESHOOTING.md` section "502 Bad Gateway / Login Failing After Container Restart"
+- Includes symptoms, diagnosis, solution, and prevention steps
+
+### Lessons Learned
+
+1. **Always use proper docker-compose commands** - they handle networking automatically
+2. **Verify connectivity after deployment** - test from nginx container to API
+3. **Check docker networks** - `docker network inspect` shows which network each container is on
+4. **Monitor error logs immediately after deployment** - would have caught this in seconds
+
+---
+
 **Date:** 2025-11-19
 **Context:** User reported duplicates in top 25 and weekly points showing as 0
 

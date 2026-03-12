@@ -63,8 +63,14 @@ fi
 echo "   ✅ Volume exists"
 
 # Check available disk space
-AVAILABLE_SPACE=$(df -BG "$BACKUP_DIR" | awk 'NR==2 {print $4}' | tr -d 'G')
-VOLUME_SIZE=$(docker system df -v | grep "$VOLUME_NAME" | awk '{print $4}' | head -1)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    AVAILABLE_SPACE=$(df -g "$BACKUP_DIR" | awk 'NR==2 {print $4}')
+else
+    # Linux
+    AVAILABLE_SPACE=$(df -BG "$BACKUP_DIR" | awk 'NR==2 {print $4}' | tr -d 'G')
+fi
+VOLUME_SIZE=$(docker system df -v 2>/dev/null | grep "$VOLUME_NAME" | awk '{print $4}' | head -1 || echo "unknown")
 echo "   ✅ Available disk space: ${AVAILABLE_SPACE}GB"
 echo "   📊 Volume size: ${VOLUME_SIZE}"
 

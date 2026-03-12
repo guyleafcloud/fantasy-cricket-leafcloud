@@ -230,6 +230,87 @@ docker exec fantasy_cricket_api env | grep JWT_SECRET
 
 ### Docker and Deployment Issues
 
+#### Issue: 502 Bad Gateway / Login Failing After Container Restart
+
+**Symptoms**:
+- Login returns 502 error
+- API health check works from inside nginx container
+- No login attempts in API logs
+- Frontend shows "Failed to load resource: 502"
+
+**Cause**: Container recreated in different Docker network than nginx.
+
+**Diagnosis**:
+```bash
+# Check which networks containers are on
+docker inspect fantasy_cricket_nginx | grep -A 5 'Networks'
+docker inspect fantasy_cricket_api | grep -A 5 'Networks'
+
+# If they're on DIFFERENT networks, that's the problem!
+```
+
+**Solution**:
+```bash
+# Connect API to nginx network
+docker network connect fantasy-cricket-leafcloud_cricket_network fantasy_cricket_api
+
+# Verify connectivity
+docker exec fantasy_cricket_nginx wget -q -O- http://fantasy_cricket_api:8000/health
+```
+
+**Root Cause**: Using `docker rm -f` + `docker-compose up` creates container in wrong network.
+
+**Prevention**:
+```bash
+# ❌ WRONG - breaks networking
+docker rm -f fantasy_cricket_api && docker-compose up -d --no-deps fantasy_cricket_api
+
+# ✅ CORRECT - preserves networks
+cd /home/ubuntu/fantasy-cricket && docker-compose up -d --build fantasy_cricket_api
+
+# ✅ ALSO CORRECT - proper compose workflow
+docker-compose stop fantasy_cricket_api
+docker-compose build fantasy_cricket_api
+docker-compose up -d fantasy_cricket_api
+```
+
+**CRITICAL**: Never use `docker rm -f` + `docker-compose up` on production. Always use proper compose commands.
+
+---
+
+#### Issue: 502 Bad Gateway After Recreating Containers
+
+**Symptoms**:
+- Containers are running and healthy
+- API health check works
+- But frontend shows 502 Bad Gateway
+- Nginx error logs show "Connection refused" to old container IP
+
+**Cause**: When containers are recreated (rm + up), they get new IP addresses. Nginx caches DNS lookups to container hostnames and continues trying to reach the old IP addresses.
+
+**Diagnosis**:
+```bash
+# Check nginx error logs for connection refused errors
+docker logs fantasy_cricket_nginx 2>&1 | tail -30
+
+# Look for errors like:
+# connect() failed (111: Connection refused) while connecting to upstream
+# upstream: "http://172.20.0.9:3001/"
+```
+
+**Solution**:
+```bash
+# Restart nginx to clear DNS cache
+docker-compose restart fantasy_cricket_nginx
+```
+
+**Prevention**:
+- Always restart nginx after recreating API or frontend containers
+- Better: Use `docker-compose up -d --build` instead of rm + up
+- Never use `docker rm -f` + `docker-compose up` (see Issue above)
+
+---
+
 #### Issue: Container won't start
 
 **Diagnosis**:

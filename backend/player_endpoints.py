@@ -297,3 +297,186 @@ async def create_players_bulk(
         "total_processed": created_count + updated_count,
         "errors": errors if errors else None
     }
+
+
+# =============================================================================
+# DATA QUALITY ENDPOINTS
+# =============================================================================
+
+@router.get("/players/quality-check")
+async def player_quality_check(
+    club_id: Optional[str] = None,
+    admin: dict = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Run data quality checks on player roster (Admin only)
+
+    Checks for:
+    - Invalid player names (dates, scorecard text, team names)
+    - Default multiplier players (likely opposition players)
+    - Duplicate player names
+    - Players without team assignments
+    - Opposition team players
+
+    Returns detailed report with recommendations.
+    """
+    import re
+    from sqlalchemy import func
+    from collections import defaultdict
+
+    # Define validation patterns
+    INVALID_PATTERNS = [
+        (r'^\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)', 'Date format'),
+        (r'EXTRAS:', 'Scorecard text'),
+        (r'Fall of wickets', 'Scorecard text'),
+        (r'^c\s+\w+\s+b\s+\w+', 'Dismissal notation'),
+        (r'^\d+\s+(CEST|GMT)', 'Timestamp'),
+        (r'CSV Test Player', 'Test data'),
+        (r'^Team\s+\d', 'Team placeholder'),
+        (r'TOTAL:', 'Scorecard total'),
+        (r'Result:', 'Match result'),
+        (r'Toss won by', 'Match metadata'),
+        (r'Venue:', 'Match metadata'),
+    ]
+
+    OPPOSITION_TEAMS = [
+        'Rood en Wit', 'Salland', 'Ajax', 'Quick', 'VRA', 'VOC', 'Kampong',
+        'HCC', 'HBS', 'Excelsior', 'VVV', 'Qui Vive', 'Voorburg', 'Hercules',
+        'Dosti', 'SV Kampong', 'Bloemendaal', 'Koninklijke', 'HCC 1', 'VRA 1',
+        'Ajax 1', 'Quick 1', 'VOC 1', 'Kampong 1', 'Kampong 2', 'Kampong 3'
+    ]
+
+    # Build query
+    query = db.query(Player)
+    if club_id:
+        query = query.filter(Player.club_id == club_id)
+
+    players = query.all()
+
+    issues = {
+        'invalid_names': [],
+        'default_multipliers': [],
+        'duplicates': [],
+        'no_team_assignment': [],
+        'opposition_players': [],
+        'suspicious_patterns': []
+    }
+
+    # Track name counts for duplicate detection
+    name_counts = defaultdict(list)
+
+    for player in players:
+        # Check for invalid name patterns
+        for pattern, reason in INVALID_PATTERNS:
+            if re.search(pattern, player.name, re.IGNORECASE):
+                issues['invalid_names'].append({
+                    'id': player.id,
+                    'name': player.name,
+                    'reason': reason,
+                    'team': getattr(player, 'rl_team', 'Unknown')
+                })
+                break
+
+        # Check for default multipliers (potential opposition players)
+        if player.multiplier == 1.0 and hasattr(player, 'role'):
+            role_val = player.role
+            if isinstance(role_val, str):
+                role_str = role_val
+            else:
+                # It's an enum
+                role_str = str(role_val.value) if hasattr(role_val, 'value') else str(role_val)
+
+            if role_str in ['ALL_ROUNDER', 'all-rounder', None, '']:
+                issues['default_multipliers'].append({
+                    'id': player.id,
+                    'name': player.name,
+                    'team': getattr(player, 'rl_team', 'Unknown'),
+                    'role': role_str
+                })
+
+        # Check for opposition team names
+        for opp_team in OPPOSITION_TEAMS:
+            if opp_team.lower() in player.name.lower():
+                issues['opposition_players'].append({
+                    'id': player.id,
+                    'name': player.name,
+                    'matched_pattern': opp_team,
+                    'team': getattr(player, 'rl_team', 'Unknown')
+                })
+                break
+
+        # Check for missing team assignment
+        if not hasattr(player, 'rl_team') or not player.rl_team:
+            issues['no_team_assignment'].append({
+                'id': player.id,
+                'name': player.name
+            })
+
+        # Track for duplicate detection
+        name_counts[player.name.lower()].append({
+            'id': player.id,
+            'name': player.name,
+            'team': getattr(player, 'rl_team', 'Unknown')
+        })
+
+        # Check for suspicious patterns
+        # Single letter names
+        if len(player.name) == 1 or player.name.upper() in ['W', 'O', 'M', 'NB', 'LB']:
+            issues['suspicious_patterns'].append({
+                'id': player.id,
+                'name': player.name,
+                'reason': 'Single letter or cricket abbreviation',
+                'team': getattr(player, 'rl_team', 'Unknown')
+            })
+        # All uppercase names (often opposition)
+        elif player.name.isupper() and len(player.name) > 3:
+            issues['suspicious_patterns'].append({
+                'id': player.id,
+                'name': player.name,
+                'reason': 'All uppercase',
+                'team': getattr(player, 'rl_team', 'Unknown')
+            })
+
+    # Find duplicates
+    for name, player_list in name_counts.items():
+        if len(player_list) > 1:
+            issues['duplicates'].append({
+                'name': name,
+                'count': len(player_list),
+                'players': player_list
+            })
+
+    # Calculate summary statistics
+    total_issues = sum(len(v) for v in issues.values())
+    total_players = len(players)
+
+    # Generate recommendations
+    recommendations = []
+    if issues['invalid_names']:
+        recommendations.append(f"Delete {len(issues['invalid_names'])} players with invalid names (dates, scorecard text)")
+    if issues['default_multipliers']:
+        recommendations.append(f"Review {len(issues['default_multipliers'])} players with default multipliers (might be opposition)")
+    if issues['duplicates']:
+        recommendations.append(f"Merge {len(issues['duplicates'])} duplicate player records")
+    if issues['no_team_assignment']:
+        recommendations.append(f"Assign teams to {len(issues['no_team_assignment'])} players")
+    if issues['opposition_players']:
+        recommendations.append(f"Remove {len(issues['opposition_players'])} opposition team players")
+    if issues['suspicious_patterns']:
+        recommendations.append(f"Review {len(issues['suspicious_patterns'])} players with suspicious name patterns")
+
+    # Health score (0-100)
+    health_score = max(0, 100 - (total_issues / total_players * 100)) if total_players > 0 else 100
+
+    return {
+        "summary": {
+            "total_players": total_players,
+            "total_issues": total_issues,
+            "health_score": round(health_score, 1),
+            "status": "excellent" if health_score >= 95 else "good" if health_score >= 85 else "fair" if health_score >= 70 else "poor"
+        },
+        "issues": issues,
+        "recommendations": recommendations,
+        "timestamp": "2026-03-12T00:00:00Z"  # Could use datetime.utcnow().isoformat()
+    }

@@ -44,10 +44,9 @@ class ScorecardPlayerMatcher:
     def _load_all_players(self):
         """Load all players from database into memory"""
         query = text("""
-            SELECT p.id, p.name, p.player_type, p.multiplier, p.is_wicket_keeper,
-                   t.name as team_name, c.name as club_name
+            SELECT p.id, p.name, p.role, p.multiplier,
+                   p.rl_team as team_name, c.name as club_name
             FROM players p
-            LEFT JOIN teams t ON p.team_id = t.id
             LEFT JOIN clubs c ON p.club_id = c.id
         """)
 
@@ -56,11 +55,11 @@ class ScorecardPlayerMatcher:
             {
                 'id': row[0],
                 'name': row[1],
-                'player_type': row[2],
+                'player_type': row[2],  # Actually 'role' now, but kept key name for compatibility
                 'multiplier': row[3],
-                'is_wicket_keeper': row[4],
-                'team_name': row[5],
-                'club_name': row[6]
+                'is_wicket_keeper': row[2] == 'WICKET_KEEPER',  # Derive from role
+                'team_name': row[4],
+                'club_name': row[5]
             }
             for row in result
         ]

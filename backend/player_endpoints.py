@@ -230,10 +230,12 @@ async def create_players_bulk(
 
                 # CSV is leading for team assignment - always update
                 existing_player.team_id = team_id
+                existing_player.rl_team = team_name  # NEW: Also update rl_team field
 
                 # Update player_type if provided in CSV
                 if player_type is not None:
                     existing_player.player_type = player_type
+                    existing_player.role = player_type.upper().replace('-', '_')  # NEW: Also update role field
 
                 # Only update multiplier if explicitly provided in CSV
                 if multiplier is not None:
@@ -260,9 +262,12 @@ async def create_players_bulk(
                     name=player_name,
                     club_id=club_id,
                     team_id=team_id,
+                    rl_team=team_name,  # NEW: Set rl_team field
                     player_type=player_type,
+                    role=player_type.upper().replace('-', '_') if player_type else 'ALL_ROUNDER',  # NEW: Set role field
                     multiplier=multiplier if multiplier is not None else 1.0,
                     is_wicket_keeper=is_wicket_keeper,
+                    tier='HOOFDKLASSE',  # NEW: Set tier field
                     created_by=admin["user_id"]
                 )
 

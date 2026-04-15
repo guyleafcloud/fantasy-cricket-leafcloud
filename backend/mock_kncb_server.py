@@ -472,7 +472,44 @@ def get_matches(entity_id):
     grade = next((g for g in GRADES if g['grade_id'] == grade_id), GRADES[0])
     grade_name = grade['grade_name']
 
-    # Generate 10-20 random matches for this grade
+    # PRELOADED MODE: Use actual scorecard data
+    if PRELOADED_MODE:
+        index = load_preloaded_index()
+        if index:
+            # Return matches from our preloaded scorecards
+            matches = []
+            for match_data in index.get('matches', []):
+                # Extract team name to match against grade (tier)
+                team = match_data.get('team', '')
+
+                # Parse team number (e.g., "ACC 1" -> 1)
+                try:
+                    team_tier = int(team.split()[-1]) if team else 0
+                except:
+                    team_tier = 0
+
+                # Map grade_id to tier (simplified - all grades get all matches for now)
+                # In production, you might want to filter by tier
+
+                match_id = int(match_data['match_id'])
+
+                # Create match entry compatible with scraper expectations
+                match_entry = {
+                    "match_id": match_id,
+                    "home_club_name": "ACC",  # Simplified - all our scorecards are ACC matches
+                    "away_club_name": "Opponent",
+                    "match_date_time": match_data.get('mapped_date_2026', '2026-01-01T00:00:00'),
+                    "grade_id": grade_id,
+                    "grade_name": grade_name,
+                    "season_id": season_id,
+                    "status": "Complete"
+                }
+                matches.append(match_entry)
+
+            logger.info(f"📊 GET /matches - Returning {len(matches)} preloaded matches for grade {grade_name}")
+            return jsonify(matches)
+
+    # RANDOM MODE: Generate random matches
     num_matches = random.randint(10, 20)
     matches = []
 
@@ -509,7 +546,7 @@ def get_matches(entity_id):
                 match_id, home_club, away_club, grade_name
             )
 
-    logger.info(f"📊 GET /matches - Returning {len(matches)} matches for grade {grade_name}")
+    logger.info(f"📊 GET /matches - Returning {len(matches)} random matches for grade {grade_name}")
     return jsonify(matches)
 
 
